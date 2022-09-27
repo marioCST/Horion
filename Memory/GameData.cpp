@@ -17,7 +17,7 @@ void GameData::retrieveClientInstance() {
 	static uintptr_t clientInstanceOffset = 0x0;
 	uintptr_t sigOffset = 0x0;
 	if (clientInstanceOffset == 0x0) {
-		sigOffset = FindSignature("48 8B 15 ? ? ? ? 4C 8B 02 4C 89 06 40 84 FF 74 ? 48 8B CD E8 ? ? ? ? 48 8B C6 48 8B 4C 24 ? 48 33 CC E8 ? ? ? ? 48 8B 5C 24 ? 48 8B 6C 24 ? 48 8B 74 24 ? 48 83 C4 ? 5F C3 B9 ? ? ? ? E8 ? ? ? ? CC E8 ? ? ? ? CC CC CC CC CC CC CC CC CC CC CC 48 89 5C 24 ? 48 89 6C 24 ? 56");
+		sigOffset = FindSignature("48 8B 01 FF 90 ? ? ? ? F2 ? ? 00 8B 40 08 F2 ? ? 03 89 43 08 48 8B C3 48 83 C4 20 5B C3 CC CC CC 48 8B 41 10");
 		if (sigOffset != 0x0) {
 			int offset = *reinterpret_cast<int*>((sigOffset + 3));                                                 // Get Offset from code
 			clientInstanceOffset = sigOffset - g_Data.gameModule->ptrBase + offset + /*length of instruction*/ 7;  // Offset is relative
@@ -26,8 +26,10 @@ void GameData::retrieveClientInstance() {
 	}
 	// clientInstanceOffset = 0x03CD5058;  // pointer scanned, can't find good signatures so it'll stay
 	g_Data.clientInstance = reinterpret_cast<C_ClientInstance*>(g_Data.slimMem->ReadPtr<uintptr_t*>(g_Data.gameModule->ptrBase + clientInstanceOffset, {0x0, 0x0, 0x58}));
+	//g_Data.clientInstance = reinterpret_cast<C_ClientInstance*>(g_Data.slimMem->Read<uintptr_t*>(g_Data.gameModule->ptrBase + 0x13D1F95));
 #ifdef _DEBUG
 	if (g_Data.clientInstance == 0)
+		logF("Client Instance is 0");
 		throw std::exception("Client Instance is 0");
 #endif
 }
@@ -44,7 +46,7 @@ bool GameData::canUseMoveKeys() {
 bool GameData::isKeyDown(int key) {
 	static uintptr_t keyMapOffset = 0x0;
 	if (keyMapOffset == 0x0) {
-		uintptr_t sigOffset = FindSignature("48 8D 0D ? ? ? ? 89 1C B9");
+		uintptr_t sigOffset = FindSignature("48 83 EC ? ? ? C1 4C 8D 05 ? ? ? ? 89 54 24 ? 88 4C 24 ? 41 89 14");
 		if (sigOffset != 0x0) {
 			int offset = *reinterpret_cast<int*>((sigOffset + 3));                                         // Get Offset from code
 			keyMapOffset = sigOffset - g_Data.gameModule->ptrBase + offset + /*length of instruction*/ 7;  // Offset is relative
