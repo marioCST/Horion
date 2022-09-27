@@ -17,7 +17,7 @@ void GameData::retrieveClientInstance() {
 	static uintptr_t clientInstanceOffset = 0x0;
 	uintptr_t sigOffset = 0x0;
 	if (clientInstanceOffset == 0x0) {
-		sigOffset = FindSignature("48 8B 01 FF 90 ? ? ? ? F2 ? ? 00 8B 40 08 F2 ? ? 03 89 43 08 48 8B C3 48 83 C4 20 5B C3 CC CC CC 48 8B 41 10");
+		sigOffset = FindSignature("48 8D 3D ? ? ? ? 48 85 F6 74 33 BD ? ? ? ? 8B");
 		if (sigOffset != 0x0) {
 			int offset = *reinterpret_cast<int*>((sigOffset + 3));                                                 // Get Offset from code
 			clientInstanceOffset = sigOffset - g_Data.gameModule->ptrBase + offset + /*length of instruction*/ 7;  // Offset is relative
@@ -26,7 +26,6 @@ void GameData::retrieveClientInstance() {
 	}
 	// clientInstanceOffset = 0x03CD5058;  // pointer scanned, can't find good signatures so it'll stay
 	g_Data.clientInstance = reinterpret_cast<C_ClientInstance*>(g_Data.slimMem->ReadPtr<uintptr_t*>(g_Data.gameModule->ptrBase + clientInstanceOffset, {0x0, 0x0, 0x58}));
-	//g_Data.clientInstance = reinterpret_cast<C_ClientInstance*>(g_Data.slimMem->Read<uintptr_t*>(g_Data.gameModule->ptrBase + 0x13D1F95));
 #ifdef _DEBUG
 	if (g_Data.clientInstance == 0)
 		logF("Client Instance is 0");
