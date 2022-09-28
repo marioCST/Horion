@@ -17,7 +17,7 @@ void GameData::retrieveClientInstance() {
 	static uintptr_t clientInstanceOffset = 0x0;
 	uintptr_t sigOffset = 0x0;
 	if (clientInstanceOffset == 0x0) {
-		sigOffset = FindSignature("48 8D 3D ? ? ? ? 48 85 F6 74 33 BD ? ? ? ? 8B");
+		sigOffset = FindSignature("48 8D 15 ? ? ? ? FF 90 ? ? ? ? F3 ? ? ? ? ? ? ? F3 ? ? ? 66 ? ? ? 8D 41 01 ? ? C0 ? ? C1 ? ? C8 85 C9 7E 07");
 		if (sigOffset != 0x0) {
 			int offset = *reinterpret_cast<int*>((sigOffset + 3));                                                 // Get Offset from code
 			clientInstanceOffset = sigOffset - g_Data.gameModule->ptrBase + offset + /*length of instruction*/ 7;  // Offset is relative
