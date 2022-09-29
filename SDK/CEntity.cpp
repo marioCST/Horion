@@ -46,7 +46,7 @@ float C_Entity::getBlocksPerSecond() {
 
 void C_Entity::lerpTo(vec3_t const &pos, vec2_t const &a2, int a3) { //lerpTo was removed from the Player vtable so this is how we are going to use it from now on
 	using lerpTo = void(__fastcall *)(C_Entity *, vec3_t const &, vec2_t const &, int);
-	static lerpTo lerp = reinterpret_cast<lerpTo>(FindSignature("48 89 5C 24 ? 57 48 83 EC ? 48 8B D9 49 8B F8 48 8B 89 ? ? ? ? 48 85 C9 74 ? 48 8B 01 48 8B 5C 24"));
+	static lerpTo lerp = reinterpret_cast<lerpTo>(FindSignature("48 89 5C ? ? 48 89 6C ? ? 48 89 74 ? ? 57 48 83 EC ? 48 8B D9 41 8B F8"));
 	lerp(this, pos, a2, a3);
 }
 
