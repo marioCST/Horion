@@ -68,7 +68,6 @@ struct AABBHasher {
 
 class GameData {
 private:
-	C_ClientInstance* clientInstance = nullptr;
 	C_LocalPlayer* localPlayer = nullptr;
 	C_GameMode* gameMode = nullptr;
 	C_EntityList* entityList = nullptr;
@@ -98,6 +97,7 @@ private:
 	TextHolder* fakeName;
 
 public:
+	C_ClientInstance* clientInstance = nullptr;
 	C_HIDController* hidController = nullptr;
 	std::queue<std::shared_ptr<InfoBoxData>> infoBoxQueue;
 	NetworkedData networkedData;

@@ -11,6 +11,22 @@ bool isRunning = true;
 #pragma comment(lib, "MinHook.x86.lib")
 #endif
 
+typedef void(__thiscall* ClientInstanceHook)(C_ClientInstance*, void*);
+ClientInstanceHook _CITick;
+
+void clientInstanceHook(C_ClientInstance* CI, void* a2) {
+	g_Data.clientInstance = CI;
+
+	static bool sent = false;
+
+	if (!sent) {
+		logF("ClientInstance: %llX", CI);
+		sent = true;
+	}
+
+	_CITick(CI, a2);
+}
+
 DWORD WINAPI keyThread(LPVOID lpParam) {
 	logF("Key thread started");
 
@@ -324,6 +340,14 @@ DWORD WINAPI start(LPVOID lpParam) {
 	gameModule = mem.GetModule(L"Minecraft.Windows.exe");  // Get Module for Base Address
 
 	MH_Initialize();
+
+	uintptr_t clientInstanceSig = FindSignature("40 53 56 57 48 81 EC ? ? ? ? 44");
+
+	if (MH_CreateHook((void*)clientInstanceSig, &clientInstanceHook, reinterpret_cast<LPVOID*>(&_CITick)) == MH_OK) {
+		MH_EnableHook((void*)clientInstanceSig);
+		logF("Enabled ClientInstance Tick");
+	}
+
 	GameData::initGameData(gameModule, &mem, (HMODULE)lpParam);
 	Target::init(g_Data.getPtrLocalPlayer());
 

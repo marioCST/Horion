@@ -110,7 +110,7 @@ private:
 	vec3_t origin;           //0x0890
 public:
 	vec3_t& getOrigin() {
-		return *(vec3_t*)((char*)this + (0x798));
+		return *(vec3_t*)((char*)this + (0x970));
 	}
 
 	__int64 getLevelRendererPlayer() {
@@ -883,9 +883,9 @@ public:
 
 	C_LocalPlayer* getLocalPlayer() {
 		if (this != nullptr) {
-			__int64 ptr = *reinterpret_cast<__int64*>(reinterpret_cast<__int64>(this) + 0xD0);
+			__int64 ptr = *reinterpret_cast<__int64*>(reinterpret_cast<__int64>(this) + 0xF8); // Level Renderer
 			if (ptr > 0x1000000000 && ptr < 0xF00000000000) {
-				C_LocalPlayer* res = *reinterpret_cast<C_LocalPlayer**>(ptr + 0x278);
+				C_LocalPlayer* res = *reinterpret_cast<C_LocalPlayer**>(ptr + 0x278); // Offset from Level Renderer
 				if (reinterpret_cast<__int64>(res) < 0xF00000000000) return res;
 			}
 		}
