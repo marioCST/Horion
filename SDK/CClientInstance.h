@@ -883,9 +883,9 @@ public:
 
 	C_LocalPlayer* getLocalPlayer() {
 		if (this != nullptr) {
-			__int64 ptr = *reinterpret_cast<__int64*>(reinterpret_cast<__int64>(this) + 0xF8); // Level Renderer
+			__int64 ptr = *reinterpret_cast<__int64*>(reinterpret_cast<__int64>(this) + 0x18); // Level Renderer
 			if (ptr > 0x1000000000 && ptr < 0xF00000000000) {
-				C_LocalPlayer* res = *reinterpret_cast<C_LocalPlayer**>(ptr + 0x278); // Offset from Level Renderer
+				C_LocalPlayer* res = *reinterpret_cast<C_LocalPlayer**>(ptr + 0xB8); // Offset from Level Renderer
 				if (reinterpret_cast<__int64>(res) < 0xF00000000000) return res;
 			}
 		}

@@ -14,18 +14,18 @@ size_t AABBHasher::operator()(const AABB& i) const {
 	return Utils::posToHash(i.lower);
 }
 void GameData::retrieveClientInstance() {
-	static uintptr_t clientInstanceOffset = 0x0;
+	/*static uintptr_t clientInstanceOffset = 0x0;
 	uintptr_t sigOffset = 0x0;
 	if (clientInstanceOffset == 0x0) {
 		sigOffset = FindSignature("48 8B 15 ? ? ? ? 4C 8B 02 4C 89 06 40 84 FF 74 0C 48 8D 0D ? ? ? ? E8 ? ? ? ? 48 8B C6 48 8B 4C ? ? 48 33 CC E8 ? ? ? ? 48 8B 5C ? ? 48 8B 74 ? ? 48 83 C4 ? 5F C3 E8 ? ? ? ? 90 CC CC CC CC CC CC CC CC CC 48 89 5C ? ? 48 89 74 ? ? 57 48 83 EC ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 ? ? 48 8B DA 48 8B F1 48 89 4C ? ? 48 8D 0D ? ? ? ? E8 ? ? ? ? 85 C0 ? ? C1 85 C0");
 		if (sigOffset != 0x0) {
 			int offset = *reinterpret_cast<int*>((sigOffset + 3));                                                 // Get Offset from code
-			clientInstanceOffset = sigOffset - g_Data.gameModule->ptrBase + offset + /*length of instruction*/ 7;  // Offset is relative
+			clientInstanceOffset = sigOffset - g_Data.gameModule->ptrBase + offset + /*length of instruction*/ /*7;  // Offset is relative
 			logF("client: %llX", clientInstanceOffset);
 		}
-	}
+	}*/
 	// clientInstanceOffset = 0x03CD5058;  // pointer scanned, can't find good signatures so it'll stay
-	g_Data.clientInstance = reinterpret_cast<C_ClientInstance*>(g_Data.slimMem->ReadPtr<uintptr_t*>(g_Data.gameModule->ptrBase + clientInstanceOffset, {0x18, 0x18, 0xB8, 0x0}));
+	g_Data.clientInstance = reinterpret_cast<C_ClientInstance*>(g_Data.slimMem->ReadPtr<uintptr_t*>(g_Data.gameModule->ptrBase + 0x049253C8, {0x38, 0x8, 0x0}));
 #ifdef _DEBUG
 	if (g_Data.clientInstance == 0)
 		logF("Client Instance is 0");
@@ -215,7 +215,7 @@ void GameData::initGameData(const SlimUtils::SlimModule* gameModule, SlimUtils::
 	g_Data.slimMem = slimMem;
 	g_Data.hDllInst = hDllInst;
 	g_Data.networkedData.xorKey = rand() % 0xFFFF | ((rand() % 0xFFFF) << 16);
-	//retrieveClientInstance();
+	retrieveClientInstance();
 #ifdef _DEBUG
 	logF("base: %llX", g_Data.getModule()->ptrBase);
 	logF("clientInstance %llX", g_Data.clientInstance);

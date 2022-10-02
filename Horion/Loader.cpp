@@ -341,12 +341,12 @@ DWORD WINAPI start(LPVOID lpParam) {
 
 	MH_Initialize();
 
-	uintptr_t clientInstanceSig = FindSignature("40 53 56 57 48 81 EC ? ? ? ? 44");
+	/*uintptr_t clientInstanceSig = FindSignature("40 53 56 57 48 81 EC ? ? ? ? 44");
 
 	if (MH_CreateHook((void*)clientInstanceSig, &clientInstanceHook, reinterpret_cast<LPVOID*>(&_CITick)) == MH_OK) {
 		MH_EnableHook((void*)clientInstanceSig);
 		logF("Enabled ClientInstance Tick");
-	}
+	}*/
 
 	GameData::initGameData(gameModule, &mem, (HMODULE)lpParam);
 	Target::init(g_Data.getPtrLocalPlayer());
