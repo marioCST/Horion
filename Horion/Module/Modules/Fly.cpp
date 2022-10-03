@@ -135,7 +135,7 @@ void Fly::onDisable() {
 			g_Data.getLocalPlayer()->canFly = false;
 		break;
 	case 1:
-	case 5:
+	case 6:
 		g_Data.getLocalPlayer()->velocity = vec3_t(0, 0, 0);
 	}
 }
