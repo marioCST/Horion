@@ -8,7 +8,8 @@ Fly::Fly() : IModule('F', Category::MOVEMENT, "Fly to the sky") {
 			   .addEntry(EnumEntry("Jetpack", 3))
 			   .addEntry(EnumEntry("Jetpack2", 4))
 			   .addEntry(EnumEntry("Motion", 5))
-			   .addEntry(EnumEntry("Moonlight", 6));
+			   .addEntry(EnumEntry("Moonlight", 6))
+			   .addEntry(EnumEntry("Geyser", 7));
 	registerEnumSetting("Mode", &mode, 0);
 	registerFloatSetting("Horizontal Speed", &this->horizontalSpeed, this->horizontalSpeed, 0.1f, 10.f);
 	registerFloatSetting("Vertical Speed", &this->verticalSpeed, this->verticalSpeed, 0.1f, 10.f);
@@ -146,6 +147,19 @@ void Fly::onMove(C_MoveInputHandler *input) {
 		return;
 
 	bool keyPressed = false;
+	C_GameSettingsInput *inputf = g_Data.getClientInstance()->getGameSettingsInput();
+	bool jumping = GameData::isKeyDown(*inputf->spaceBarKey);
+	bool sneaking = GameData::isKeyDown(*inputf->sneakKey);
+
+	float calcYaw = (localPlayer->yaw + 90) * (PI / 180);
+	float c = cos(calcYaw);
+	float s = sin(calcYaw);
+
+	vec2_t moveVec2D = {input->forwardMovement, -input->sideMovement};
+	bool flag = moveVec2D.magnitude() > 0.f;
+
+	moveVec2D = {moveVec2D.x * c - moveVec2D.y * s, moveVec2D.x * s + moveVec2D.y * c};
+	vec3_t moveVec;
 
 	switch (mode.selected) {
 	case 5: {
@@ -202,8 +216,6 @@ void Fly::onMove(C_MoveInputHandler *input) {
 		// Moonlight is an AntiCheat by disepi (Zephyr Developer)
 		// This Fly/Glide worked on the Hive in the first half year of 2021
 		// Idea from Weather Client (dead by now), TurakanFly from BadMan worked similar with less height loss
-
-		C_LocalPlayer *localPlayer = g_Data.getLocalPlayer();
 
 		if (localPlayer->onGround == false) {
 			localPlayer->velocity.y = 0;
@@ -273,6 +285,30 @@ void Fly::onMove(C_MoveInputHandler *input) {
 
 			gameTick = 0;
 		}
+		break;
 	}
+	case 7:
+		float motion = 0.0f;
+
+		if (g_Data.canUseMoveKeys()) {
+			if (jumping)
+				motion += verticalSpeed;
+			if (sneaking)
+				motion -= verticalSpeed;
+		}
+
+		if (gameTick = 15 && !jumping && !sneaking) {
+			motion = -0.04;
+			gameTick = 0;
+		}
+
+		if (flag || jumping || sneaking) {
+			moveVec.x = moveVec2D.x * horizontalSpeed;
+			moveVec.y = motion;
+			moveVec.z = moveVec2D.y * horizontalSpeed;
+
+			localPlayer->lerpMotion(moveVec);
+		}
+		break;
 	}
 }
