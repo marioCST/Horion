@@ -309,6 +309,21 @@ C_InteractPacket::C_InteractPacket(/*enum InteractPacket::Action, class ActorRun
 	vTable = interactPacketVtable;
 }
 
+/*BookEditPacket::BookEditPacket() {
+	static uintptr_t** bookEditPacketVtable = 0x0;
+	if (bookEditPacketVtable == 0x0) {
+		uintptr_t sigOffset = FindSignature("48 8D 05 ? ? ? ? 48 89 01 48 8D 05 ? ? ? ? 48 89 51 ?");
+		int offset = *reinterpret_cast<int*>(sigOffset + 3);
+		bookEditPacketVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + 7);
+#ifdef _DEBUG
+		if (bookEditPacketVtable == 0x0 || sigOffset == 0x0)
+			__debugbreak();
+#endif
+	}
+	memset(this, 0, sizeof(BookEditPacket));
+	vTable = bookEditPacketVtable;
+}*/
+
 ActorEventPacket::ActorEventPacket(uint64_t entityRuntimeId, char eventId, int16_t itemId) {
 	static uintptr_t** actorEvenPacketVtable = 0x0;
 	if (actorEvenPacketVtable == 0x0) {

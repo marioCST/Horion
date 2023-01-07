@@ -226,6 +226,24 @@ public:
 	TextHolder platformChatId;
 };
 
+/* class BookEditPacket : public Packet { // Theoretically ready to use, variable positions in vtable unknown
+public:
+	BookEditPacket();
+
+	char action;
+
+	char slot;
+	char page;
+	char secondaryPage;
+
+	TextHolder text;
+	TextHolder photoName;
+
+	TextHolder title;
+	TextHolder author;
+	int64_t xuid;
+};*/
+
 #pragma pack(push, 8)
 
 __declspec(align(8)) class C_MovePlayerPacket : public Packet {
