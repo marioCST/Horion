@@ -116,7 +116,7 @@ void Fly::onTick(GameMode *gm) {
 			gameTick = 0;
 		}
 
-		gm->player->velocity = vec3_t(0, 0, 0);
+		gm->player->velocity = Vec3(0, 0, 0);
 
 		break;
 	}
@@ -147,7 +147,7 @@ void Fly::onMove(MoveInputHandler *input) {
 		return;
 
 	bool keyPressed = false;
-	C_GameSettingsInput *inputf = g_Data.getClientInstance()->getGameSettingsInput();
+	GameSettingsInput *inputf = Game.getClientInstance()->getGameSettingsInput();
 	bool jumping = GameData::isKeyDown(*inputf->spaceBarKey);
 	bool sneaking = GameData::isKeyDown(*inputf->sneakKey);
 
@@ -155,11 +155,11 @@ void Fly::onMove(MoveInputHandler *input) {
 	float c = cos(calcYaw);
 	float s = sin(calcYaw);
 
-	vec2_t moveVec2D = {input->forwardMovement, -input->sideMovement};
+	Vec2 moveVec2D = {input->forwardMovement, -input->sideMovement};
 	bool flag = moveVec2D.magnitude() > 0.f;
 
 	moveVec2D = {moveVec2D.x * c - moveVec2D.y * s, moveVec2D.x * s + moveVec2D.y * c};
-	vec3_t moveVec;
+	Vec3 moveVec;
 
 	switch (mode.selected) {
 	case 5: {
@@ -220,7 +220,7 @@ void Fly::onMove(MoveInputHandler *input) {
 			localPlayer->velocity.y = 0;
 		}
 
-		C_GameSettingsInput *input = g_Data.getClientInstance()->getGameSettingsInput();
+		GameSettingsInput *input = Game.getClientInstance()->getGameSettingsInput();
 
 		if (input == nullptr)
 			return;
@@ -262,7 +262,7 @@ void Fly::onMove(MoveInputHandler *input) {
 			yaw -= 360.f;
 
 		float calcYaw = (yaw + 90) * (PI / 180);
-		vec3_t moveVec;
+		Vec3 moveVec;
 		moveVec.x = cos(calcYaw) * horizontalSpeed;
 		moveVec.y = localPlayer->velocity.y;
 		moveVec.z = sin(calcYaw) * horizontalSpeed;
@@ -274,7 +274,7 @@ void Fly::onMove(MoveInputHandler *input) {
 
 		if (gameTick > 6) {
 			if (localPlayer->onGround == false) {
-				vec3_t pos;
+				Vec3 pos;
 				pos.x = localPlayer->getPos()->x;
 				pos.y = localPlayer->getPos()->y - 0.025f;
 				pos.z = localPlayer->getPos()->z;
@@ -289,7 +289,7 @@ void Fly::onMove(MoveInputHandler *input) {
 	case 7:
 		float motion = 0.0f;
 
-		if (g_Data.canUseMoveKeys()) {
+		if (Game.canUseMoveKeys()) {
 			if (jumping)
 				motion += verticalSpeed;
 			if (sneaking)

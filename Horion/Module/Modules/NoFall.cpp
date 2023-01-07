@@ -34,25 +34,22 @@ void NoFall::onTick(GameMode* gm) {
 
 	if (localPlayer->fallDistance > 2.f) {
 		switch (mode.selected) {
-		/*case 3:{
+		/*case 3:
 			PlayerActionPacket actionPacket;
 			actionPacket.action = 7; //Respawn
 			actionPacket.entityRuntimeId = localPlayer->entityRuntimeId;
 			Game.getClientInstance()->loopbackPacketSender->sendToServer(&actionPacket);
-		}
-			break;
-			*/
-		case 1:{
+			break;*/
+		case 1:
 			localPlayer->velocity.y = 0.f;
 			localPlayer->setPos((*localPlayer->getPos()).add(0, 0.2, 0));
-		}
 			break;
-		case 2:{
+		case 2:
 			PlayerActionPacket actionPacket;
 			actionPacket.action = 15;  //Open Elytra, I have a fix for that server side
 			actionPacket.entityRuntimeId = localPlayer->entityRuntimeId;
 			Game.getClientInstance()->loopbackPacketSender->sendToServer(&actionPacket);
-		}
+			break;
 		}
 	}
 }
