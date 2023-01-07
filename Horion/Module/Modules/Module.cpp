@@ -61,7 +61,7 @@ IModule::IModule(int key, Category c, const char* tooltip) {
 	this->tooltip = tooltip;
 	this->registerIntSetting(std::string("keybind"), &this->keybind, this->keybind, 0, 0xFF);
 	this->registerBoolSetting(std::string("enabled"), &this->enabled, false);
-	this->ModulePos = vec2_t(0.f, 0.f);
+	this->ModulePos = Vec2(0.f, 0.f);
 }
 
 void IModule::registerFloatSetting(std::string name, float* floatPtr, float defaultValue, float minValue, float maxValue) {
@@ -195,7 +195,7 @@ bool IModule::allowAutoStart() {
 	return true;
 }
 
-void IModule::onTick(C_GameMode*) {
+void IModule::onTick(GameMode*) {
 }
 
 void IModule::onKeyUpdate(int key, bool isDown) {
@@ -213,16 +213,16 @@ void IModule::onEnable() {
 void IModule::onDisable() {
 }
 
-void IModule::onPreRender(C_MinecraftUIRenderContext* renderCtx) {
+void IModule::onPreRender(MinecraftUIRenderContext* renderCtx) {
 }
 
-void IModule::onPostRender(C_MinecraftUIRenderContext* renderCtx) {
+void IModule::onPostRender(MinecraftUIRenderContext* renderCtx) {
 }
 
-void IModule::onSendPacket(C_Packet*) {
+void IModule::onSendPacket(Packet*) {
 }
 
-void IModule::onWorldTick(C_GameMode*) {
+void IModule::onWorldTick(GameMode*) {
 }
 
 void IModule::onLoadConfig(void* confVoid) {
@@ -348,12 +348,12 @@ bool IModule::isEnabled() {
 const char* IModule::getTooltip() {
 	return this->tooltip;
 }
-void IModule::onAttack(C_Entity*) {
+void IModule::onAttack(Entity*) {
 }
 bool IModule::callWhenDisabled() {
 	return false;
 }
-void IModule::onMove(C_MoveInputHandler*) {
+void IModule::onMove(MoveInputHandler*) {
 }
 void IModule::onLevelRender() {
 }

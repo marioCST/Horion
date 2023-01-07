@@ -10,10 +10,10 @@ const char* InventoryMove::getModuleName() {
 	return ("InvMove");
 }
 
-void InventoryMove::onTick(C_GameMode* gm) {
-	if (g_Data.getLocalPlayer()->canOpenContainerScreen())
+void InventoryMove::onTick(GameMode* gm) {
+	if (Game.getLocalPlayer()->canOpenContainerScreen())
 		return;
-	C_GameSettingsInput* input = g_Data.getClientInstance()->getGameSettingsInput();
+	GameSettingsInput* input = Game.getClientInstance()->getGameSettingsInput();
 
 	if (input == nullptr)
 		return;
@@ -55,7 +55,7 @@ void InventoryMove::onTick(C_GameMode* gm) {
 
 	float calcYaw = (yaw + 90) * (PI / 180);
 	//float calcPitch = (gm->player->pitch) * -(PI / 180);
-	vec3_t moveVec;
+	Vec3 moveVec;
 	moveVec.x = cos(calcYaw) * speed;
 	moveVec.y = gm->player->velocity.y;
 	moveVec.z = sin(calcYaw) * speed;

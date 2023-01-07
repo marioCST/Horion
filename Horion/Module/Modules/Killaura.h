@@ -17,7 +17,7 @@ private:
 public:
 	bool rotations = false;
 	bool targetListEmpty = false;
-	vec2_t angle;
+	Vec2 angle;
 	bool isMobAura = false;
 	bool hurttime = true;
 	float range = 6;
@@ -28,7 +28,7 @@ public:
 
 	// Inherited via IModule
 	virtual const char* getModuleName() override;
-	virtual void onTick(C_GameMode* gm) override;
+	virtual void onTick(GameMode* gm) override;
 	virtual void onEnable() override;
-	virtual void onSendPacket(C_Packet* packet) override;
+	virtual void onSendPacket(Packet* packet) override;
 };

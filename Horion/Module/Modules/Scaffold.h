@@ -6,7 +6,7 @@ class Scaffold : public IModule {
 private:
 	bool spoof = false;
 	bool staircaseMode = false;
-	bool tryScaffold(vec3_t blockBelow);
+	bool tryScaffold(Vec3 blockBelow);
 	bool findBlock();
 
 public:
@@ -15,6 +15,6 @@ public:
 
 	// Inherited via IModule
 	virtual const char* getModuleName() override;
-	virtual void onTick(C_GameMode* gm) override;
+	virtual void onTick(GameMode* gm) override;
 	virtual void onDisable() override;
 };

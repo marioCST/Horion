@@ -1,8 +1,8 @@
 #pragma once
 
 #include "JoePath.h"
-#include "../../SDK/CEntity.h"
-#include "../../SDK/CMoveInputHandler.h"
+#include "../../SDK/Entity.h"
+#include "../../SDK/MoveInputHandler.h"
 
 class JoeMovementController {
 private:
@@ -19,11 +19,11 @@ private:
 
 public:
 	bool overrideViewAngles = false;
-	vec2_t targetViewAngles = {0, 0};
+	Vec2 targetViewAngles = {0, 0};
 
 	JoeMovementController(std::shared_ptr<JoePath> path);
 
-	void step(C_LocalPlayer* player, C_MoveInputHandler* movementHandler);
+	void step(LocalPlayer* player, MoveInputHandler* movementHandler);
 	bool isDone(){
 		return stateInfo.currentPathSegment >= currentPath->getNumSegments();
 	}

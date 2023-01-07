@@ -8,13 +8,13 @@ private:
 	bool onlyHand = false;
 	bool bypass = false;
 	bool shouldTP = false;
-	vec3_t tpPos;
+	Vec3 tpPos;
 
 public:
 	Teleport();
 	~Teleport();
 
 	// Inherited via IModule
-	virtual void onTick(C_GameMode* gm) override;
+	virtual void onTick(GameMode* gm) override;
 	virtual const char* getModuleName() override;
 };

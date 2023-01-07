@@ -11,18 +11,18 @@ struct MaterialPtr {
 using tess_vertex_t = void(__fastcall*)(Tessellator* _this, float v1, float v2, float v3);
 using meshHelper_renderImm_t = void(__fastcall*)(__int64, Tessellator* tesselator, MaterialPtr*);
 
-C_MinecraftUIRenderContext* renderCtx;
-C_GuiData* guiData;
+MinecraftUIRenderContext* renderCtx;
+GuiData* guiData;
 __int64 screenContext2d;
 __int64 game3dContext;
 Tessellator* tesselator;
 float* colorHolder;
 std::shared_ptr<glmatrixf> refdef;
-vec2_t fov;
-vec2_t screenSize;
-vec3_t origin;
+Vec2 fov;
+Vec2 screenSize;
+Vec3 origin;
 float lerpT;
-C_TexturePtr* texturePtr = nullptr;
+TexturePtr* texturePtr = nullptr;
 
 static MaterialPtr* uiMaterial = nullptr;
 static MaterialPtr* entityFlatStaticMaterial = nullptr;
@@ -42,20 +42,20 @@ void initializeSigs() {
 	hasInitializedSigs = true;
 }
 
-void DrawUtils::setCtx(C_MinecraftUIRenderContext* ctx, C_GuiData* gui) {
+void DrawUtils::setCtx(MinecraftUIRenderContext* ctx, GuiData* gui) {
 	if (!hasInitializedSigs)
 		initializeSigs();
 	LARGE_INTEGER EndingTime, ElapsedMicroseconds;
 	LARGE_INTEGER Frequency;
 	QueryPerformanceFrequency(&Frequency);
 	QueryPerformanceCounter(&EndingTime);
-	ElapsedMicroseconds.QuadPart = EndingTime.QuadPart - g_Data.getLastUpdateTime();
+	ElapsedMicroseconds.QuadPart = EndingTime.QuadPart - Game.getLastUpdateTime();
 
 	ElapsedMicroseconds.QuadPart *= 1000000;
 	int ticksPerSecond = 20;
-	if(g_Data.getClientInstance()->minecraft)
-		if (g_Data.getClientInstance()->minecraft->timer != nullptr)
-			ticksPerSecond = (int)*g_Data.getClientInstance()->minecraft->timer;
+	if(Game.getClientInstance()->minecraft)
+		if (Game.getClientInstance()->minecraft->timer != nullptr)
+			ticksPerSecond = (int)*Game.getClientInstance()->minecraft->timer;
 	if(ticksPerSecond < 1)
 		ticksPerSecond = 1;
 	ElapsedMicroseconds.QuadPart /= Frequency.QuadPart / ticksPerSecond;
@@ -72,14 +72,14 @@ void DrawUtils::setCtx(C_MinecraftUIRenderContext* ctx, C_GuiData* gui) {
 	tesselator = *reinterpret_cast<Tessellator**>(screenContext2d + 0xB0);
 	colorHolder = *reinterpret_cast<float**>(screenContext2d + 0x30);
 
-	glmatrixf* badrefdef = g_Data.getClientInstance()->getRefDef();
+	glmatrixf* badrefdef = Game.getClientInstance()->getRefDef();
 
 	refdef = std::shared_ptr<glmatrixf>(badrefdef->correct());
-	fov = g_Data.getClientInstance()->getFov();
+	fov = Game.getClientInstance()->getFov();
 	screenSize.x = gui->widthGame;
 	screenSize.y = gui->heightGame;
-	if (g_Data.getClientInstance()->levelRenderer != nullptr)
-		origin = g_Data.getClientInstance()->levelRenderer->getOrigin();
+	if (Game.getClientInstance()->levelRenderer != nullptr)
+		origin = Game.getClientInstance()->levelRenderer->getOrigin();
 
 	if (uiMaterial == nullptr) {
 		// 2 Sigs, wanted one comes first
@@ -87,9 +87,7 @@ void DrawUtils::setCtx(C_MinecraftUIRenderContext* ctx, C_GuiData* gui) {
 		int offset = *reinterpret_cast<int*>(sigOffset + 3);
 		uiMaterial = reinterpret_cast<MaterialPtr*>(sigOffset + offset + 7);
 	}
-	if(entityFlatStaticMaterial == nullptr && g_Data.isInGame()){
-		entityFlatStaticMaterial = reinterpret_cast<MaterialPtr*>(g_Data.getClientInstance()->itemInHandRenderer->entityLineMaterial.materialPtr);
-	}
+	if(entityFlatStaticMaterial == nullptr && Game.isInGame()) entityFlatStaticMaterial = reinterpret_cast<MaterialPtr*>(Game.getClientInstance()->itemInHandRenderer->entityLineMaterial.materialPtr);
 }
 
 void DrawUtils::setColor(float r, float g, float b, float a) {
@@ -100,29 +98,29 @@ void DrawUtils::setColor(float r, float g, float b, float a) {
 	*reinterpret_cast<uint8_t*>(colorHolder + 4) = 1;
 }
 
-C_Font* DrawUtils::getFont(Fonts font) {
+Font* DrawUtils::getFont(Fonts font) {
 	static auto fontChangerModule = moduleMgr->getModule<FontChanger>();
 
 	if (fontChangerModule->Fonts.selected == 1)
-		return g_Data.getClientInstance()->minecraftGame->mcFont;
+		return Game.getClientInstance()->minecraftGame->mcFont;
 	else
-		return g_Data.getClientInstance()->minecraftGame->getOldFont();
+		return Game.getClientInstance()->minecraftGame->getOldFont();
 
 	switch (font) {
 	case Fonts::SMOOTH:
-		return g_Data.getClientInstance()->minecraftGame->getTheGoodFontThankYou();
+		return Game.getClientInstance()->minecraftGame->getTheGoodFontThankYou();
 		break;
 	case Fonts::UNICOD:
-		return g_Data.getClientInstance()->minecraftGame->getTheBetterFontYes();
+		return Game.getClientInstance()->minecraftGame->getTheBetterFontYes();
 		break;
 	case Fonts::RUNE:
-		return g_Data.getClientInstance()->_getRuneFont();
+		return Game.getClientInstance()->_getRuneFont();
 		break;
 	case Fonts::MCFONT:
-		return g_Data.getClientInstance()->minecraftGame->mcFont;
+		return Game.getClientInstance()->minecraftGame->mcFont;
 		break;
 	default:
-		return g_Data.getClientInstance()->_getFont();
+		return Game.getClientInstance()->_getFont();
 		break;
 	}
 }
@@ -143,7 +141,7 @@ MatrixStack* DrawUtils::getMatrixStack() {
 float DrawUtils::getTextWidth(std::string* textStr, float textSize, Fonts font) {
 	TextHolder text(*textStr);
 
-	C_Font* fontPtr = getFont(font);
+	Font* fontPtr = getFont(font);
 
 	float ret = renderCtx->getLineLength(fontPtr, &text, textSize);
 
@@ -151,7 +149,7 @@ float DrawUtils::getTextWidth(std::string* textStr, float textSize, Fonts font) 
 }
 
 float DrawUtils::getFontHeight(float textSize, Fonts font) {
-	C_Font* fontPtr = getFont(font);
+	Font* fontPtr = getFont(font);
 
 	float ret = fontPtr->getLineHeight() * textSize;
 
@@ -162,7 +160,7 @@ void DrawUtils::flush() {
 	renderCtx->flushText(0);
 }
 
-void DrawUtils::drawTriangle(const vec2_t& p1, const vec2_t& p2, const vec2_t& p3) {
+void DrawUtils::drawTriangle(const Vec2& p1, const Vec2& p2, const Vec2& p3) {
 	
 	DrawUtils::tess__begin(tesselator, 3, 3);
 
@@ -174,7 +172,7 @@ void DrawUtils::drawTriangle(const vec2_t& p1, const vec2_t& p2, const vec2_t& p
 }
 
 
-void DrawUtils::drawQuad(const vec2_t& p1, const vec2_t& p2, const vec2_t& p3, const vec2_t& p4) {
+void DrawUtils::drawQuad(const Vec2& p1, const Vec2& p2, const Vec2& p3, const Vec2& p4) {
 	DrawUtils::tess__begin(tesselator, 1, 4);
 
 	tess_vertex(tesselator, p1.x, p1.y, 0);
@@ -185,7 +183,7 @@ void DrawUtils::drawQuad(const vec2_t& p1, const vec2_t& p2, const vec2_t& p3, c
 	meshHelper_renderImm(screenContext2d, tesselator, uiMaterial);
 }
 
-void DrawUtils::drawLine(const vec2_t& start, const vec2_t& end, float lineWidth) {
+void DrawUtils::drawLine(const Vec2& start, const Vec2& end, float lineWidth) {
 	float modX = 0 - (start.y - end.y);
 	float modY = start.x - end.x;
 
@@ -209,13 +207,13 @@ void DrawUtils::drawLine(const vec2_t& start, const vec2_t& end, float lineWidth
 	meshHelper_renderImm(screenContext2d, tesselator, uiMaterial);
 }
 
-void DrawUtils::drawText(const vec2_t& pos, std::string* textStr, const MC_Color& color, float textSize, float alpha, Fonts font) {
+void DrawUtils::drawText(const Vec2& pos, std::string* textStr, const MC_Color& color, float textSize, float alpha, Fonts font) {
 	TextHolder text(*textStr);
-	C_Font* fontPtr = getFont(font);
+	Font* fontPtr = getFont(font);
 	static uintptr_t caretMeasureData = 0xFFFFFFFF;
 
 
-	float posF[4];  // vec4_t(startX, startY, endX, endY);
+	float posF[4];  // Vec4(startX, startY, endX, endY);
 	posF[0] = pos.x;
 	posF[1] = pos.x + 1000;
 	posF[2] = pos.y - 1;
@@ -228,27 +226,27 @@ void DrawUtils::drawText(const vec2_t& pos, std::string* textStr, const MC_Color
 	renderCtx->drawText(fontPtr, posF, &text, color.arr, alpha, 0, &textMeasure, &caretMeasureData);
 }
 
-void DrawUtils::drawBox(const vec3_t& lower, const vec3_t& upper, float lineWidth, bool outline) {
+void DrawUtils::drawBox(const Vec3& lower, const Vec3& upper, float lineWidth, bool outline) {
 	
-	vec3_t diff;
+	Vec3 diff;
 	diff.x = upper.x - lower.x;
 	diff.y = upper.y - lower.y;
 	diff.z = upper.z - lower.z;
 
-	vec3_t vertices[8];
-	vertices[0] = vec3_t(lower.x, lower.y, lower.z);
-	vertices[1] = vec3_t(lower.x + diff.x, lower.y, lower.z);
-	vertices[2] = vec3_t(lower.x, lower.y + diff.y, lower.z);
-	vertices[3] = vec3_t(lower.x + diff.x, lower.y + diff.y, lower.z);
-	vertices[4] = vec3_t(lower.x, lower.y, lower.z + diff.z);
-	vertices[5] = vec3_t(lower.x + diff.x, lower.y, lower.z + diff.z);
-	vertices[6] = vec3_t(lower.x, lower.y + diff.y, lower.z + diff.z);
-	vertices[7] = vec3_t(lower.x + diff.x, lower.y + diff.y, lower.z + diff.z);
+	Vec3 vertices[8];
+	vertices[0] = Vec3(lower.x, lower.y, lower.z);
+	vertices[1] = Vec3(lower.x + diff.x, lower.y, lower.z);
+	vertices[2] = Vec3(lower.x, lower.y + diff.y, lower.z);
+	vertices[3] = Vec3(lower.x + diff.x, lower.y + diff.y, lower.z);
+	vertices[4] = Vec3(lower.x, lower.y, lower.z + diff.z);
+	vertices[5] = Vec3(lower.x + diff.x, lower.y, lower.z + diff.z);
+	vertices[6] = Vec3(lower.x, lower.y + diff.y, lower.z + diff.z);
+	vertices[7] = Vec3(lower.x + diff.x, lower.y + diff.y, lower.z + diff.z);
 
 	// Convert to screen coord
-	std::vector<std::tuple<int, vec2_t>> screenCords;
+	std::vector<std::tuple<int, Vec2>> screenCords;
 	for (int i = 0; i < 8; i++) {
-		vec2_t screen;
+		Vec2 screen;
 		if (refdef->OWorldToScreen(origin, vertices[i], screen, fov, screenSize)) {
 			screenCords.emplace_back(outline ? (int) screenCords.size() : i, screen);
 		}
@@ -281,7 +279,7 @@ void DrawUtils::drawBox(const vec3_t& lower, const vec3_t& upper, float lineWidt
 	}
 	// Find start vertex
 	auto it = screenCords.begin();
-	std::tuple<int, vec2_t> start = *it;
+	std::tuple<int, Vec2> start = *it;
 	it++;
 	for (; it != screenCords.end(); it++) {
 		auto cur = *it;
@@ -295,18 +293,18 @@ void DrawUtils::drawBox(const vec3_t& lower, const vec3_t& upper, float lineWidt
 
 	auto current = start;
 	indices.push_back(std::get<0>(current));
-	vec2_t lastDir(0, -1);
+	Vec2 lastDir(0, -1);
 	do {
 		float smallestAngle = PI * 2;
-		vec2_t smallestDir;
-		std::tuple<int, vec2_t> smallestE;
+		Vec2 smallestDir;
+		std::tuple<int, Vec2> smallestE;
 		auto lastDirAtan2 = atan2(lastDir.y, lastDir.x);
 		for (auto cur : screenCords) {
 			if (std::get<0>(current) == std::get<0>(cur))
 				continue;
 
 			// angle between vecs
-			vec2_t dir = vec2_t(std::get<1>(cur)).sub(std::get<1>(current));
+			Vec2 dir = Vec2(std::get<1>(cur)).sub(std::get<1>(current));
 			float angle = atan2(dir.y, dir.x) - lastDirAtan2;
 			if (angle > PI) {
 				angle -= 2 * PI;
@@ -326,10 +324,10 @@ void DrawUtils::drawBox(const vec3_t& lower, const vec3_t& upper, float lineWidt
 
 	// draw
 	
-	vec2_t lastVertex;
+	Vec2 lastVertex;
 	bool hasLastVertex = false;
 	for (auto& indice : indices) {
-		vec2_t curVertex = std::get<1>(screenCords[indice]);
+		Vec2 curVertex = std::get<1>(screenCords[indice]);
 		if (!hasLastVertex) {
 			hasLastVertex = true;
 			lastVertex = curVertex;
@@ -341,10 +339,10 @@ void DrawUtils::drawBox(const vec3_t& lower, const vec3_t& upper, float lineWidt
 	}
 }
 
-void DrawUtils::drawImage(std::string FilePath, vec2_t& imagePos, vec2_t& ImageDimension, vec2_t& idk) {
+void DrawUtils::drawImage(std::string filePath, Vec2& imagePos, Vec2& ImageDimension, Vec2& idk) {
 	if (texturePtr == nullptr) {
-		texturePtr = new C_TexturePtr();
-		C_FilePath file(FilePath);
+		texturePtr = new TexturePtr();
+		FilePath file(filePath);
 		renderCtx->getTexture(texturePtr, file);
 	}
 
@@ -359,9 +357,9 @@ void DrawUtils::drawImage(std::string FilePath, vec2_t& imagePos, vec2_t& ImageD
 	}
 }
 
-void DrawUtils::drawNameTags(C_Entity* ent, float textSize, bool drawHealth, bool useUnicodeFont) {
-	vec2_t textPos;
-	vec4_t rectPos;
+void DrawUtils::drawNameTags(Entity* ent, float textSize, bool drawHealth, bool useUnicodeFont) {
+	Vec2 textPos;
+	Vec4 rectPos;
 	std::string text = ent->getNameTag()->getText();
 	text = Utils::sanitize(text);
 
@@ -375,7 +373,7 @@ void DrawUtils::drawNameTags(C_Entity* ent, float textSize, bool drawHealth, boo
 		rectPos.y = textPos.y - 1.f * textSize;
 		rectPos.z = textPos.x + textWidth + 1.f * textSize;
 		rectPos.w = textPos.y + textHeight + 2.f * textSize;
-		vec4_t subRectPos = rectPos;
+		Vec4 subRectPos = rectPos;
 		subRectPos.y = subRectPos.w - 1.f * textSize;
 		static auto nametagsMod = moduleMgr->getModule<NameTags>();
 		static auto ClientThemes = moduleMgr->getModule<ClientTheme>();
@@ -393,24 +391,24 @@ void DrawUtils::drawNameTags(C_Entity* ent, float textSize, bool drawHealth, boo
 				static auto nameTagsMod = moduleMgr->getModule<NameTags>();
 
 				if (ent->getEntityTypeId() == 63 && nameTagsMod->displayArmor) {  // is player, show armor
-					auto* player = reinterpret_cast<C_Player*>(ent);
+					auto* player = reinterpret_cast<Player*>(ent);
 					float scale = textSize * 0.6f;
 					float spacing = scale + 15.f;
 					float x = rectPos.x + 1.f * textSize;
 					float y = rectPos.y - 20.f * scale;
 					// armor
 					for (int i = 0; i < 4; i++) {
-						C_ItemStack* stack = player->getArmor(i);
+						ItemStack* stack = player->getArmor(i);
 						if (stack->item != nullptr) {
-							DrawUtils::drawItem(stack, vec2_t(x, y), 1.f, scale, stack->isEnchanted());
+							DrawUtils::drawItem(stack, Vec2(x, y), 1.f, scale, stack->isEnchanted());
 							x += scale * spacing;
 						}
 					}
 					// item
 					{
-						C_ItemStack* stack = player->getSelectedItem();
+						ItemStack* stack = player->getSelectedItem();
 						if (stack->item != nullptr) {
-							DrawUtils::drawItem(stack, vec2_t(rectPos.z - 1.f - 15.f * scale, y), 1.f, scale, stack->isEnchanted());
+							DrawUtils::drawItem(stack, Vec2(rectPos.z - 1.f - 15.f * scale, y), 1.f, scale, stack->isEnchanted());
 						}
 					}
 				}
@@ -418,25 +416,25 @@ void DrawUtils::drawNameTags(C_Entity* ent, float textSize, bool drawHealth, boo
 		}
 	}
 }
-	void DrawUtils::drawEntityBox(C_Entity* ent, float lineWidth) {
-	vec3_t end = ent->eyePos0;
+	void DrawUtils::drawEntityBox(Entity* ent, float lineWidth) {
+	Vec3 end = ent->eyePos0;
 	AABB render(end, ent->width, ent->height, end.y - ent->aabb.lower.y);
 	render.upper.y += 0.1f;
 
 	drawBox(render.lower, render.upper, lineWidth, true);
 }
 
-void DrawUtils::draw2D(C_Entity* ent, float lineWidth) {
-	vec3_t base = ent->eyePos0;
-	float ofs = (g_Data.getLocalPlayer()->yaw + 90.f) * (PI / 180);
+void DrawUtils::draw2D(Entity* ent, float lineWidth) {
+	Vec3 base = ent->eyePos0;
+	float ofs = (Game.getLocalPlayer()->yaw + 90.f) * (PI / 180);
 
-	vec3_t corners[4];
-	vec2_t corners2d[4];
+	Vec3 corners[4];
+	Vec2 corners2d[4];
 
-	corners[0] = vec3_t(base.x - ent->width / 1.5f * -sin(ofs), ent->aabb.upper.y + (float)0.1, base.z - ent->width / 1.5f * cos(ofs));
-	corners[1] = vec3_t(base.x + ent->width / 1.5f * -sin(ofs), ent->aabb.upper.y + (float)0.1, base.z + ent->width / 1.5f * cos(ofs));
-	corners[2] = vec3_t(base.x - ent->width / 1.5f * -sin(ofs), ent->aabb.lower.y, base.z - ent->width / 1.5f * cos(ofs));
-	corners[3] = vec3_t(base.x + ent->width / 1.5f * -sin(ofs), ent->aabb.lower.y, base.z + ent->width / 1.5f * cos(ofs));
+	corners[0] = Vec3(base.x - ent->width / 1.5f * -sin(ofs), ent->aabb.upper.y + (float)0.1, base.z - ent->width / 1.5f * cos(ofs));
+	corners[1] = Vec3(base.x + ent->width / 1.5f * -sin(ofs), ent->aabb.upper.y + (float)0.1, base.z + ent->width / 1.5f * cos(ofs));
+	corners[2] = Vec3(base.x - ent->width / 1.5f * -sin(ofs), ent->aabb.lower.y, base.z - ent->width / 1.5f * cos(ofs));
+	corners[3] = Vec3(base.x + ent->width / 1.5f * -sin(ofs), ent->aabb.lower.y, base.z + ent->width / 1.5f * cos(ofs));
 
 	if (refdef->OWorldToScreen(origin, corners[0], corners2d[0], fov, screenSize) &&
 		refdef->OWorldToScreen(origin, corners[1], corners2d[1], fov, screenSize) &&
@@ -444,17 +442,17 @@ void DrawUtils::draw2D(C_Entity* ent, float lineWidth) {
 		refdef->OWorldToScreen(origin, corners[3], corners2d[3], fov, screenSize)) {
 		//float length = (corners2d[1].x - corners2d[0].x) / 4.f;
 
-		/*drawLine(corners2d[0], vec2_t(corners2d[0].x + length, corners2d[0].y), lineWidth);
-		drawLine(corners2d[0], vec2_t(corners2d[0].x, corners2d[0].y + length), lineWidth);
+		/*drawLine(corners2d[0], Vec2(corners2d[0].x + length, corners2d[0].y), lineWidth);
+		drawLine(corners2d[0], Vec2(corners2d[0].x, corners2d[0].y + length), lineWidth);
 
-		drawLine(vec2_t(corners2d[1].x - length, corners2d[1].y), corners2d[1], lineWidth);
-		drawLine(corners2d[1], vec2_t(corners2d[1].x, corners2d[1].y + length), lineWidth);
+		drawLine(Vec2(corners2d[1].x - length, corners2d[1].y), corners2d[1], lineWidth);
+		drawLine(corners2d[1], Vec2(corners2d[1].x, corners2d[1].y + length), lineWidth);
 
-		drawLine(vec2_t(corners2d[2].x, corners2d[2].y - length), corners2d[2], lineWidth);
-		drawLine(corners2d[2], vec2_t(corners2d[2].x + length, corners2d[2].y), lineWidth);
+		drawLine(Vec2(corners2d[2].x, corners2d[2].y - length), corners2d[2], lineWidth);
+		drawLine(corners2d[2], Vec2(corners2d[2].x + length, corners2d[2].y), lineWidth);
 
-		drawLine(vec2_t(corners2d[3].x, corners2d[3].y - length), corners2d[3], lineWidth);
-		drawLine(vec2_t(corners2d[3].x - length, corners2d[3].y), corners2d[3], lineWidth);*/
+		drawLine(Vec2(corners2d[3].x, corners2d[3].y - length), corners2d[3], lineWidth);
+		drawLine(Vec2(corners2d[3].x - length, corners2d[3].y), corners2d[3], lineWidth);*/
 
 		drawLine(corners2d[0], corners2d[1], lineWidth);
 		drawLine(corners2d[0], corners2d[2], lineWidth);
@@ -463,20 +461,20 @@ void DrawUtils::draw2D(C_Entity* ent, float lineWidth) {
 	}
 }
 
-void DrawUtils::drawItem(C_ItemStack* item, const vec2_t& itemPos, float opacity, float scale, bool isEnchanted) {
+void DrawUtils::drawItem(ItemStack* item, const Vec2& itemPos, float opacity, float scale, bool isEnchanted) {
 	__int64 scnCtx = reinterpret_cast<__int64*>(renderCtx)[2];
-	auto* screenCtx = reinterpret_cast<C_ScreenContext*>(scnCtx);
-	C_BaseActorRenderContext baseActorRenderCtx(screenCtx, g_Data.getClientInstance(), g_Data.getClientInstance()->minecraftGame);
-	C_ItemRenderer* renderer = baseActorRenderCtx.renderer;
+	auto* screenCtx = reinterpret_cast<ScreenContext*>(scnCtx);
+	BaseActorRenderContext baseActorRenderCtx(screenCtx, Game.getClientInstance(), Game.getClientInstance()->minecraftGame);
+	ItemRenderer* renderer = baseActorRenderCtx.renderer;
 	renderer->renderGuiItemNew(&baseActorRenderCtx, item, 0, itemPos.x, itemPos.y, opacity, scale, isEnchanted);
 }
 
-vec2_t DrawUtils::worldToScreen(const vec3_t& world) {
-	vec2_t ret{-1, -1};
+Vec2 DrawUtils::worldToScreen(const Vec3& world) {
+	Vec2 ret{-1, -1};
 	refdef->OWorldToScreen(origin, world, ret, fov, screenSize);
 	return ret;
 }
-void DrawUtils::drawLine3d(const vec3_t& start, const vec3_t& end) {
+void DrawUtils::drawLine3d(const Vec3& start, const Vec3& end) {
 	if(game3dContext == 0 || entityFlatStaticMaterial == 0)
 		return;
 
@@ -492,7 +490,7 @@ void DrawUtils::drawLine3d(const vec3_t& start, const vec3_t& end) {
 
 	meshHelper_renderImm(game3dContext, myTess, entityFlatStaticMaterial);
 }
-void DrawUtils::drawBox3d(const vec3_t& lower, const vec3_t& upper) {
+void DrawUtils::drawBox3d(const Vec3& lower, const Vec3& upper) {
 	if (game3dContext == 0 || entityFlatStaticMaterial == 0)
 		return;
 
@@ -500,23 +498,23 @@ void DrawUtils::drawBox3d(const vec3_t& lower, const vec3_t& upper) {
 
 	DrawUtils::tess__begin(myTess, 4, 12);
 
-	vec3_t diff;
+	Vec3 diff;
 	diff.x = upper.x - lower.x;
 	diff.y = upper.y - lower.y;
 	diff.z = upper.z - lower.z;
 
 	auto newLower = lower.sub(origin);
 
-	vec3_t vertices[8];
-	vertices[0] = vec3_t(newLower.x, newLower.y, newLower.z);
-	vertices[1] = vec3_t(newLower.x + diff.x, newLower.y, newLower.z);
-	vertices[2] = vec3_t(newLower.x, newLower.y, newLower.z + diff.z);
-	vertices[3] = vec3_t(newLower.x + diff.x, newLower.y, newLower.z + diff.z);
+	Vec3 vertices[8];
+	vertices[0] = Vec3(newLower.x, newLower.y, newLower.z);
+	vertices[1] = Vec3(newLower.x + diff.x, newLower.y, newLower.z);
+	vertices[2] = Vec3(newLower.x, newLower.y, newLower.z + diff.z);
+	vertices[3] = Vec3(newLower.x + diff.x, newLower.y, newLower.z + diff.z);
 
-	vertices[4] = vec3_t(newLower.x, newLower.y + diff.y, newLower.z);
-	vertices[5] = vec3_t(newLower.x + diff.x, newLower.y + diff.y, newLower.z);
-	vertices[6] = vec3_t(newLower.x, newLower.y + diff.y, newLower.z + diff.z);
-	vertices[7] = vec3_t(newLower.x + diff.x, newLower.y + diff.y, newLower.z + diff.z);
+	vertices[4] = Vec3(newLower.x, newLower.y + diff.y, newLower.z);
+	vertices[5] = Vec3(newLower.x + diff.x, newLower.y + diff.y, newLower.z);
+	vertices[6] = Vec3(newLower.x, newLower.y + diff.y, newLower.z + diff.z);
+	vertices[7] = Vec3(newLower.x + diff.x, newLower.y + diff.y, newLower.z + diff.z);
 
 	#define line(m, n) tess_vertex(myTess, m.x, m.y, m.z); \
 		tess_vertex(myTess, n.x, n.y, n.z);
@@ -543,7 +541,7 @@ void DrawUtils::drawBox3d(const vec3_t& lower, const vec3_t& upper) {
 	
 	meshHelper_renderImm(game3dContext, myTess, entityFlatStaticMaterial);
 }
-void DrawUtils::fillRectangle(const vec4_t& pos, const MC_Color& col, float alpha) {
+void DrawUtils::fillRectangle(const Vec4& pos, const MC_Color& col, float alpha) {
 	DrawUtils::setColor(col.r, col.g, col.b, alpha);
 	DrawUtils::drawQuad({pos.x, pos.w}, {pos.z, pos.w}, {pos.z, pos.y}, {pos.x, pos.y});
 }
@@ -556,20 +554,20 @@ inline void DrawUtils::tess__begin(Tessellator* tess, int vertexFormat, int numV
 }
 void DrawUtils::setGameRenderContext(__int64 ctx) {
 	game3dContext = ctx;
-	if (g_Data.getClientInstance()->levelRenderer != nullptr)
-		origin = g_Data.getClientInstance()->levelRenderer->getOrigin();
+	if (Game.getClientInstance()->levelRenderer != nullptr)
+		origin = Game.getClientInstance()->levelRenderer->getOrigin();
 
 	if(ctx){
 		LARGE_INTEGER EndingTime, ElapsedMicroseconds;
 		LARGE_INTEGER Frequency;
 		QueryPerformanceFrequency(&Frequency);
 		QueryPerformanceCounter(&EndingTime);
-		ElapsedMicroseconds.QuadPart = EndingTime.QuadPart - g_Data.getLastUpdateTime();
+		ElapsedMicroseconds.QuadPart = EndingTime.QuadPart - Game.getLastUpdateTime();
 
 		ElapsedMicroseconds.QuadPart *= 1000000;
 		int ticksPerSecond = 20;
-		if(g_Data.getClientInstance()->minecraft)
-			ticksPerSecond = (int)*g_Data.getClientInstance()->minecraft->timer;
+		if(Game.getClientInstance()->minecraft)
+			ticksPerSecond = (int)*Game.getClientInstance()->minecraft->timer;
 		if(ticksPerSecond < 1)
 			ticksPerSecond = 1;
 		ElapsedMicroseconds.QuadPart /= Frequency.QuadPart / ticksPerSecond;
@@ -583,10 +581,10 @@ void DrawUtils::setGameRenderContext(__int64 ctx) {
 float DrawUtils::getLerpTime() {
 	return lerpT;
 }
-vec3_t DrawUtils::getOrigin() {
+Vec3 DrawUtils::getOrigin() {
 	return origin;
 }
-void DrawUtils::drawLinestrip3d(const std::vector<vec3_t>& points) {
+void DrawUtils::drawLinestrip3d(const std::vector<Vec3>& points) {
 	if(game3dContext == 0 || entityFlatStaticMaterial == 0)
 		return;
 
