@@ -324,19 +324,34 @@ C_InteractPacket::C_InteractPacket(/*enum InteractPacket::Action, class ActorRun
 	vTable = bookEditPacketVtable;
 }*/
 
+/*DisconnectPacket::DisconnectPacket() {
+	static uintptr_t** disconnectPacketVtable = 0x0;
+	if (disconnectPacketVtable == 0x0) {
+		uintptr_t sigOffset = FindSignature("48 8D 05 ? ? ? ? 48 89 01 48 8D 05 ? ? ? ? 48 89 41 ? 48 8B C1 C7 41 18");
+		int offset = *reinterpret_cast<int*>(sigOffset + 3);
+		disconnectPacketVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + /*length of instruction*/ /*7);
+#ifdef _DEBUG
+		if (disconnectPacketVtable == 0x0 || sigOffset == 0x0)
+			__debugbreak();
+#endif
+	}
+	memset(this, 0, sizeof(DisconnectPacket));  // Avoid overwriting vtable
+	vTable = disconnectPacketVtable;
+}*/
+
 ActorEventPacket::ActorEventPacket(uint64_t entityRuntimeId, char eventId, int16_t itemId) {
-	static uintptr_t** actorEvenPacketVtable = 0x0;
-	if (actorEvenPacketVtable == 0x0) {
+	static uintptr_t** actorEventPacketVtable = 0x0;
+	if (actorEventPacketVtable == 0x0) {
 		uintptr_t sigOffset = FindSignature("48 8D 0D ? ? ? ? 48 89 4D ? 48 89 45 ? C6 45 ? ? 44 89 7D");
 		int offset = *reinterpret_cast<int*>(sigOffset + 3);
-		actorEvenPacketVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + /*length of instruction*/ 7);
+		actorEventPacketVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + /*length of instruction*/ 7);
 #ifdef _DEBUG
-		if (actorEvenPacketVtable == 0x0 || sigOffset == 0x0)
+		if (actorEventPacketVtable == 0x0 || sigOffset == 0x0)
 			__debugbreak();
 #endif
 	}
 	memset(this, 0, sizeof(ActorEventPacket));  // Avoid overwriting vtable
-	vTable = actorEvenPacketVtable;
+	vTable = actorEventPacketVtable;
 	this->two = 2;
 	this->one = 1;
 	this->entityRuntimeId = entityRuntimeId;

@@ -87,6 +87,14 @@ public:
 class C_EmotePacket : public Packet {
 public:
 	C_EmotePacket();
+
+private:
+	char padding[0x28];
+
+public:
+	int64_t entityRuntimeId;
+	TextHolder emotId;
+	char flags;
 };
 
 class C_AnimatePacket : public Packet {
@@ -99,7 +107,7 @@ private:
 public:
 	int64_t entityId;
 	int64_t action;
-	float unknown;
+	float rowingTime;
 };
 
 class C_NPCRequestPacket : public Packet {
@@ -242,6 +250,14 @@ public:
 	TextHolder title;
 	TextHolder author;
 	int64_t xuid;
+};*/
+
+/*class DisconnectPacket : public Packet {
+public:
+	DisconnectPacket();
+
+	bool hideDisconnectScreen;
+	TextHolder reason;
 };*/
 
 #pragma pack(push, 8)
