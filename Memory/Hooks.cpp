@@ -10,6 +10,7 @@
 
 #include "../SDK/Tag.h"
 #include "../Horion/Menu/TabGui.h"
+#include "../Utils/ClientColors.h"
 
 Hooks g_Hooks;
 bool isTicked = false;
@@ -246,13 +247,12 @@ void Hooks::Init() {
 			return origFunc(_this, matrix, lerpT);
 		};
 		
-		std::shared_ptr<FuncHook> bobViewHook = std::make_shared<FuncHook>(levelRendererBobView, (decltype(&bobViewHookF.operator()))bobViewHookF);
+		using BobViewHookFunc = decltype(&bobViewHookF.operator());
+		auto bobViewHook = std::make_shared<FuncHook>(levelRendererBobView, static_cast<BobViewHookFunc>(bobViewHookF));
 
 		g_Hooks.lambdaHooks.push_back(bobViewHook);
 
 		#undef lambda_counter
-		
-		
 
 		logF("Hooks initialized");
 	}
@@ -311,25 +311,21 @@ void* Hooks::Player_tickWorld(Player* _this, __int64 unk) {
 void Hooks::ClientInstanceScreenModel_sendChatMessage(void* _this, TextHolder* text) {
 	static auto oSendMessage = g_Hooks.ClientInstanceScreenModel_sendChatMessageHook->GetFastcall<void, void*, TextHolder*>();
 
+	if (text->getTextLength() <= 0)
+		return oSendMessage(_this, text);
 
-	if (text->getTextLength() > 0) {
-		char* message = text->getText();
-
-		if (*message == cmdMgr->prefix) {
-			cmdMgr->execute(message);
-
-			return;
-		} else if (*message == '.') {
-			// maybe the user forgot his prefix, give him some helpful advice
-			static bool helpedUser = false;
-			if (!helpedUser) {
-				helpedUser = true;
-				Game.getClientInstance()->getGuiData()->displayClientMessageF("%sYour Horion prefix is: \"%s%c%s\"", RED, YELLOW, cmdMgr->prefix, RED);
-				Game.getClientInstance()->getGuiData()->displayClientMessageF("%sEnter \"%s%cprefix .%s\" to reset your prefix", RED, YELLOW, cmdMgr->prefix, RED);
-			}
-		}
+	auto message = text->getText();
+	if (*message == cmdMgr->prefix) {
+		cmdMgr->execute(message);
+		return;
+	} else if (*message == '.') {
+		static std::once_flag flag;
+		std::call_once(flag, [] {
+			Game.getClientInstance()->getGuiData()->displayClientMessageF("%sYour Horion prefix is: \"%s%c%s\"", RED, YELLOW, cmdMgr->prefix, RED);
+			Game.getClientInstance()->getGuiData()->displayClientMessageF("%sEnter \"%s%cprefix .%s\" to reset your prefix", RED, YELLOW, cmdMgr->prefix, RED);
+		});
 	}
-	oSendMessage(_this, text);
+	return oSendMessage(_this, text);
 }
 
 void Hooks::Actor_baseTick(Entity* ent) {
@@ -449,7 +445,6 @@ __int64 Hooks::RenderText(__int64 a1, MinecraftUIRenderContext* renderCtx) {
 				shouldRenderTabGui = hudModule->tabgui && hudModule->isEnabled();
 				shouldRenderArrayList = hudModule->arraylist && hudModule->isEnabled();
 				shouldRenderWatermark = hudModule->watermark && hudModule->isEnabled();
-				static auto ClientThemes = moduleMgr->getModule<ClientTheme>();
 
 				if (clickGuiModule->isEnabled()) {
 					ClickGui::render();
@@ -502,11 +497,7 @@ __int64 Hooks::RenderText(__int64 a1, MinecraftUIRenderContext* renderCtx) {
 							windowSize.y - margin);
 
 						DrawUtils::drawRectangle(rect, MC_Color(rcolors), 1.f, 2.f);
-						if (ClientThemes->Theme.selected == 1) {
-							DrawUtils::fillRectangle(rect, MC_Color(13, 29, 48), 1.f);
-						} else {
-							DrawUtils::fillRectangle(rect, MC_Color(12, 12, 12), 1.f);
-						}
+						DrawUtils::fillRectangle(rect, ClientColors::watermarkBackgroundColor, 1.f);
 						DrawUtils::drawText(Vec2(rect.x + borderPadding, rect.y), &name, MC_Color(rcolors), nameTextSize);
 						DrawUtils::drawText(Vec2(rect.x + borderPadding + nameLength, rect.w - 7), &version, MC_Color(rcolors), versionTextSize);
 					}
@@ -634,11 +625,7 @@ __int64 Hooks::RenderText(__int64 a1, MinecraftUIRenderContext* renderCtx) {
 							currColor[0] += 1.f / a * c;
 							Utils::ColorConvertHSVtoRGB(currColor[0], currColor[1], currColor[2], currColor[0], currColor[1], currColor[2]);
 
-							if (ClientThemes->Theme.selected == 1) {
-								DrawUtils::fillRectangle(rectPos, MC_Color(13, 29, 48), 1.f);
-							} else {
-								DrawUtils::fillRectangle(rectPos, MC_Color(12, 12, 12), 1.f);
-							}
+							DrawUtils::fillRectangle(rectPos, ClientColors::arraylistBackgroundColor, 1.f);
 							DrawUtils::fillRectangle(leftRect, MC_Color(currColor), 1.f);
 							if (!GameData::canUseMoveKeys() && rectPos.contains(&mousePos) && hudModule->clickToggle) {
 								Vec4 selectedRect = rectPos;
@@ -1069,13 +1056,13 @@ int Hooks::BlockLegacy_getRenderLayer(BlockLegacy* a1) {
 
 __int8* Hooks::BlockLegacy_getLightEmission(BlockLegacy* a1, __int8* a2) {
 	static auto oFunc = g_Hooks.BlockLegacy_getLightEmissionHook->GetFastcall<__int8*, BlockLegacy*, __int8*>();
-
 	static auto xrayMod = moduleMgr->getModule<Xray>();
-	if (xrayMod->isEnabled()) {
-		*a2 = 15;
-		return a2;
-	}
-	return oFunc(a1, a2);
+
+	if (!xrayMod || !xrayMod->isEnabled()) 
+		return oFunc(a1, a2);
+
+	*a2 = 15;
+	return a2;
 }
 
 __int64 Hooks::LevelRenderer_renderLevel(__int64 _this, __int64 a2, __int64 a3) {
@@ -1207,16 +1194,15 @@ float Hooks::GetGamma(uintptr_t* a1) {
 }
 
 bool Hooks::Actor_isInWater(Entity* _this) {
-	static auto oFunc = g_Hooks.Actor_isInWaterHook->GetFastcall<bool, Entity*>();
-
-	if (Game.getLocalPlayer() != _this)
-		return oFunc(_this);
-
-	static auto airSwimModule = moduleMgr->getModule<AirSwim>();
-	if (airSwimModule->isEnabled())
-		return true;
-
-	return oFunc(_this);
+    static auto oFunc = g_Hooks.Actor_isInWaterHook->GetFastcall<bool, Entity*>();
+    static auto airSwimModule = moduleMgr->getModule<AirSwim>();
+    
+    if (Game.getLocalPlayer() != _this)
+        return oFunc(_this);
+    else if (airSwimModule && airSwimModule->isEnabled())
+        return true;
+    else 
+        return oFunc(_this);
 }
 
 void Hooks::JumpPower(Entity* a1, float a2) {
@@ -1508,16 +1494,17 @@ void Hooks::LevelRendererPlayer__renderNameTags(__int64 a1, __int64 a2, TextHold
 	static auto func = g_Hooks.LevelRendererPlayer__renderNameTagsHook->GetFastcall<void, __int64, __int64, TextHolder*, __int64>();
 	static auto nameTagsMod = moduleMgr->getModule<NameTags>();
 
-	if (nameTagsMod->isEnabled() && nameTagsMod->nameTags.size() > 0) {
-		std::string text = Utils::sanitize(a3->getText());
-		std::size_t found = text.find('\n');
+	if (!nameTagsMod || !nameTagsMod->isEnabled())
+		return func(a1, a2, a3, a4);
 
-		if (found != std::string::npos)
-			text = text.substr(0, found);
+	std::string text = Utils::sanitize(a3->getText());
+	std::size_t found = text.find('\n');
 
-		if (nameTagsMod->nameTags.find(text) != nameTagsMod->nameTags.end())
-			return;
-	}
+	if (found != std::string::npos)
+		text = text.substr(0, found);
+
+	if (nameTagsMod->nameTags.find(text) != nameTagsMod->nameTags.end())
+		return;
 
 	return func(a1, a2, a3, a4);
 }
