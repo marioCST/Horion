@@ -355,7 +355,7 @@ ActorEventPacket::ActorEventPacket(uint64_t entityRuntimeId, char eventId, int16
 #endif
 	}
 	memset(this, 0, sizeof(ActorEventPacket));  // Avoid overwriting vtable
-	vTable = actorEvenPacketVtable;
+	vTable = actorEventPacketVtable;
 	this->entityRuntimeId = entityRuntimeId;
 	this->eventId = eventId;
 	this->itemId = itemId;
