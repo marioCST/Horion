@@ -28,6 +28,11 @@ TexturePtr* texturePtr = nullptr;
 static MaterialPtr* uiMaterial = nullptr;
 static MaterialPtr* entityFlatStaticMaterial = nullptr;
 
+bool DrawUtils::isLeftClickDown = false;
+bool DrawUtils::isRightClickDown = false;
+bool DrawUtils::shouldToggleLeftClick = false;
+bool DrawUtils::shouldToggleRightClick = false;
+
 tess_vertex_t tess_vertex;
 meshHelper_renderImm_t meshHelper_renderImm;
 //mce__VertexFormat__disableHalfFloats_t mce__VertexFormat__disableHalfFloats;
@@ -354,7 +359,7 @@ void DrawUtils::drawImage(std::string filePath, Vec2& imagePos, Vec2& ImageDimen
 	if (texturePtr != nullptr) {
 		renderCtx->drawImage(texturePtr, imagePos, ImageDimension, yot, idk);
 		MC_Color col(1.f, 1.f, 1.f);
-		renderCtx->flushImages(col, flushImageAddr, (__int64)&hashedString);
+		renderCtx->flushImages(col, (float)flushImageAddr, (__int64)&hashedString);
 	}
 }
 
@@ -546,12 +551,12 @@ inline void DrawUtils::tess__begin(Tessellator* tess, int vertexFormat, int numV
 	static tess_begin_t tess_begin = reinterpret_cast<tess_begin_t>(FindSignature("48 89 5C 24 ?? 55 48 83 EC ?? 80 B9 ?? ?? ?? ?? 00 45"));
 	tess_begin(tess, vertexFormat, numVerticesReserved);
 }
-void DrawUtils::setGameRenderContext(__int64 ctx) {
+void DrawUtils::setGameRenderContext(std::int64_t ctx) {
 	game3dContext = ctx;
 	if (Game.getClientInstance()->levelRenderer != nullptr)
 		origin = Game.getClientInstance()->levelRenderer->getOrigin();
 
-	if(ctx){
+	if (ctx) {
 		LARGE_INTEGER EndingTime, ElapsedMicroseconds;
 		LARGE_INTEGER Frequency;
 		QueryPerformanceFrequency(&Frequency);
@@ -560,16 +565,12 @@ void DrawUtils::setGameRenderContext(__int64 ctx) {
 
 		ElapsedMicroseconds.QuadPart *= 1000000;
 		int ticksPerSecond = 20;
-		if(Game.getClientInstance()->minecraft)
+		if (Game.getClientInstance()->minecraft)
 			ticksPerSecond = (int)*Game.getClientInstance()->minecraft->timer;
-		if(ticksPerSecond < 1)
-			ticksPerSecond = 1;
+		ticksPerSecond = std::max(ticksPerSecond, 1);
 		ElapsedMicroseconds.QuadPart /= Frequency.QuadPart / ticksPerSecond;
 		lerpT = (ElapsedMicroseconds.QuadPart / 1000000.f);
-		if (lerpT > 1)
-			lerpT = 1;
-		else if (lerpT < 0)
-			lerpT = 0;
+		lerpT = std::clamp(lerpT, 0.0f, 1.0f);
 	}
 }
 float DrawUtils::getLerpTime() {
@@ -605,4 +606,20 @@ void DrawUtils::drawLinestrip3d(const std::vector<Vec3>& points) {
 
 MC_Color MC_Color::lerp(const MC_Color& o, float t) const {
 	return MC_Color(Utils::lerp(r, o.r, t), Utils::lerp(g, o.g, t), Utils::lerp(b, o.b, t), Utils::lerp(a, o.a, t));
+}
+
+void DrawUtils::onMouseClickUpdate(int key, bool isDown) {
+	if (Game.isInGame())
+		switch (key) {
+		case 1:  // Left Click
+			isLeftClickDown = isDown;
+			if (isDown)
+				shouldToggleLeftClick = true;
+			break;
+		case 2:  // Right Click
+			isRightClickDown = isDown;
+			if (isDown)
+				shouldToggleRightClick = true;
+			break;
+		}
 }

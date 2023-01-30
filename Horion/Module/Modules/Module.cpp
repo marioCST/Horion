@@ -207,6 +207,9 @@ void IModule::onKeyUpdate(int key, bool isDown) {
 	}
 }
 
+void IModule::onKey(int key, bool isDown, bool& shouldCancel) {
+}
+
 void IModule::onEnable() {
 }
 
@@ -354,6 +357,8 @@ bool IModule::callWhenDisabled() {
 	return false;
 }
 void IModule::onMove(MoveInputHandler*) {
+}
+void IModule::onPlayerTick(Player* player) {
 }
 void IModule::onLevelRender() {
 }

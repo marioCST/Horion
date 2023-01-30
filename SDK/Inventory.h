@@ -1,6 +1,6 @@
 #pragma once
 #include "Item.h"
-
+#include "../Utils/Utils.h"
 class ItemStack;
 class Inventory;
 class Player;
@@ -61,6 +61,29 @@ public:
 
 	void moveItem(int from, int to);
 	void swapSlots(int from, int to);
+
+	bool isInContainerScreen() {
+		switch (*reinterpret_cast<int*>(this + 0x20)) {
+		case 3: {
+			return false;
+		} break;
+		case 4: {
+			return true;
+		} break;
+		}
+		return false;
+	}
+
+	class TextHolder getPlayerName() {
+		return *reinterpret_cast<class TextHolder*>(reinterpret_cast<__int64>(this) + 0x319);
+	}
+};
+
+class Container {
+public:
+	class ItemStack* getItemStackFromSlot(int slot){
+		return Utils::CallVFunc<5, class ItemStack*, int>(this, slot);
+	}
 };
 
 class PlayerInventoryProxy {
@@ -72,6 +95,10 @@ private:
 	char pad_0x0014[0x9C];  //0x0014
 public:
 	Inventory* inventory;  //0x00B0
+
+	class Container* getContainer() {
+		return reinterpret_cast<Container*>((uintptr_t)(this) + 0xD0);
+	}
 };
 
 //Im not sure exactly where these unknown's go but the funcs we use work.
@@ -162,7 +189,7 @@ private:
 	virtual __int64 _sendFlyingItem(__int64 const&, std::string const&, int, std::string const&, int);
 
 public:
-	void handleAutoPlace(uintptr_t a1, std::string name, int slot);
+	void handleAutoPlace(std::string name, int slot);
 };
 
 class CraftingScreenController : public ContainerScreenController {

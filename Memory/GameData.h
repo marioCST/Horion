@@ -60,7 +60,6 @@ private:
 private:
 	bool injectorConnectionActive = false;
 	const SlimUtils::SlimModule* gameModule = 0;
-	SlimUtils::SlimMem* slimMem;
 	bool shouldTerminateB = false;
 	bool shouldHideB = false;
 	bool isAllowingWIPFeatures = false;
@@ -71,6 +70,8 @@ private:
 public:
 	HIDController* hidController = nullptr;
 	std::queue<std::shared_ptr<InfoBoxData>> infoBoxQueue;
+	static SlimUtils::SlimMem* slimMem;
+	static bool keys[0x256];
 
 	static bool canUseMoveKeys();
 	static bool isKeyDown(int key);
@@ -88,6 +89,7 @@ public:
 	static void EntityList_tick(EntityList* list);
 	static void setHIDController(HIDController* Hid);
 	static void setRakNetInstance(RakNetInstance* raknet);
+	static void displayMessages(GuiData* guiData);
 	static void log(const char* fmt, ...);
 	float fov = 0.f;
 	int fps = 0;
@@ -168,6 +170,8 @@ public:
 	TextHolder* getFakeName() { return fakeName; };
 	inline __int64 getLastUpdateTime() { return lastUpdate; };
 	void forEachEntity(std::function<void(Entity*, bool)>);
+	void forEachPlayer(std::function<void(Entity*, bool)>);
+	void forEachMob(std::function<void(Entity*, bool)>);
 	int getFPS() { return fps; };
 	int getLeftCPS() { return cpsLeft; };
 	int getRightCPS() { return cpsRight; };

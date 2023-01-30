@@ -189,7 +189,7 @@
     <ClCompile>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <DebugInformationFormat>None</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <WholeProgramOptimization>false</WholeProgramOptimization>
@@ -473,6 +473,7 @@
     <ClInclude Include="Horion\Module\Modules\ESP.h" />
     <!--    <ClInclude Include="Horion\Module\Modules\FastEat.h" /> -->
     <ClInclude Include="Horion\Module\Modules\FastLadder.h" />
+    <ClInclude Include="Horion\Module\Modules\FastStop.h" />
     <ClInclude Include="Horion\Module\Modules\Fly.h" />
     <ClInclude Include="Horion\Module\Modules\FollowPathModule.h" />
     <ClInclude Include="Horion\Module\Modules\FontChanger.h" />
@@ -605,6 +606,9 @@
     <ClInclude Include="Utils\Utils.h" />
     <ClInclude Include="Utils\VoxelIntersector.h" />
     <ClInclude Include="Utils\xorstr.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="minhook\MinHook.x64.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

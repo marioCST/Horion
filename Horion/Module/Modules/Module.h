@@ -125,6 +125,7 @@ public:
 	virtual void onWorldTick(GameMode*);
 	virtual void onTick(GameMode*);
 	virtual void onKeyUpdate(int key, bool isDown);
+	virtual void onKey(int key, bool isDown, bool& shouldCancel);
 	virtual void onEnable();
 	virtual void onDisable();
 	virtual void onAttack(Entity*);
@@ -132,6 +133,7 @@ public:
 	virtual void onPostRender(MinecraftUIRenderContext* renderCtx);
 	virtual void onLevelRender();
 	virtual void onMove(MoveInputHandler*);
+	virtual void onPlayerTick(Player*);
 	virtual void onLoadConfig(void* conf);
 	virtual void onSaveConfig(void* conf);
 	virtual bool isFlashMode();
