@@ -72,6 +72,7 @@ void ModuleManager::initModules() {
 		moduleList.emplace_back(new Scaffold());
 		moduleList.emplace_back(new Velocity());
 		moduleList.emplace_back(new Killaura());
+		moduleList.emplace_back(new Reducer());
 		moduleList.emplace_back(new Compass());
 		moduleList.emplace_back(new NoSwing());
 		moduleList.emplace_back(new Crasher());

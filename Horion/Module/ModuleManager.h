@@ -62,6 +62,7 @@
 #include "Modules/HighJump.h"
 #include "Modules/Teleport.h"
 #include "Modules/AntiVoid.h"
+#include "Modules/Reducer.h"
 #include "Modules/Compass.h"
 #include "Modules/Godmode.h"
 #include "Modules/NoSwing.h"
