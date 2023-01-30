@@ -67,6 +67,20 @@ std::wstring Utils::stringToWstring(std::string txt) {
 	return gamer;
 }
 
+void Utils::patchBytes(unsigned char* dst, unsigned char* src, unsigned int size) {
+	DWORD oldProtect;
+	VirtualProtect(dst, size, PAGE_EXECUTE_READWRITE, &oldProtect);
+	memcpy(dst, src, size);
+	VirtualProtect(dst, size, oldProtect, &oldProtect);
+}
+
+void Utils::nopBytes(unsigned char* dst, unsigned int size) {
+	DWORD oldProtect;
+	VirtualProtect(dst, size, PAGE_EXECUTE_READWRITE, &oldProtect);
+	memset(dst, 0x90, size);
+	VirtualProtect(dst, size, oldProtect, &oldProtect);
+}
+
 std::string Utils::getRttiBaseClassName(void* ptr) {
 #define retIfBad(m, c) \
 	if (IsBadReadPtr(reinterpret_cast<void*>(m), c)) DebugBreak();

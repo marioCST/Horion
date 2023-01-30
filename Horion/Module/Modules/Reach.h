@@ -13,6 +13,8 @@ public:
 	Reach();
 	~Reach();
 
+	SettingEnum type = (*new SettingEnum());
+
 	// Inherited via IModule
 	virtual const char* getModuleName() override;
 	virtual void onEnable() override;
