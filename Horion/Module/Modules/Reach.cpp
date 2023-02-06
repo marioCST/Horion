@@ -47,7 +47,7 @@ void Reach::onEnable() {
 		unsigned char arr[4];
 
 		memcpy(arr, &reachValue, sizeof(float));
-		Utils::patchBytes((unsigned char*)reachOff, arr, 4);
+		PatchBytes((BYTE*)reachOff, (BYTE*)arr, 4);
 	}
 }
 
@@ -58,6 +58,6 @@ void Reach::onDisable() {
 			VirtualProtect(reachPtr, sizeof(float), oldProtect, &oldProtect);
 	} else {
 		uintptr_t reachOff = Utils::getBase() + 0x398A878; // Reach offset
-		Utils::patchBytes((unsigned char*)reachOff, (unsigned char*)"\x00\x00\x40\x40" /*3*/, 4);
+		PatchBytes((BYTE*)reachOff, (BYTE*)"\x00\x00\x40\x40" /*3*/, 4);
 	}
 }

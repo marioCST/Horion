@@ -12,7 +12,7 @@ const char* Freecam::getModuleName() {
 	return ("Freecam");
 }
 
-void* cameraAddr = (void*)FindSignature("f3 0f 11 43 ? f3 0f 10 44 24 ? f3 0f 11 43 ? f3 0f 10 44 24 ? f3 0f 11 43 ? f3 0f 10 44 24 ? f3 0f 11 43 ? f3 0f 10 44 24 ? f3 0f 11 43 ? f3 0f 10 44 24 ? f3 0f 11 43 ? f3 0f 10 44 24 ? f3 0f 11 43 ? f3 0f 10 44 24 ? f3 0f 11 43 ? f3 0f 10 44 24 ? f3 0f 11 43 ? f3 0f 10 44 24 ? f3 0f 11 43 ? f3 0f 10 44 24 ? f3 0f 11 43");
+void* cameraAddr = (void*)FindSignature("F3 0F 11 43 ? F3 0F 10 44 24 ? F3 0F 11 43 ? F3 0F 10 44 24 ? F3 0F 11 43 ? F3 0F 10 44 24 ? F3 0F 11 43 ? F3 0F 10 44 24 ? F3 0F 11 43 ? F3 0F 10 44 24 ? F3 0F 11 43 ? F3 0F 10 44 24 ? F3 0F 11 43 ? F3 0F 10 44 24 ? F3 0F 11 43 ? F3 0F 10 44 24 ? F3 0F 11 43 ? F3 0F 10 44 24 ? F3 0F 11 43 ? F3 0F 10 44 24 ? F3 0F 11 43");
 
 void Freecam::onEnable() {
 	auto Player = Game.getLocalPlayer();
