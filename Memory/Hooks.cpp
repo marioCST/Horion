@@ -12,6 +12,7 @@
 #include "../Horion/Menu/TabGui.h"
 #include "../SDK/Tag.h"
 #include "../Utils/ClientColors.h"
+#include "../Utils/ColorUtil.h"
 
 Hooks g_Hooks;
 bool isTicked = false;
@@ -63,9 +64,6 @@ void Hooks::Init() {
 		void* getLightEmission = reinterpret_cast<void*>(FindSignature("0F B6 81 ? ? ? ? 88 02 48 8B C2"));
 		g_Hooks.BlockLegacy_getLightEmissionHook = std::make_unique<FuncHook>(getLightEmission, Hooks::BlockLegacy_getLightEmission);
 
-		//void* ascendLadder = reinterpret_cast<void*>(FindSignature("C7 81 ? ? ? ? ? ? ? ? C3 CC CC CC CC CC C7 81 ? ? ? ? ? ? ? ? C3 CC CC CC CC CC C7 81"));
-		//g_Hooks.Actor_ascendLadderHook = std::make_unique<FuncHook>(ascendLadder, Hooks::Actor_ascendLadder);
-
 		void* getGameEdition = reinterpret_cast<void*>(FindSignature("8B 91 ?? ?? ?? ?? 85 D2 74 1C 83 EA 01"));
 		g_Hooks.AppPlatform_getGameEditionHook = std::make_unique<FuncHook>(getGameEdition, Hooks::AppPlatform_getGameEdition);
 
@@ -105,19 +103,13 @@ void Hooks::Init() {
 		void* _getSkinPack = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 55 56 57 41 54 41 55 41 56 41 57 48 8D AC 24 ? ? ? ? B8 ? ? ? ? E8 ? ? ? ? 48 2B E0 48 8B 05 ? ? ? ? 48 33 C4 48 89 85 ? ? ? ? 4C 8B EA 48 8B F1"));
 		g_Hooks.SkinRepository___loadSkinPackHook = std::make_unique<FuncHook>(_getSkinPack, Hooks::SkinRepository___loadSkinPack);
 
-		//void* _toStyledString = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 48 89 74 24 ? 57 48 81 EC ? ? ? ? 49 8B D8 48 8B F9"));
-		//g_Hooks.toStyledStringHook = std::make_unique<FuncHook>(_toStyledString, Hooks::toStyledString);
-
-		//void* InGamePlayScreen___renderLevel = reinterpret_cast<void*>(FindSignature("48 89 5C 24 20 55 56 57 41 54 41 55 41 56 41 57 48 8D AC 24 ?? ?? ?? ?? 48 81 EC ?? ?? ?? ?? 0F 29 B4 24 ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 85 ?? ?? ?? ?? 49 8B D8 4C"));
-		//g_Hooks.InGamePlayScreen___renderLevelHook = std::make_unique<FuncHook>(InGamePlayScreen___renderLevel, Hooks::InGamePlayScreen___renderLevel);
-
 #ifdef TEST_DEBUG
 		void* addAction = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 55 56 57 41 56 41 57 48 83 EC 30 45 0F B6 F8 4C 8B F2 48 8B F1 48 8B 01 48 8B 88 ? ? ? ? 48 85 C9"));
 		g_Hooks.InventoryTransactionManager__addActionHook = std::make_unique<FuncHook>(addAction, Hooks::InventoryTransactionManager__addAction);
 #endif
 
-		//void* localPlayerUpdateFromCam = reinterpret_cast<void*>(FindSignature("48 8B C4 53 48 81 EC ? ? ? ? 0F 29 70 ? 0F 29 78 ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 84 24 ? ? ? ? 4D 8B D0"));
-		//g_Hooks.LocalPlayer__updateFromCameraHook = std::make_unique<FuncHook>(localPlayerUpdateFromCam, Hooks::LocalPlayer__updateFromCamera);
+		void* localPlayerUpdateFromCam = reinterpret_cast<void*>(FindSignature("48 8B C4 53 48 81 EC ? ? ? ? 0F 29 70 ? 0F 29 78 ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 84 24 ? ? ? ? 4D 8B D0"));
+		g_Hooks.LocalPlayer__updateFromCameraHook = std::make_unique<FuncHook>(localPlayerUpdateFromCam, Hooks::LocalPlayer__updateFromCamera);
 
 		void* renderNameTags = reinterpret_cast<void*>(FindSignature("48 8B C4 48 89 58 ? 55 56 57 41 54 41 55 41 56 41 57 48 8D A8 ? ? ? ? 48 81 EC ? ? ? ? 0F 29 70 ? 0F 29 78 ? 44 0F 29 40 ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 85 ? ? ? ? 49 8B F1"));
 		g_Hooks.LevelRendererPlayer__renderNameTagsHook = std::make_unique<FuncHook>(renderNameTags, Hooks::LevelRendererPlayer__renderNameTags);
@@ -186,7 +178,6 @@ void Hooks::Init() {
 		} else logF("MoveTurnInput is null");
 
 		//The reason im using a sig is because injecting on the menu causes LocalPlayer to be null so i cant get the vtable from just doing Game.getLocalPlayer(). Same with Gamemode bc i get that from local player.
-	
 		// LocalPlayer::vtable
 		{
 			uintptr_t** localPlayerVtable = GetVtableFromSig("48 8D 05 ? ? ? ? 48 89 01 48 8B 89 ? ? ? ? 48 8B 01 FF 90 ? ? ? ? 48 8B 10", 3);
@@ -293,7 +284,7 @@ void* Hooks::Player_tickWorld(Player* _this, __int64 unk) {
 	static auto oTick = g_Hooks.Player_tickWorldHook->GetFastcall<void*, Player*, __int64>();
 	auto o = oTick(_this, unk);
 
-	if (_this == Game.getLocalPlayer()) {
+	if (_this != nullptr && Game.getLocalPlayer() != nullptr && _this == Game.getLocalPlayer()) {
 		GameMode* gm = Game.getLocalPlayer()->getGameMode();
 		if (_this && gm) {
 			GameData::updateGameData(gm);
@@ -421,19 +412,7 @@ __int64 Hooks::RenderText(__int64 a1, MinecraftUIRenderContext* renderCtx) {
 		bool shouldRenderArrayList = true;
 		bool shouldRenderTabGui = true;
 		bool shouldRenderWatermark = true;
-
-		static float rcolors[4];          // Rainbow color array RGBA
-		static float disabledRcolors[4];  // Rainbow Colors, but for disabled modules
-		static float currColor[4];        // ArrayList colors
-
-		// Rainbow color updates
-		{
-			Utils::ApplyRainbow(rcolors);  // Increase Hue of rainbow color array
-			disabledRcolors[0] = std::min(1.f, rcolors[0] * 0.4f + 0.2f);
-			disabledRcolors[1] = std::min(1.f, rcolors[1] * 0.4f + 0.2f);
-			disabledRcolors[2] = std::min(1.f, rcolors[2] * 0.4f + 0.2f);
-			disabledRcolors[3] = 1;
-		}
+		MC_Color color = ColorUtil::getRainbowColor(3, 0.5f, 1, 1);
 
 		{
 			// Main Menu
@@ -445,7 +424,7 @@ __int64 Hooks::RenderText(__int64 a1, MinecraftUIRenderContext* renderCtx) {
 					Vec2 textPos = Vec2(wid.x / 2.f - DrawUtils::getTextWidth(&text, 8.f) / 2.f, wid.y / 9.5f);
 					Vec4 rectPos = Vec4(textPos.x - 55.f, textPos.y - 15.f, textPos.x + DrawUtils::getTextWidth(&text, 8.f) + 55.f, textPos.y + 75.f);
 					DrawUtils::fillRectangle(rectPos, ClientColors::menuBackgroundColor, 1.f);
-					DrawUtils::drawRectangle(rectPos, rcolors, 1.f, 2.f);
+					DrawUtils::drawRectangle(rectPos, color, 1.f, 2.f);
 					DrawUtils::drawText(textPos, &text, MC_Color(255, 255, 255, 1), 8.f);
 				}
 			} else {
@@ -464,20 +443,8 @@ __int64 Hooks::RenderText(__int64 a1, MinecraftUIRenderContext* renderCtx) {
 				if (shouldRenderTabGui) TabGui::render();
 
 				{
-					// Display ArrayList on the Right?
-					static constexpr bool isOnRightSide = true;
-
-					float yOffset = 0;  // Offset of next Text
 					Vec2 windowSize = Game.getClientInstance()->getGuiData()->windowSize;
-					Vec2 windowSizeReal = Game.getClientInstance()->getGuiData()->windowSizeReal;
-					Vec2 mousePos = *Game.getClientInstance()->getMousePos();
-
-					// Convert mousePos to visual Pos
-					{
-						mousePos = mousePos.div(windowSizeReal);
-						mousePos = mousePos.mul(windowSize);
-					}
-
+					
 					// Draw Horion logo
 					if (shouldRenderWatermark) {
 						constexpr float nameTextSize = 1.5f;
@@ -503,153 +470,10 @@ __int64 Hooks::RenderText(__int64 a1, MinecraftUIRenderContext* renderCtx) {
 							windowSize.x - margin + borderPadding,
 							windowSize.y - margin);
 
-						DrawUtils::drawRectangle(rect, MC_Color(rcolors), 1.f, 2.f);
+						DrawUtils::drawRectangle(rect, MC_Color(color), 1.f, 2.f);
 						DrawUtils::fillRectangle(rect, ClientColors::watermarkBackgroundColor, 1.f);
-						DrawUtils::drawText(Vec2(rect.x + borderPadding, rect.y), &name, MC_Color(rcolors), nameTextSize);
-						DrawUtils::drawText(Vec2(rect.x + borderPadding + nameLength, rect.w - 7), &version, MC_Color(rcolors), versionTextSize);
-					}
-
-					// Draw ArrayList
-					if (moduleMgr->isInitialized() && shouldRenderArrayList) {
-						// Parameters
-						float textSize = hudModule->scale;
-						float textPadding = 1.0f * textSize;
-						float textHeight = 10.0f * textSize;
-						float smoothness = 2;
-
-						struct IModuleContainer {
-							// Struct used to Sort IModules in a std::set
-							std::shared_ptr<IModule> backingModule;
-							std::string moduleName;
-							bool enabled;
-							int keybind;
-							float textWidth;
-							Vec2* pos;
-							bool shouldRender = true;
-
-							IModuleContainer(std::shared_ptr<IModule> mod) {
-								const char* moduleNameChr = mod->getModuleName();
-								this->enabled = mod->isEnabled();
-								this->keybind = mod->getKeybind();
-								this->backingModule = mod;
-								this->pos = mod->getPos();
-
-								if (keybind == 0x0)
-									moduleName = moduleNameChr;
-								else {
-									char text[50];
-									sprintf_s(text, 50, "%s%s", moduleNameChr, hudModule->keybinds ? std::string(" [" + std::string(Utils::getKeybindName(keybind)) + "]").c_str() : "");
-									moduleName = text;
-								}
-
-								if (!this->enabled && *this->pos == Vec2(0.f, 0.f))
-									this->shouldRender = false;
-								this->textWidth = DrawUtils::getTextWidth(&moduleName, hudModule->scale);
-							}
-
-							bool operator<(const IModuleContainer& other) const {
-								/*if (enabled) {
-							if (!other.enabled)  // We are enabled
-								return true;
-						} else if (other.enabled)  // They are enabled
-							return false;*/
-
-								if (this->textWidth == other.textWidth)
-									return moduleName < other.moduleName;
-								return this->textWidth > other.textWidth;
-							}
-						};
-
-						// Mouse click detector
-						static bool wasLeftMouseDown = GameData::isLeftClickDown();  // Last isDown value
-						bool leftMouseDown = GameData::isLeftClickDown();            // current isDown value
-
-						bool executeClick = leftMouseDown && leftMouseDown != wasLeftMouseDown;  // isDown == true AND (current state IS NOT last state)
-						wasLeftMouseDown = leftMouseDown;                                        // Set last isDown value
-
-						std::set<IModuleContainer> modContainerList;
-						// Fill modContainerList with Modules
-						{
-							auto lock = moduleMgr->lockModuleList();
-							std::vector<std::shared_ptr<IModule>>* moduleList = moduleMgr->getModuleList();
-							for (auto it : *moduleList) {
-								if (it.get() != hudModule)
-									modContainerList.emplace(IModuleContainer(it));
-							}
-						}
-
-						int a = 0;
-						int b = 0;
-						int c = 0;
-
-						// Loop through mods to display Labels
-						for (std::set<IModuleContainer>::iterator it = modContainerList.begin(); it != modContainerList.end(); ++it) {
-							if (!it->shouldRender)
-								continue;
-
-							std::string textStr = it->moduleName;
-							float textWidth = it->textWidth;
-
-							float xOffsetOri = windowSize.x - textWidth - (textPadding * 2);
-
-							float xOffset = windowSize.x - it->pos->x;
-
-							it->pos->x += smoothness;
-
-							if (xOffset < xOffsetOri) {
-								xOffset = xOffsetOri;
-							}
-							if (!it->enabled) {
-								xOffset += it->pos->y;
-								it->pos->y += smoothness;
-							}
-							if (xOffset >= windowSize.x && !it->enabled) {
-								it->pos->x = 0.f;
-								it->pos->y = 0.f;
-							}
-
-							Vec2 textPos = Vec2(
-								xOffset + textPadding,
-								yOffset + textPadding);
-							Vec4 rectPos = Vec4(
-								xOffset - 2,
-								yOffset,
-								isOnRightSide ? windowSize.x : textWidth + (textPadding * 2),
-								yOffset + textPadding * 2 + textHeight);
-							Vec4 leftRect = Vec4(
-								xOffset - 2,
-								yOffset,
-								xOffset - 1,
-								yOffset + textPadding * 2 + textHeight);
-							c++;
-							b++;
-							if (b < 20)
-								a = moduleMgr->getEnabledModuleCount() * 2;
-							else
-								b = 0;
-							currColor[3] = rcolors[3];
-							Utils::ColorConvertRGBtoHSV(rcolors[0], rcolors[1], rcolors[2], currColor[0], currColor[1], currColor[2]);
-							currColor[0] += 1.f / a * c;
-							Utils::ColorConvertHSVtoRGB(currColor[0], currColor[1], currColor[2], currColor[0], currColor[1], currColor[2]);
-
-							DrawUtils::fillRectangle(rectPos, ClientColors::arraylistBackgroundColor, 1.f);
-							DrawUtils::fillRectangle(leftRect, MC_Color(currColor), 1.f);
-							if (!GameData::canUseMoveKeys() && rectPos.contains(&mousePos) && hudModule->clickToggle) {
-								Vec4 selectedRect = rectPos;
-								selectedRect.x = leftRect.z;
-								if (leftMouseDown) {
-									DrawUtils::fillRectangle(selectedRect, MC_Color(0.8f, 0.8f, 0.8f), 0.8f);
-									if (executeClick)
-										it->backingModule->toggle();
-								} else
-									DrawUtils::fillRectangle(selectedRect, MC_Color(0.8f, 0.8f, 0.8f, 0.8f), 0.3f);
-							}
-							DrawUtils::drawText(textPos, &textStr, MC_Color(currColor), textSize);
-
-							yOffset += textHeight + (textPadding * 2);
-						}
-						c = 0;
-						modContainerList.clear();
+						DrawUtils::drawText(Vec2(rect.x + borderPadding, rect.y), &name, MC_Color(color), nameTextSize);
+						DrawUtils::drawText(Vec2(rect.x + borderPadding + nameLength, rect.w - 7), &version, MC_Color(color), versionTextSize);
 					}
 				}
 			}
@@ -698,7 +522,7 @@ __int64 Hooks::RenderText(__int64 a1, MinecraftUIRenderContext* renderCtx) {
 					centerPos.x + paddingHoriz + std::max(titleWidth, msgWidth) / 2,
 					centerPos.y + paddingVert * 2 + titleTextHeight + messageHeight * lines);
 				DrawUtils::fillRectangle(rectPos, MC_Color(12, 12, 12), box->fadeVal);
-				DrawUtils::drawRectangle(rectPos, rcolors, box->fadeVal, 2.f);
+				DrawUtils::drawRectangle(rectPos, color, box->fadeVal, 2.f);
 				DrawUtils::drawText(textPos, &box->title, MC_Color(), titleTextSize, box->fadeVal);
 				DrawUtils::drawText(msgPos, &box->message, MC_Color(), messageTextSize, box->fadeVal);
 			}
@@ -712,9 +536,7 @@ __int64 Hooks::RenderText(__int64 a1, MinecraftUIRenderContext* renderCtx) {
 
 float* Hooks::Dimension_getFogColor(Dimension* _this, float* color, __int64 a3, float a4) {
 	static auto oGetFogColor = g_Hooks.Dimension_getFogColorHook->GetFastcall<float*, Dimension*, float*, __int64, float>();
-
-	static float rcolors[4];
-
+	MC_Color rColor = ColorUtil::getRainbowColor(3, 0.5f, 1, 1);
 	static auto nightMod = moduleMgr->getModule<NightMode>();
 	if (nightMod->isEnabled()) {
 		color[0] = 0.f;
@@ -726,22 +548,11 @@ float* Hooks::Dimension_getFogColor(Dimension* _this, float* color, __int64 a3, 
 
 	static auto rainbowSkyMod = moduleMgr->getModule<RainbowSky>();
 	if (rainbowSkyMod->isEnabled()) {
-		if (rcolors[3] < 1) {
-			rcolors[0] = 1;
-			rcolors[1] = 0.2f;
-			rcolors[2] = 0.2f;
-			rcolors[3] = 1;
-		}
-
-		Utils::ColorConvertRGBtoHSV(rcolors[0], rcolors[1], rcolors[2], rcolors[0], rcolors[1], rcolors[2]);  // perfect code, dont question this
-
-		rcolors[0] += 0.001f;
-		if (rcolors[0] >= 1)
-			rcolors[0] = 0;
-
-		Utils::ColorConvertHSVtoRGB(rcolors[0], rcolors[1], rcolors[2], rcolors[0], rcolors[1], rcolors[2]);
-
-		return rcolors;
+		color[0] = rColor.r;
+		color[1] = rColor.g;
+		color[2] = rColor.b;
+		color[3] = 1;
+		return color;
 	}
 	return oGetFogColor(_this, color, a3, a4);
 }
@@ -910,14 +721,13 @@ void Hooks::LoopbackPacketSender_sendToServer(LoopbackPacketSender* a, Packet* p
 	static auto oFunc = g_Hooks.LoopbackPacketSender_sendToServerHook->GetFastcall<void, LoopbackPacketSender*, Packet*>();
 
 	static auto autoSneakMod = moduleMgr->getModule<AutoSneak>();
-	static auto freecamMod = moduleMgr->getModule<Freecam>();
 	static auto blinkMod = moduleMgr->getModule<Blink>();
 	static auto noPacketMod = moduleMgr->getModule<NoPacket>();
 
 	if (noPacketMod->isEnabled() && Game.isInGame())
 		return;
 
-	if (freecamMod->isEnabled() || blinkMod->isEnabled()) {
+	if (blinkMod->isEnabled()) {
 		if (packet->isInstanceOf<C_MovePlayerPacket>() || packet->isInstanceOf<PlayerAuthInputPacket>()) {
 			if (blinkMod->isEnabled()) {
 				if (packet->isInstanceOf<C_MovePlayerPacket>()) {
@@ -1419,30 +1229,28 @@ __int64 Hooks::InGamePlayScreen___renderLevel(__int64 playScreen, __int64 a2, __
 	auto func = g_Hooks.InGamePlayScreen___renderLevelHook->GetFastcall<__int64, __int64, __int64, __int64>();
 	return func(playScreen, a2, a3);
 }
+
 __int64 Hooks::GameMode_attack(GameMode* _this, Entity* ent) {
 	auto func = g_Hooks.GameMode_attackHook->GetFastcall<__int64, GameMode*, Entity*>();
 	moduleMgr->onAttack(ent);
 	return func(_this, ent);
 }
-void Hooks::LocalPlayer__updateFromCamera(__int64 a1, Camera* camera) {
-	auto func = g_Hooks.LocalPlayer__updateFromCameraHook->GetFastcall<__int64, __int64, Camera*>();
-	auto noHurtcamMod = moduleMgr->getModule<NoHurtcam>();
-	if (noHurtcamMod->isEnabled() && Game.isInGame() && Game.getLocalPlayer()->isAlive()) {
-		Vec2 rot;
-		camera->getPlayerRotation(&rot);
-		if (camera->facesPlayerFront) {
-			rot.x *= -1;  // rotate back
-			rot.y += 180;
-			rot = rot.normAngles();
-		}
-		camera->setOrientationDeg(rot.x, rot.y, 0);
-	}
-	func(a1, camera);
+
+void Hooks::LocalPlayer__updateFromCamera(__int64 a1, Camera* camera, __int64* a3, Entity* a4) {
+	auto func = g_Hooks.LocalPlayer__updateFromCameraHook->GetFastcall<__int64, __int64, Camera*, __int64*, Entity*>();
+	auto freecamMod = moduleMgr->getModule<Freecam>();
+	freecamMod->camera = camera;
+	//camera->nearClippingPlane = 0.000001;
+	//camera->farClippingPlane = -5;
+	func(a1, camera, a3, a4);
 }
+
 bool Hooks::Mob__isImmobile(Entity* ent) {
 	auto func = g_Hooks.Mob__isImmobileHook->GetFastcall<bool, Entity*>();
-
+	static auto freecamMod = moduleMgr->getModule<Freecam>();
 	static auto antiImmobileMod = moduleMgr->getModule<AntiImmobile>();
+	if (freecamMod->isEnabled())
+		return true;
 	if (antiImmobileMod->isEnabled() && ent == Game.getLocalPlayer())
 		return false;
 
@@ -1451,13 +1259,16 @@ bool Hooks::Mob__isImmobile(Entity* ent) {
 
 void Hooks::Actor__setRot(Entity* _this, Vec2& angle) {
 	auto func = g_Hooks.Actor__setRotHook->GetFastcall<void, Entity*, Vec2&>();
-	auto killauraMod = moduleMgr->getModule<Killaura>();
-	auto freelookMod = moduleMgr->getModule<Freelook>();
-	if (killauraMod->isEnabled() && !killauraMod->targetListEmpty && killauraMod->rotations && _this == Game.getLocalPlayer()) {
-		func(_this, angle = killauraMod->angle);
-	}
-	if (freelookMod->isEnabled() && Game.getLocalPlayer() == _this) {
-		func(_this, angle = freelookMod->oldPos);
+	static auto killauraMod = moduleMgr->getModule<Killaura>();
+	static auto freelookMod = moduleMgr->getModule<Freelook>();
+	static auto freecamMod = moduleMgr->getModule<Freecam>();
+	if (_this == Game.getLocalPlayer()) {
+		if (freecamMod->isEnabled()) {
+			freecamMod->yaw = angle.y;
+			angle = {freecamMod->initialViewAngles.x, freecamMod->initialViewAngles.y};
+		}
+		if (killauraMod->isEnabled() && !killauraMod->targetListEmpty && killauraMod->rotations) angle = killauraMod->angle;
+		if (freelookMod->isEnabled()) angle = freelookMod->oldPos;
 	}
 	func(_this, angle);
 }
