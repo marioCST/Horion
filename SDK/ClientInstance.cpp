@@ -46,11 +46,11 @@ void GuiData::displayClientMessageNoSendF(const char *fmt, ...) {
 
 MaterialPtr::MaterialPtr(const std::string &materialName) {
 	using materialPtrConst_t = void(__fastcall *)(MaterialPtr *, __int64, const HashedString &);
-	static materialPtrConst_t materialPtrConst = reinterpret_cast<materialPtrConst_t>(FindSignature("48 89 5c 24 ? 48 89 74 24 ? 48 89 4c 24 ? 57 48 83 ec ? 4c 8b ca"));
+	static materialPtrConst_t materialPtrConst = reinterpret_cast<materialPtrConst_t>(FindSignature("48 89 5C 24 ? 48 89 74 24 ? 48 89 4C 24 ? 57 48 83 EC ? 4C 8B CA"));
 
 	static __int64 renderGroupBase = 0;
 	if (renderGroupBase == 0) {
-		auto sig = FindSignature("48 8d 0d ? ? ? ? ff 50 ? 48 8b d8 48 8b 50 ? 48 85 d2 0f 84 ? ? ? ? 8b 42 ? 85 c0 0f 84 ? ? ? ? 8d 48 ? f0 0f b1 4a ? 74 ? 85 c0 0f 84 ? ? ? ? eb ? 48 8b 03 48 8b 5b ? 48 89 44 24 ? 48 89 5c 24 ? 48 8d 54 24 ? 48 8d 0d ? ? ? ? e8 ? ? ? ? be") + 3;
+		auto sig = FindSignature("48 8D 0D ? ? ? ? FF 50 ? 48 8B D8 48 8B 50 ? 48 85 D2 0F 84 ? ? ? ? 8B 42 ? 85 C0 0F 84 ? ? ? ? 8D 48 ? F0 0F B1 4A ? 74 ? 85 C0 0F 84 ? ? ? ? EB ? 48 8B 03 48 8B 5B ? 48 89 44 24 ? 48 89 5C 24 ? 48 8D 54 24 ? 48 8D 0D ? ? ? ? E8 ? ? ? ? BE") + 3;
 		auto off = *reinterpret_cast<int *>(sig);
 		renderGroupBase = sig + 4 + off;
 	}
