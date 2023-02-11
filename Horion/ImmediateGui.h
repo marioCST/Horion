@@ -16,7 +16,7 @@ protected:
 };
 
 class ButtonInfo : public ComponentInfo {
-private:
+protected:
 	Vec2 pos;
 	Vec2 size;
 	bool centered;
@@ -30,10 +30,19 @@ public:
 	void calculateSize(const char*);
 	bool isInSelectableSurface(Vec2 mouse);
 	Vec4 getSelectableSurface();
-	void draw(Vec2 mousePos, const char* label);
+	virtual void draw(Vec2 mousePos, const char* label);
 	bool canClick() { return canClickB; };
 	void updatePos(Vec2 pos) { pos = pos; }
 	
+};
+
+class ImageButtonInfo : public ButtonInfo {
+public:
+	ImageButtonInfo(int id, Vec2 pos, bool centered = false);
+	virtual ~ImageButtonInfo(){};
+
+	virtual void draw(Vec2 mousePos, const char* location) override;
+	void updateSize(Vec2 size);
 };
 
 class ImmediateGui {
@@ -44,6 +53,7 @@ private:
 public:
 	void startFrame();
 	bool Button(const char* label, Vec2 pos, bool centered = false);
+	bool ImageButton(const char* location, Vec2 pos, Vec2 size, bool centered = false);
 };
 
 extern ImmediateGui HorionGui;

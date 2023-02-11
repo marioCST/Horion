@@ -57,7 +57,11 @@ void TestModule::onPreRender(MinecraftUIRenderContext* renderCtx) {
 		clientMessageF("Test Button Was Clicked");
 	}
 
-	DrawUtils::drawImage("textures/ui/title", Vec2(100,100), Vec2(200,200));
+	if (HorionGui.ImageButton("textures/ui/title", Vec2(100, 200), Vec2(200, 100))) {
+		clientMessageF("Test Image Button Was Clicked");
+	}
+
+	DrawUtils::drawImage("textures/ui/title", Vec2(100,100), Vec2(200,100));
 	DrawUtils::flushImage();
 }
 
