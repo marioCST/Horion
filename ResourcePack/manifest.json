@@ -1,0 +1,18 @@
+{
+    "format_version": 2,
+    "header": {
+        "description": "Horion pack",
+        "name": "Horion 1.18.12 textures (marioCST fork)",
+        "uuid": "2a8be14a-3dc1-431d-87fe-c370b83fb939",
+        "version": [0, 0, 1],
+        "min_engine_version": [ 1, 18, 10 ]
+    },
+    "modules": [
+        {
+            "description": "Horion pack",
+            "type": "resources",
+            "uuid": "3b5814b2-7d2e-45fb-82b8-7415de86dd51",
+            "version": [0, 0, 1]
+        }
+    ]
+}

@@ -418,15 +418,27 @@ __int64 Hooks::RenderText(__int64 a1, MinecraftUIRenderContext* renderCtx) {
 			// Main Menu
 			std::string screenName(g_Hooks.currentScreenName);
 			if (strcmp(screenName.c_str(), "start_screen") == 0) {
+				int imgX = 866 / 2.6f, imgY = 373 / 2.6f;
+
+				Vec2 imgPos = Vec2(wid.x / 2.f - imgX / 2.f, wid.y / 9.5f - imgY / 4.25f);
+				Vec2 imgSize = Vec2(imgX, imgY);
+
+				Vec4 rectPos = Vec4(imgPos.x - 55.f, imgPos.y - 3.f, imgPos.x + imgSize.x + 55.f, imgPos.y + imgSize.y + 3.f);
+				DrawUtils::fillRectangle(rectPos, ClientColors::menuBackgroundColor, 1.f);
+				DrawUtils::drawRectangle(rectPos, color, 1.f, 2.f);
+
+				DrawUtils::drawImage("textures/horion/banner", imgPos, imgSize);
+				DrawUtils::flushImage();
+
 				// Draw BIG epic horion watermark
-				{
+				/*{
 					std::string text = "H O R I O N";
 					Vec2 textPos = Vec2(wid.x / 2.f - DrawUtils::getTextWidth(&text, 8.f) / 2.f, wid.y / 9.5f);
 					Vec4 rectPos = Vec4(textPos.x - 55.f, textPos.y - 15.f, textPos.x + DrawUtils::getTextWidth(&text, 8.f) + 55.f, textPos.y + 75.f);
 					DrawUtils::fillRectangle(rectPos, ClientColors::menuBackgroundColor, 1.f);
 					DrawUtils::drawRectangle(rectPos, color, 1.f, 2.f);
 					DrawUtils::drawText(textPos, &text, MC_Color(255, 255, 255, 1), 8.f);
-				}
+				}*/
 			} else {
 				shouldRenderTabGui = hudModule->tabgui && hudModule->isEnabled();
 				shouldRenderArrayList = hudModule->arraylist && hudModule->isEnabled();
