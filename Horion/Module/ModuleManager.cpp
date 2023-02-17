@@ -29,6 +29,7 @@ void ModuleManager::initModules() {
 		// moduleList.emplace_back(new Criticals());
 		moduleList.emplace_back(new ChestStealer());
 		moduleList.emplace_back(new EditionFaker());
+		moduleList.emplace_back(new ReachDisplay());
 		moduleList.emplace_back(new ClientTheme());
 		moduleList.emplace_back(new FontChanger());
 		moduleList.emplace_back(new VanillaPlus());
