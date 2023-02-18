@@ -41,6 +41,6 @@ bool SetLoreCommand::execute(std::vector<std::string>* args) {
 
 	setLore(item, loreList);
 
-	clientMessageF("Set lore!");
+	clientMessageF("Set lore to '%s'!", lore);
 	return true;
 }
