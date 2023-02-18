@@ -47,6 +47,7 @@ void CommandMgr::initCommands() {
 	commandList.push_back(new CommandBlockExploitCommand());
 	commandList.push_back(new NameSpoofCommand());
 	commandList.push_back(new PathCommand());
+	commandList.push_back(new SetLoreCommand());
 
 #ifdef _DEBUG
 	commandList.push_back(new TestCommand());
