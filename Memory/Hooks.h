@@ -131,6 +131,9 @@ private:
 	static float getDestroySpeed(Player* _this, Block& block);
 	static bool Actor_canSee(Entity* _this, Entity& entity);
 	static bool Actor_shouldRender(Entity* _this);
+	static void Actor_handleFallDistanceOnServer(Entity* _this, float f1, float f2, bool b);
+	static void Actor_causeFallDamage(Entity* _this, float f);
+	static void Actor_checkFallDamage(Entity* _this, float f, bool b);
 
 	std::unique_ptr<FuncHook> Actor_rotationHook;
 	std::unique_ptr<FuncHook> setPosHook;
@@ -193,6 +196,9 @@ private:
 	std::unique_ptr<FuncHook> testyHook;
 	std::unique_ptr<FuncHook> Actor_canSeeHook;
 	std::unique_ptr<FuncHook> Actor_shouldRenderHook;
+	std::unique_ptr<FuncHook> Actor_handleFallDistanceOnServerHook;
+	std::unique_ptr<FuncHook> Actor_causeFallDamageHook;
+	std::unique_ptr<FuncHook> Actor_checkFallDamageHook;
 };
 
 extern Hooks g_Hooks;

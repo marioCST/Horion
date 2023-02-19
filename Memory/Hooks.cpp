@@ -122,7 +122,16 @@ void Hooks::Init() {
 
 		void* Actor_shouldRender = reinterpret_cast<void*>(FindSignature("48 83 EC ? 48 8B 01 FF 90 ? ? ? ? 84 C0 ? ? C0 48 83 C4 ? C3 CC CC CC CC CC CC CC CC CC 48 89 5C ? ? 57"));
 		g_Hooks.Actor_shouldRenderHook = std::make_unique<FuncHook>(Actor_shouldRender, Hooks::Actor_shouldRender);
-		
+
+		//void* Actor_handleFallDistanceOnServer = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 48 89 74 24 ? 57 48 83 EC 50 48 8B 99 ? ? ? ? 48 8B F1 48 8B B9"));
+		//g_Hooks.Actor_handleFallDistanceOnServerHook = std::make_unique<FuncHook>(Actor_handleFallDistanceOnServer, Hooks::Actor_handleFallDistanceOnServer);
+
+		//void* Actor_causeFallDamage = reinterpret_cast<void*>(FindSignature("40 53 48 83 EC 40 48 8B D9 0F 29 74 24 ? 48 8B 89 ? ? ? ? 0F"));
+		//g_Hooks.Actor_causeFallDamageHook = std::make_unique<FuncHook>(Actor_causeFallDamage, Hooks::Actor_causeFallDamage);
+
+		//void* Actor_checkFallDamage = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 57 48 83 EC 60 0F 29 74 24 ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 24 ? 48 8B 01"));
+		//g_Hooks.Actor_checkFallDamageHook = std::make_unique<FuncHook>(Actor_checkFallDamage, Hooks::Actor_checkFallDamage);
+
 		static constexpr auto counterStart = __COUNTER__ + 1;
 		#define lambda_counter (__COUNTER__ - counterStart)
 
@@ -1365,4 +1374,22 @@ bool Hooks::Actor_shouldRender(Entity* _this) {
 	static auto antiInvisMod = moduleMgr->getModule<AntiInvis>();
 
 	return antiInvisMod->isEnabled() ? true : oFunc(_this);
+}
+
+void Hooks::Actor_handleFallDistanceOnServer(Entity* _this, float f1, float f2, bool b) {
+	//static auto func = g_Hooks.Actor_handleFallDistanceOnServerHook->GetFastcall<void, Entity*, float, float, bool>();
+
+	//if (_this != Game.getLocalPlayer()) func(_this, f1, f2, b);
+}
+
+void Hooks::Actor_causeFallDamage(Entity* _this, float f) {
+	//static auto func = g_Hooks.Actor_causeFallDamageHook->GetFastcall<void, Entity*, float>();
+
+	//if (_this != Game.getLocalPlayer()) func(_this, f);
+}
+
+void Hooks::Actor_checkFallDamage(Entity* _this, float f, bool b) {
+	// static auto func = g_Hooks.Actor_checkFallDamageHook->GetFastcall<void, Entity*, float, bool>();
+
+	// if (_this != Game.getLocalPlayer()) func(_this, f, b);
 }
