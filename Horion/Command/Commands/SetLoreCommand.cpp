@@ -25,7 +25,7 @@ bool SetLoreCommand::execute(std::vector<std::string>* args) {
 
 	ItemStack* item = inv->getItemStack(selectedSlot);
 
-	if (item == nullptr) {
+	if (item == nullptr || item->item == nullptr) {
 		clientMessageF("Please hold an item!");
 		return false;
 	}
