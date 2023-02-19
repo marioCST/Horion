@@ -116,6 +116,12 @@ void Hooks::Init() {
 		
 		void* destroySpeed = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 48 89 74 24 ? 57 48 83 EC ? 48 8B FA 0F 29 74 24 ? 48 8B 91"));
 		g_Hooks.getDestroySpeedHook = std::make_unique<FuncHook>(destroySpeed, Hooks::getDestroySpeed);
+
+		void* Actor_canSee = reinterpret_cast<void*>(FindSignature("4C 8B DC 49 89 5B 18 49 89 73 20 57 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 84 24 ? ? ? ? 48 8B 02"));
+		g_Hooks.Actor_canSeeHook = std::make_unique<FuncHook>(Actor_canSee, Hooks::Actor_canSee);
+
+		void* Actor_shouldRender = reinterpret_cast<void*>(FindSignature("48 83 EC ? 48 8B 01 FF 90 ? ? ? ? 84 C0 ? ? C0 48 83 C4 ? C3 CC CC CC CC CC CC CC CC CC 48 89 5C ? ? 57"));
+		g_Hooks.Actor_shouldRenderHook = std::make_unique<FuncHook>(Actor_shouldRender, Hooks::Actor_shouldRender);
 		
 		static constexpr auto counterStart = __COUNTER__ + 1;
 		#define lambda_counter (__COUNTER__ - counterStart)
@@ -1345,4 +1351,18 @@ float Hooks::getDestroySpeed(Player* _this, Block& block) {
 	static auto instaBreakMod = moduleMgr->getModule<InstaBreak>();
 
 	return instaBreakMod->isEnabled() ? INFINITY : oFunc(_this, block);
+}
+
+bool Hooks::Actor_canSee(Entity* _this, Entity& entity) {
+	static auto oFunc = g_Hooks.Actor_canSeeHook->GetFastcall<bool, Entity*, Entity&>();
+	static auto antiInvisMod = moduleMgr->getModule<AntiInvis>();
+
+	return antiInvisMod->isEnabled() ? true : oFunc(_this, entity);
+}
+
+bool Hooks::Actor_shouldRender(Entity* _this) {
+	static auto oFunc = g_Hooks.Actor_shouldRenderHook->GetFastcall<bool, Entity*>();
+	static auto antiInvisMod = moduleMgr->getModule<AntiInvis>();
+
+	return antiInvisMod->isEnabled() ? true : oFunc(_this);
 }

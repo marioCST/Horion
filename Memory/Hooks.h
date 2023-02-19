@@ -129,6 +129,8 @@ private:
 	static void LevelRendererPlayer__renderNameTags(__int64 a1, __int64 a2, TextHolder* name, __int64 a4);
 	static void KeyMapHookCallback(unsigned char key, bool isDown);
 	static float getDestroySpeed(Player* _this, Block& block);
+	static bool Actor_canSee(Entity* _this, Entity& entity);
+	static bool Actor_shouldRender(Entity* _this);
 
 	std::unique_ptr<FuncHook> Actor_rotationHook;
 	std::unique_ptr<FuncHook> setPosHook;
@@ -189,6 +191,8 @@ private:
 	std::unique_ptr<FuncHook> LevelRendererPlayer__renderNameTagsHook;
 	std::unique_ptr<FuncHook> KeyMapHook;
 	std::unique_ptr<FuncHook> testyHook;
+	std::unique_ptr<FuncHook> Actor_canSeeHook;
+	std::unique_ptr<FuncHook> Actor_shouldRenderHook;
 };
 
 extern Hooks g_Hooks;

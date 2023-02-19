@@ -53,6 +53,7 @@
 #include "Modules/AutoTotem.h"
 #include "Modules/AutoSneak.h"
 #include "Modules/AutoArmor.h"
+#include "Modules/AntiInvis.h"
 #include "Modules/FastStop.h"
 #include "Modules/Freelook.h"
 #include "Modules/Scaffold.h"

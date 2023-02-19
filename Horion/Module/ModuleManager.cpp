@@ -63,6 +63,7 @@ void ModuleManager::initModules() {
 		moduleList.emplace_back(new AutoTotem());
 		moduleList.emplace_back(new BowAimbot());
 		moduleList.emplace_back(new HudModule());
+		moduleList.emplace_back(new AntiInvis());
 		moduleList.emplace_back(new FastStop());
 		moduleList.emplace_back(new Freelook());
 		moduleList.emplace_back(new Teleport());
