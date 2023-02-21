@@ -292,6 +292,7 @@
     <ClCompile Include="Horion\Module\Modules\AutoClicker.cpp" />
     <ClCompile Include="Horion\Module\Modules\AutoGapple.cpp" />
     <ClCompile Include="Horion\Module\Modules\AutoSneak.cpp" />
+    <ClCompile Include="Horion\Module\Modules\AutoSplitter.cpp" />
     <ClCompile Include="Horion\Module\Modules\AutoSprint.cpp" />
     <ClCompile Include="Horion\Module\Modules\AutoTotem.cpp" />
     <ClCompile Include="Horion\Module\Modules\Bhop.cpp" />
@@ -462,6 +463,7 @@
     <ClInclude Include="Horion\Module\Modules\AutoClicker.h" />
     <ClInclude Include="Horion\Module\Modules\AutoGapple.h" />
     <ClInclude Include="Horion\Module\Modules\AutoSneak.h" />
+    <ClInclude Include="Horion\Module\Modules\AutoSplitter.h" />
     <ClInclude Include="Horion\Module\Modules\AutoSprint.h" />
     <ClInclude Include="Horion\Module\Modules\AutoTotem.h" />
     <ClInclude Include="Horion\Module\Modules\Bhop.h" />

@@ -19,6 +19,7 @@
 #include "Modules/EditionFaker.h"
 #include "Modules/ChestStealer.h"
 #include "Modules/ReachDisplay.h"
+#include "Modules/AutoSplitter.h"
 #include "Modules/ClientTheme.h"
 #include "Modules/FontChanger.h"
 #include "Modules/VanillaPlus.h"
