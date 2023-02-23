@@ -43,8 +43,11 @@ void AutoSplitter::onTick(GameMode* gm) {
 			if (!stack->getItem()->isBlock()) continue;
 
 			if (stack->count > this->maxAmount) {
-				ItemStack tmp1(*stack->getItem(), this->maxAmount, 0);
-				ItemStack tmp2(*stack->getItem(), stack->count - this->maxAmount, 0);
+				ItemStack tmp1(*stack);
+				tmp1.count = this->maxAmount;
+
+				ItemStack tmp2(*stack);
+				tmp2.count = stack->count - this->maxAmount;
 
 				int empty = inv->getFirstEmptySlot();
 
