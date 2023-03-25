@@ -87,8 +87,7 @@ void ImageButtonInfo::draw(Vec2 mousePos, const char* location) {
 		canClickB = false;
 	}
 
-	DrawUtils::drawImage(location, imagePos, imageSize);
-	DrawUtils::flushImage();
+	DrawUtils::drawImage(location, imagePos, imageSize, Vec2(0, 0));
 }
 
 void ImmediateGui::startFrame() {

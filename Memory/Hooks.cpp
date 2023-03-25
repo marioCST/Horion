@@ -442,8 +442,7 @@ __int64 Hooks::RenderText(__int64 a1, MinecraftUIRenderContext* renderCtx) {
 				DrawUtils::fillRectangle(rectPos, ClientColors::menuBackgroundColor, 1.f);
 				DrawUtils::drawRectangle(rectPos, color, 1.f, 2.f);
 
-				DrawUtils::drawImage("textures/horion/banner", imgPos, imgSize);
-				DrawUtils::flushImage();
+				DrawUtils::drawImage("textures/horion/banner", imgPos, imgSize, Vec2(0, 0));
 
 				// Draw BIG epic horion watermark
 				/*{
