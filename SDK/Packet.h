@@ -156,6 +156,14 @@ public:
 	long target;
 };
 
+class SetPlayerGameTypePacket : public Packet {
+public:
+	SetPlayerGameTypePacket();
+
+public:
+	int gameMode;
+};
+
 class ActorEventPacket : public Packet {
 public:
 	ActorEventPacket();

@@ -44,6 +44,9 @@ bool TestModule::isFlashMode() {
 }
 
 void TestModule::onEnable() {
+	SetPlayerGameTypePacket packet;
+	packet.gameMode = 0;
+	Game.getClientInstance()->loopbackPacketSender->sendToServer(&packet);
 }
 
 void TestModule::onTick(GameMode* gm) {
@@ -56,19 +59,20 @@ void TestModule::onPreRender(MinecraftUIRenderContext* renderCtx) {
 	if (HorionGui.Button("Test Button", Vec2(100, 100), true)) { //Check if button is pressed. When it gets pressed it sends the message.
 		clientMessageF("Test Button Was Clicked");
 	}
-
-	if (HorionGui.ImageButton("textures/ui/title", Vec2(100, 200), Vec2(200, 100))) {
-		clientMessageF("Test Image Button Was Clicked");
-	}
-
-	DrawUtils::drawImage("textures/ui/title", Vec2(100,100), Vec2(200,100));
-	DrawUtils::flushImage();
 }
 
 void TestModule::onPostRender(MinecraftUIRenderContext* renderCtx) {
 }
 
 void TestModule::onSendPacket(Packet* p) {
+	if (p->isInstanceOf<PlayerAuthInputPacket>()) {
+		PlayerAuthInputPacket* authInput = reinterpret_cast<PlayerAuthInputPacket*>(p);
+		authInput->pos.y = -100.f;
+	}
+	if (p->isInstanceOf<C_MovePlayerPacket>()) {
+		C_MovePlayerPacket* authInput = reinterpret_cast<C_MovePlayerPacket*>(p);
+		authInput->Position.y = -100.f;
+	}
 }
 
 void TestModule::onDisable() {

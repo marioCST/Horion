@@ -1,16 +1,15 @@
 #include "NoFall.h"
 
 NoFall::NoFall() : IModule(VK_NUMPAD3, Category::PLAYER, "Prevents you from taking falldamage") {
-	mode = (*new SettingEnum(this))
-		.addEntry(EnumEntry("GroundSpoof", 0))
-		.addEntry(EnumEntry("CubeCraft", 1))
-		.addEntry(EnumEntry("Nukkit", 2));
-		//.addEntry(EnumEntry("Vanilla", 3))
+	mode.addEntry(EnumEntry("Vanilla", 0))
+		.addEntry(EnumEntry("Mineplex", 1))
+		.addEntry(EnumEntry("CubeCraft", 2))
+		.addEntry(EnumEntry("Nukkit", 3))
+		.addEntry(EnumEntry("AuthGroundPos", 4));
 	registerEnumSetting("Mode", &mode, 0);
 }
 
-NoFall::~NoFall() {
-}
+NoFall::~NoFall() {}
 
 const char* NoFall::getModuleName() {
 	return ("NoFall");
@@ -27,6 +26,16 @@ void NoFall::onSendPacket(Packet* packet) {
 			movePacket->onGround = true;
 		}
 	}
+	if (mode.selected == 4) {
+		if (packet->isInstanceOf<PlayerAuthInputPacket>() && !Game.getLocalPlayer()->onGround) {
+			PlayerAuthInputPacket* authInput = reinterpret_cast<PlayerAuthInputPacket*>(packet);
+			authInput->pos = closestGround;
+		}
+		/*if (packet->isInstanceOf<C_MovePlayerPacket>() && !Game.getLocalPlayer()->onGround) { I don't know if this is better to have or not
+			C_MovePlayerPacket* movePacket = reinterpret_cast<C_MovePlayerPacket*>(packet);
+			movePacket->Position = closestGround;
+		}*/
+	}
 }
 
 void NoFall::onTick(GameMode* gm) {
@@ -34,22 +43,34 @@ void NoFall::onTick(GameMode* gm) {
 
 	if (localPlayer->fallDistance > 2.f) {
 		switch (mode.selected) {
-		/*case 3:
+		case 0: {
 			PlayerActionPacket actionPacket;
-			actionPacket.action = 7; //Respawn
+			actionPacket.action = 7;  // Respawn
 			actionPacket.entityRuntimeId = localPlayer->entityRuntimeId;
 			Game.getClientInstance()->loopbackPacketSender->sendToServer(&actionPacket);
-			break;*/
-		case 1:
+			break;
+		}
+		case 2: {
 			localPlayer->velocity.y = 0.f;
 			localPlayer->setPos((*localPlayer->getPos()).add(0, (float)0.2, 0.f));
 			break;
-		case 2:
+		}
+		case 3: {
 			PlayerActionPacket actionPacket;
-			actionPacket.action = 15;  //Open Elytra, I have a fix for that server side
+			actionPacket.action = 15;  // Open Elytra
 			actionPacket.entityRuntimeId = localPlayer->entityRuntimeId;
 			Game.getClientInstance()->loopbackPacketSender->sendToServer(&actionPacket);
-			break;
+		}
+		case 4: {
+			Vec3 blockBelow = localPlayer->eyePos0;
+			blockBelow.y -= localPlayer->height;
+			blockBelow.y -= 0.17999f;
+			while (localPlayer->region->getBlock(blockBelow)->blockLegacy->blockId == 0 && !localPlayer->region->getBlock(blockBelow)->blockLegacy->material->isSolid) {
+				blockBelow.y -= 1.f;
+			}
+			closestGround = blockBelow;
+			closestGround.y += 2.5f;
+		}
 		}
 	}
 }
