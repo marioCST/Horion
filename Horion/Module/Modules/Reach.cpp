@@ -42,7 +42,7 @@ void Reach::onEnable() {
 #endif
 		}
 	} else {
-		uintptr_t reachOff = Utils::getBase() + 0x398A878; // Reach offset
+		uintptr_t reachOff = Utils::getBase() + 0x440C8E0;  // Reach offset
 
 		unsigned char arr[4];
 
@@ -57,7 +57,7 @@ void Reach::onDisable() {
 		if (reachPtr != 0)
 			VirtualProtect(reachPtr, sizeof(float), oldProtect, &oldProtect);
 	} else {
-		uintptr_t reachOff = Utils::getBase() + 0x398A878; // Reach offset
+		uintptr_t reachOff = Utils::getBase() + 0x440C8E0;  // Reach offset
 		PatchBytes((BYTE*)reachOff, (BYTE*)"\x00\x00\x40\x40" /*3*/, 4);
 	}
 }
