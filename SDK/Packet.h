@@ -250,6 +250,11 @@ public:
 	TextHolder reason;
 };*/
 
+class ResourcePacksInfoPacket : public Packet {
+public:
+	ResourcePacksInfoPacket();
+};
+
 #pragma pack(push, 8)
 
 __declspec(align(8)) class C_MovePlayerPacket : public Packet {

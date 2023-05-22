@@ -328,6 +328,21 @@ C_InteractPacket::C_InteractPacket(/*enum InteractPacket::Action, class ActorRun
 	vTable = disconnectPacketVtable;
 }*/
 
+ResourcePacksInfoPacket::ResourcePacksInfoPacket() {
+	static uintptr_t** resourcePacksInfoPacketVtable = 0x0;
+	if (resourcePacksInfoPacketVtable == 0x0) {
+		uintptr_t sigOffset = FindSignature("48 8D 05 ? ? ? ? 48 89 51 ? 48 89 01 48 8B C1 48 C7 81");
+		int offset = *reinterpret_cast<int*>(sigOffset + 3);
+		resourcePacksInfoPacketVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + /*length of instruction*/ 7);
+#ifdef _DEBUG
+		if (resourcePacksInfoPacketVtable == 0x0 || sigOffset == 0x0)
+			__debugbreak();
+#endif
+	}
+	memset(this, 0, sizeof(ResourcePacksInfoPacket));  // Avoid overwriting vtable
+	vTable = resourcePacksInfoPacketVtable;
+}
+
 SetPlayerGameTypePacket::SetPlayerGameTypePacket() {
 	static uintptr_t** setPlayerGameTypePacketVtable = 0x0;
 	if (setPlayerGameTypePacketVtable == 0x0) {
