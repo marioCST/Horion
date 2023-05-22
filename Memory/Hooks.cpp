@@ -111,15 +111,16 @@ void Hooks::Init() {
 		void* destroySpeed = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 48 89 74 24 ? 57 48 83 EC ? 48 8B FA 0F 29 74 24 ? 48 8B 91"));
 		g_Hooks.getDestroySpeedHook = std::make_unique<FuncHook>(destroySpeed, Hooks::getDestroySpeed);
 
-		//void* Actor_canSee = reinterpret_cast<void*>(FindSignature("4C 8B DC 49 89 5B 18 49 89 73 20 57 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 84 24 ? ? ? ? 48 8B 02"));
-		//g_Hooks.Actor_canSeeHook = std::make_unique<FuncHook>(Actor_canSee, Hooks::Actor_canSee);
+		void* Actor_canSee = reinterpret_cast<void*>(FindSignature("4C 8B DC 49 89 5B 18 49 89 73 20 57 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 84 24 ? ? ? ? 48 8B 02"));
+		g_Hooks.Actor_canSeeHook = std::make_unique<FuncHook>(Actor_canSee, Hooks::Actor_canSee);
 
-		//void* Actor_shouldRender = reinterpret_cast<void*>(FindSignature("48 83 EC ? 48 8B 01 FF 90 ? ? ? ? 84 C0 ? ? C0 48 83 C4 ? C3 CC CC CC CC CC CC CC CC CC 48 89 5C ? ? 57"));
-		//g_Hooks.Actor_shouldRenderHook = std::make_unique<FuncHook>(Actor_shouldRender, Hooks::Actor_shouldRender);
+		void* Actor_shouldRender = reinterpret_cast<void*>(FindSignature("48 83 EC ? 48 8B 01 FF 90 ? ? ? ? 84 C0 ? ? C0 48 83 C4 ? C3 CC CC CC CC CC CC CC CC CC 48 89 5C ? ? 57"));
+		g_Hooks.Actor_shouldRenderHook = std::make_unique<FuncHook>(Actor_shouldRender, Hooks::Actor_shouldRender);
 
 		//void* Actor_handleFallDistanceOnServer = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 48 89 74 24 ? 57 48 83 EC 50 48 8B 99 ? ? ? ? 48 8B F1 48 8B B9"));
 		//g_Hooks.Actor_handleFallDistanceOnServerHook = std::make_unique<FuncHook>(Actor_handleFallDistanceOnServer, Hooks::Actor_handleFallDistanceOnServer);
 
+		// Broken
 		//void* Actor_causeFallDamage = reinterpret_cast<void*>(FindSignature("40 53 48 83 EC 40 48 8B D9 0F 29 74 24 ? 48 8B 89 ? ? ? ? 0F"));
 		//g_Hooks.Actor_causeFallDamageHook = std::make_unique<FuncHook>(Actor_causeFallDamage, Hooks::Actor_causeFallDamage);
 
