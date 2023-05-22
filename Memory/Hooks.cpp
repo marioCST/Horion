@@ -28,13 +28,13 @@ void Hooks::Init() {
 	{
 		// vtables better than sigs
 
-		void* _renderCtx = reinterpret_cast<void*>(FindSignature("48 8B ? 48 89 ? ? 55 56 57 41 ? 41 ? 41 ? 41 ? 48 8D ? ? ? ? ? 48 81 EC ? ? ? ? 0F 29 ? ? 0F 29 ? ? 48 8B ? ? ? ? ? 48 33 ? 48 89 ? ? ? ? ? 4C 8B ? 48 89 ? ? ? 4C 8B"));
+		void* _renderCtx = reinterpret_cast<void*>(FindSignature("48 8b c4 48 89 58 ? 55 56 57 41 54 41 55 41 56 41 57 48 8d a8 ? ? ? ? 48 81 ec ? ? ? ? 0f 29 70 ? 0f 29 78 ? 48 8b 05 ? ? ? ? 48 33 c4 48 89 85 ? ? ? ? 4c 8b fa"));
 		g_Hooks.RenderTextHook = std::make_unique<FuncHook>(_renderCtx, Hooks::RenderText);
 
-		void* render = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 57 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 84 24 ? ? ? ? 48 8B DA 48 8B F9 B9"));
+		void* render = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 57 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 84 24 ? ? ? ? 48 8B DA 48 8B F9 B9 ? ? ? ?"));
 		g_Hooks.UIScene_renderHook = std::make_unique<FuncHook>(render, Hooks::UIScene_render);
 
-		void* key = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 57 48 83 EC ? 8B 05 ? ? ? ? 8B DA"));
+		void* key = reinterpret_cast<void*>(FindSignature("48 83 ec ? 0f b6 c1 4c 8d 05"));
 		g_Hooks.KeyMapHook = std::make_unique<FuncHook>(key, Hooks::KeyMapHookCallback);
 
 		void* _sendChatMessage = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ?? 55 56 57 41 54 41 55 41 56 41 57 48 8D AC 24 ?? ?? ?? ?? 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 85 ?? ?? ?? ?? 4C 8B EA 4C 8B F9 48 8B 49"));
@@ -64,9 +64,6 @@ void Hooks::Init() {
 		void* getGameEdition = reinterpret_cast<void*>(FindSignature("8B 91 ?? ?? ?? ?? 85 D2 74 1C 83 EA 01"));
 		g_Hooks.AppPlatform_getGameEditionHook = std::make_unique<FuncHook>(getGameEdition, Hooks::AppPlatform_getGameEdition);
 
-		void* getFov = reinterpret_cast<void*>(FindSignature("40 53 48 83 EC ?? 0F 29 7C 24 ?? 44"));
-		g_Hooks.LevelRendererPlayer_getFovHook = std::make_unique<FuncHook>(getFov, Hooks::LevelRendererPlayer_getFov);
-
 		void* tick_entityList = reinterpret_cast<void*>(FindSignature("48 89 ?? ?? ?? 57 48 83 EC ?? 48 8B ?? E8 ?? ?? ?? ?? ?? ?? ?? ?? ?? ?? 48 8B D8 ?? ?? ?? ?? ?? ?? 48 99"));
 		g_Hooks.MultiLevelPlayer_tickHook = std::make_unique<FuncHook>(tick_entityList, Hooks::MultiLevelPlayer_tick);
 
@@ -88,10 +85,10 @@ void Hooks::Init() {
 		void* autoComplete = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 55 56 57 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 24 ? 41 8B D9"));
 		g_Hooks.PleaseAutoCompleteHook = std::make_unique<FuncHook>(autoComplete, Hooks::PleaseAutoComplete);
 
-		void* fullbright = reinterpret_cast<void*>(FindSignature("48 83 EC ? 80 B9 ? ? ? ? ? 48 8D 54 24 ? 48 8B 01 74 ? 41 B8 ? ? ? ? FF 50 ? 48 8B 10 48 85 D2 74 ? 48 8B 42 ? 48 8B 88 ? ? ? ? 48 85 C9 74 ? E8 ? ? ? ? 48 83 C4 ? C3 F3 0F 10 42 ? 48 83 C4 ? C3 41 B8 ? ? ? ? FF 50 ? 48 8B 10 48 85 D2 75 ? E8 ? ? ? ? CC E8 ? ? ? ? CC CC CC CC CC CC CC CC CC CC F3 0F 11 4C 24"));
+		void* fullbright = reinterpret_cast<void*>(FindSignature("48 83 EC ? 80 B9 ? ? ? ? ? 48 8D 54 24 ? 48 8B 01 74 ? 41 B8 ? ? ? ? FF 50 ? 48 8B 10 48 85 D2 74 ? 48 8B 42 ? 48 8B 88 ? ? ? ? 48 85 C9 74 ? E8 ? ? ? ? 48 83 C4 ? C3 F3 0F 10 42 ? 48 83 C4 ? C3 41 B8 ? ? ? ? FF 50 ? 48 8B 10 48 85 D2 75 ? E8 ? ? ? ? CC E8 ? ? ? ? CC CC CC CC CC CC CC CC CC CC 40 53 48 83 EC ? 48 8B 01"));
 		g_Hooks.GetGammaHook = std::make_unique<FuncHook>(fullbright, Hooks::GetGamma);
 
-		void* RakNetInstance__tick = reinterpret_cast<void*>(FindSignature("48 89 5C 24 10 48 89 74 24 18 55 57 41 54 41 56 41 57 48 8D AC 24 20 FD FF FF 48 81 EC E0 03 00 00"));
+		void* RakNetInstance__tick = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 48 89 74 24 ? 55 57 41 54 41 56 41 57 48 8D AC 24 ? ? ? ? 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 85 ? ? ? ? 48 8B F9 45 33 FF"));
 		g_Hooks.RakNetInstance_tickHook = std::make_unique<FuncHook>(RakNetInstance__tick, Hooks::RakNetInstance_tick);
 
 		void* ConnectionRequest__create = reinterpret_cast<void*>(FindSignature("40 55 53 56 57 41 54 41 55 41 56 41 57 48 8D AC 24 ?? ?? ?? ?? 48 81 EC ?? ?? ?? ?? 48 8B ?? ?? ?? ?? ?? 48 33 C4 48 89 85 ?? ?? ?? ?? 49 8B D9 48 89 55 E8"));
@@ -204,25 +201,25 @@ void Hooks::Init() {
 			if (localPlayerVtable == 0x0)
 				logF("LocalPlayer signature not working!!!");
 			else {
-				g_Hooks.Actor_startSwimmingHook = std::make_unique<FuncHook>(localPlayerVtable[201], Hooks::Actor_startSwimming);
+				g_Hooks.Actor_startSwimmingHook = std::make_unique<FuncHook>(localPlayerVtable[200], Hooks::Actor_startSwimming);
 
-				g_Hooks.Actor_ascendLadderHook = std::make_unique<FuncHook>(localPlayerVtable[339], Hooks::Actor_ascendLadder);
+				g_Hooks.Actor_ascendLadderHook = std::make_unique<FuncHook>(localPlayerVtable[346], Hooks::Actor_ascendLadder);
 				
 				g_Hooks.Actor__setRotHook = std::make_unique<FuncHook>(localPlayerVtable[27], Hooks::Actor__setRot);
 
-				g_Hooks.Actor_swingHook = std::make_unique<FuncHook>(localPlayerVtable[219], Hooks::Actor_swing);
+				g_Hooks.Actor_swingHook = std::make_unique<FuncHook>(localPlayerVtable[218], Hooks::Actor_swing);
 
-				g_Hooks.JumpPowerHook = std::make_unique<FuncHook>(localPlayerVtable[345], Hooks::JumpPower); //jump from ground with movement proxy
+				g_Hooks.JumpPowerHook = std::make_unique<FuncHook>(localPlayerVtable[352], Hooks::JumpPower); //jump from ground with movement proxy
 
 				//g_Hooks.setPosHook = std::make_unique<FuncHook>(localPlayerVtable[19], Hooks::setPos);
 
 				g_Hooks.Actor_baseTickHook = std::make_unique<FuncHook>(localPlayerVtable[49], Hooks::Actor_baseTick);
 
-				g_Hooks.Mob__isImmobileHook = std::make_unique<FuncHook>(localPlayerVtable[91], Hooks::Mob__isImmobile);
+				g_Hooks.Mob__isImmobileHook = std::make_unique<FuncHook>(localPlayerVtable[92], Hooks::Mob__isImmobile);
 
 				g_Hooks.Actor_isInWaterHook = std::make_unique<FuncHook>(localPlayerVtable[71], Hooks::Actor_isInWater);
 
-				g_Hooks.Player_tickWorldHook = std::make_unique<FuncHook>(localPlayerVtable[364], Hooks::Player_tickWorld);
+				g_Hooks.Player_tickWorldHook = std::make_unique<FuncHook>(localPlayerVtable[368], Hooks::Player_tickWorld);
 
 				//g_Hooks.Actor__isInvisibleHook = std::make_unique<FuncHook>(localPlayerVtable[59], Hooks::Actor__isInvisible);
 			}
@@ -230,7 +227,7 @@ void Hooks::Init() {
 
 		// GameMode::vtable
 		{
-			uintptr_t** gameModeVtable = GetVtableFromSig("48 8D 05 ? ? ? ? 48 8B D9 48 89 01 8B FA 48 8B 89 ? ? ? ? 48 85 C9 74 ? 48 8B 01 BA ? ? ? ? FF 10 48 8B 8B", 3);
+			uintptr_t** gameModeVtable = *reinterpret_cast<uintptr_t***>(Game.getLocalPlayer()->getGameMode());
 			if (gameModeVtable == 0x0)
 				logF("GameMode signature not working!!!");
 			else {
@@ -742,7 +739,7 @@ void Hooks::PleaseAutoComplete(__int64 a1, __int64 a2, TextHolder* text, int a4)
 				}
 				text->setText(firstResult.cmdAlias.substr(0, maxReplaceLength));  // Set text
 				using syncShit = void(__fastcall*)(TextHolder*, TextHolder*);
-				static syncShit sync = reinterpret_cast<syncShit>(Utils::FindSignature("40 53 48 83 EC ? 48 8B DA 48 8D 4C 24 ? E8 ? ? ? ? 90 48 8B 40 ? 48 8B 08 48 8B 01 48 8B D3 FF 90 ? ? ? ? 90 F0 48 FF 0D ? ? ? ? 48 8B 44 24 ? 48 85 C0 74 ? 48 83 38 ? 74 ? 80 7C 24 ? ? 74 ? F0 48 FF 0D ? ? ? ? 48 8B 4C 24 ? 48 85 C9 74 ? 80 7C 24 ? ? 74 ? E8 ? ? ? ? C6 44 24 ? ? 48 8D 4C 24 ? E8 ? ? ? ? 48 8D 4C 24 ? E8 ? ? ? ? 80 7C 24 ? ? 74 ? 48 8B 4C 24 ? E8 ? ? ? ? 90 48 83 C4 ? 5B C3 B9 ? ? ? ? E8 ? ? ? ? CC CC CC CC CC CC CC CC CC CC CC CC CC CC CC CC 40 53"));
+				static syncShit sync = reinterpret_cast<syncShit>(Utils::FindSignature("40 53 48 83 ec ? 48 8b da 48 8d 4c 24 ? e8 ? ? ? ? 90 48 8b 40 ? 48 8b 08 48 8b 01 48 8b d3 ff 90 ? ? ? ? 90 48 8d 4c 24 ? e8 ? ? ? ? 80 7c 24 ? ? 74 ? 48 8b 4c 24 ? e8 ? ? ? ? 48 83 c4"));
 				sync(text, text);
 			}
 		}
@@ -823,11 +820,6 @@ void Hooks::LoopbackPacketSender_sendToClient(networkhandler* _this, const void*
 	
 	moduleMgr->onSendClientPacket(packet);
 	func(_this, networkIdentifier, packet, a4);
-}
-
-float Hooks::LevelRendererPlayer_getFov(__int64 _this, float a2, bool a3) {
-	static auto oGetFov = g_Hooks.LevelRendererPlayer_getFovHook->GetFastcall<float, __int64, float, bool>();
-	return oGetFov(_this, a2, a3);
 }
 
 void Hooks::MultiLevelPlayer_tick(EntityList* _this) {
@@ -1103,10 +1095,10 @@ void Hooks::Actor_startSwimming(Entity* _this) {
 	oFunc(_this);
 }
 
-void Hooks::RakNetInstance_tick(RakNetInstance* _this, __int64 a2, __int64 a3) {
-	static auto oTick = g_Hooks.RakNetInstance_tickHook->GetFastcall<void, RakNetInstance*, __int64, __int64>();
+void Hooks::RakNetInstance_tick(RakNetInstance* _this) {
+	static auto oTick = g_Hooks.RakNetInstance_tickHook->GetFastcall<void, RakNetInstance*>();
 	GameData::setRakNetInstance(_this);
-	oTick(_this, a2, a3);
+	oTick(_this);
 }
 
 float Hooks::GameMode_getPickRange(GameMode* _this, __int64 a2, char a3) {
