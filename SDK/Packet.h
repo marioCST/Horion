@@ -84,12 +84,13 @@ public:
 	char flags;
 };
 
-class C_AnimatePacket : public Packet {
+class AnimatePacket : public Packet {
 public:
-	C_AnimatePacket();
-	
-	int64_t entityId;
-	int64_t action;
+	AnimatePacket();
+	AnimatePacket(int action, __int64 entityRuntimeID, float rowingTime);
+
+	__int64 entityId;
+	int action;
 	float rowingTime;
 };
 
@@ -175,19 +176,23 @@ public:
 	int16_t itemId;            //0x003E
 };
 
-class C_MobEquipmentPacket : public Packet {
+class MobEquipmentPacket : public Packet {
 public:
-	C_MobEquipmentPacket();
-	C_MobEquipmentPacket(__int64 entityRuntimeId, ItemStack& item, int hotbarSlot, int inventorySlot);
-	
-	__int64 actorRuntimeId;  // 0x28
-	ItemDescriptor item;     // 0x30
-	int inventorySlot0;      // 0xC0
-	int selectedSlot0;       // 0xC4
-	uint8_t containerId;     // 0xC9
-	uint8_t inventorySlot;   // 0xC9
-	uint8_t selectedSlot;    // 0xC9
-	uint8_t containerId0;    // 0xC9
+	MobEquipmentPacket();
+	MobEquipmentPacket(__int64 entityRuntimeId, ItemStack& item, int hotbarSlot, int inventorySlot);
+
+private:
+	char pad_0x8[0x28];  // 0x0
+public:
+	__int64 entityRuntimeId;  // 0x28
+	ItemStack item;         // 0x30
+	int inventorySlot;        // 0xB8 DONT USE FOR PACKET SENDING
+	int hotbarSlot;           // 0xBC DONT USE FOR PACKET SENDING
+	char windowId;            // 0xC0  DONT USE FOR PACKET SENDING
+	char windowId1;           // 0xC1  DONT USE FOR PACKET SENDING
+	char inventorySlot1;      // 0xC2
+	char hotbarSlot1;         // 0xC3
+	char windowId2;           // 0xC4 ALL OF THIS IS PROBABLY BROKEN, DONT USE
 	char unknown1;
 };
 
@@ -275,3 +280,43 @@ public:
 };
 
 #pragma pack(pop)
+
+class PlayerHotbarPacket : public Packet {
+public:
+	PlayerHotbarPacket();
+	PlayerHotbarPacket(int selectedHotbarSlot, char containerId, bool selectHotbarSlot);
+
+	int selectedHotbarSlot;
+	char containerId;
+	bool selectHotbarSlot;
+};
+
+class MobEffectPacket : public Packet {
+public:
+	MobEffectPacket();
+	MobEffectPacket(__int64 entityRuntimeId, char event, int effectId, int amplifier, bool showParticles, int duration);  // showparticles and duration might be a in a different order
+
+	__int64 eid;
+	char event; // 0: None 1 : Add 2 : Modify 3 : Remove
+	int effectId;
+	int amplifier;
+	bool showParticles;
+	int duration;
+};
+
+class RemoveActorPacket : public Packet {
+public:
+	RemoveActorPacket();
+};
+
+class PlayerArmorDamagePacket : public Packet {
+public:
+	PlayerArmorDamagePacket();
+};
+
+class SetHealthPacket : public Packet {
+public:
+	SetHealthPacket();
+
+	int health;
+};

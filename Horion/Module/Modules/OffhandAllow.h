@@ -1,12 +1,13 @@
 #pragma once
+
 #include "Module.h"
 
-class NoSwing : public IModule {
+class OffhandAllow : public IModule {
 public:
-	bool server = false;
-	NoSwing();
-	~NoSwing();
+	OffhandAllow();
+	~OffhandAllow();
 
 	// Inherited via IModule
 	virtual const char* getModuleName() override;
+	virtual void onEnable() override;
 };

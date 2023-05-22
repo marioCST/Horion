@@ -93,6 +93,7 @@ private:
 	static int AppPlatform_getGameEdition(__int64 _this);
 	static void PleaseAutoComplete(__int64 _this, __int64 a2, TextHolder* text, int a4);
 	static void LoopbackPacketSender_sendToServer(LoopbackPacketSender* a, Packet* packet);
+	static void LoopbackPacketSender_sendToClient(class networkhandler* _this, const void* networkIdentifier, Packet* packet, int a4);
 	static float LevelRendererPlayer_getFov(__int64 _this, float a2, bool a3);
 	static void MultiLevelPlayer_tick(EntityList* entityList);
 	static void GameMode_startDestroyBlock(GameMode* _this, Vec3i* a2, uint8_t face, void* a4, void* a5);
@@ -123,7 +124,6 @@ private:
 	static void LocalPlayer__updateFromCamera(__int64 a1, Camera* camera, __int64* a3, Entity* a4);
 	static bool Mob__isImmobile(Entity*);
 	static void Actor__setRot(Entity* _this, Vec2& angle);
-	static void test(Weather* _this, float fogLevel);
 	static bool playerCallBack(Player* lp, __int64 a2, __int64 a3);
 	static void InventoryTransactionManager__addAction(InventoryTransactionManager*, InventoryAction&);
 	static void LevelRendererPlayer__renderNameTags(__int64 a1, __int64 a2, TextHolder* name, __int64 a4);
@@ -134,6 +134,8 @@ private:
 	static void Actor_handleFallDistanceOnServer(Entity* _this, float f1, float f2, bool b);
 	static void Actor_causeFallDamage(Entity* _this, float f);
 	static void Actor_checkFallDamage(Entity* _this, float f, bool b);
+	static bool Actor__isInWall(Entity* ent);
+	//static void testFunction(class networkhandler* _this, const void* networkIdentifier, Packet* packet, int a4);
 
 	std::unique_ptr<FuncHook> Actor_rotationHook;
 	std::unique_ptr<FuncHook> setPosHook;
@@ -151,6 +153,7 @@ private:
 	std::unique_ptr<FuncHook> AppPlatform_getGameEditionHook;
 	std::unique_ptr<FuncHook> PleaseAutoCompleteHook;
 	std::unique_ptr<FuncHook> LoopbackPacketSender_sendToServerHook;
+	std::unique_ptr<FuncHook> LoopbackPacketSender_sendToClientHook;
 	std::unique_ptr<FuncHook> LevelRendererPlayer_getFovHook;
 	std::unique_ptr<FuncHook> MultiLevelPlayer_tickHook;
 	std::unique_ptr<FuncHook> GameMode_startDestroyBlockHook;
@@ -186,7 +189,6 @@ private:
 	std::unique_ptr<FuncHook> LocalPlayer__updateFromCameraHook;
 	std::unique_ptr<FuncHook> Mob__isImmobileHook;
 	std::unique_ptr<FuncHook> Actor__setRotHook;
-	std::unique_ptr<FuncHook> testHook;
 	std::unique_ptr<FuncHook> getDestroySpeedHook;
 	std::unique_ptr<FuncHook> Actor__isInvisibleHook;
 	std::unique_ptr<FuncHook> FishingHook___fishHookEventHook;
@@ -199,6 +201,8 @@ private:
 	std::unique_ptr<FuncHook> Actor_handleFallDistanceOnServerHook;
 	std::unique_ptr<FuncHook> Actor_causeFallDamageHook;
 	std::unique_ptr<FuncHook> Actor_checkFallDamageHook;
+	std::unique_ptr<FuncHook> ActorisInWallHook;
+	//std::unique_ptr<FuncHook> testFunctionHook;
 };
 
 extern Hooks g_Hooks;
@@ -211,39 +215,57 @@ public:
 	FuncHook(void* func, void* hooked) {
 		funcPtr = func;
 
+		// Check if the function pointer is valid
+		if (IsBadReadPtr(funcPtr, sizeof(funcPtr))) {
+			logF("Invalid function pointer!");
+			return;
+		}
+
 		MH_STATUS ret = MH_CreateHook(func, hooked, &funcReal);
 		if (ret == MH_OK && (__int64)func > 10) {
-		} else
+			// Hook created successfully
+		} else {
 			logF("MH_CreateHook = %i", ret);
+		}
 	};
 
 	FuncHook(uintptr_t func, void* hooked) {
 		funcPtr = reinterpret_cast<void*>(func);
 
+		// Check if the function pointer is valid
+		if (IsBadReadPtr(funcPtr, sizeof(funcPtr))) {
+			logF("Invalid function pointer!");
+			return;
+		}
+
 		MH_STATUS ret = MH_CreateHook(funcPtr, hooked, &funcReal);
 		if (ret == MH_OK && (__int64)funcPtr > 10) {
-		} else
+		} else {
 			logF("MH_CreateHook = %i", ret);
+		}
 	};
 
 	void enableHook(bool enable = true) {
 		if (funcPtr != nullptr) {
 			int ret = enable ? MH_EnableHook(funcPtr) : MH_DisableHook(funcPtr);
-			if (ret != MH_OK)
+			if (ret != MH_OK) {
 				logF("MH_EnableHook = %i", ret);
-		} else
+			}
+		} else {
 			logF("enableHook() called with nullptr func!");
+		}
 	}
-
-	~FuncHook() {
-		Restore();
-	}
-
+	~FuncHook() {Restore();}
+	// Restore the hook
 	void Restore() {
-		if (funcPtr != nullptr)
-			MH_DisableHook(funcPtr);
+		if (funcPtr != nullptr) {
+			MH_STATUS ret = MH_DisableHook(funcPtr);
+			if (ret != MH_OK) {
+				logF("MH_DisableHook = %i", ret);
+			}
+		}
 	}
-
+	// Get the original function pointer with fastcall calling convention
 	template <typename TRet, typename... TArgs>
 	inline auto* GetFastcall() {
 		using Fn = TRet(__fastcall*)(TArgs...);

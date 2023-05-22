@@ -4,19 +4,20 @@
 #include <Windows.h>
 #include "../Utils/Logger.h"
 #include "../Utils/ClientColors.h"
+#include <glm/ext/matrix_transform.hpp>
 
-struct MaterialPtr {
+class MaterialPtr {
 	char padding[0x138];
 };
 
 using tess_vertex_t = void(__fastcall*)(Tessellator* _this, float v1, float v2, float v3);
-using meshHelper_renderImm_t = void(__fastcall*)(__int64, Tessellator* tesselator, MaterialPtr*);
+using meshHelper_renderImm_t = void(__fastcall*)(__int64, Tessellator* tessellator, MaterialPtr*);
 
 MinecraftUIRenderContext* renderCtx;
 GuiData* guiData;
 __int64 screenContext2d;
 __int64 game3dContext;
-Tessellator* tesselator;
+Tessellator* tessellator;
 float* colorHolder;
 std::shared_ptr<glmatrixf> refdef;
 Vec2 fov;
@@ -27,6 +28,7 @@ TexturePtr* texturePtr = nullptr;
 
 static MaterialPtr* uiMaterial = nullptr;
 static MaterialPtr* entityFlatStaticMaterial = nullptr;
+static MaterialPtr* blendMaterial = nullptr;
 
 bool DrawUtils::isLeftClickDown = false;
 bool DrawUtils::isRightClickDown = false;
@@ -75,7 +77,7 @@ void DrawUtils::setCtx(MinecraftUIRenderContext* ctx, GuiData* gui) {
 	renderCtx = ctx;
 	screenContext2d = reinterpret_cast<__int64*>(renderCtx)[2];
 
-	tesselator = *reinterpret_cast<Tessellator**>(screenContext2d + 0xB0);
+	tessellator = *reinterpret_cast<Tessellator**>(screenContext2d + 0xB0);
 	colorHolder = *reinterpret_cast<float**>(screenContext2d + 0x30);
 
 	glmatrixf* badrefdef = Game.getClientInstance()->getRefDef();
@@ -89,11 +91,18 @@ void DrawUtils::setCtx(MinecraftUIRenderContext* ctx, GuiData* gui) {
 
 	if (uiMaterial == nullptr) {
 		// 2 Sigs, wanted one comes first
-		uintptr_t sigOffset = FindSignature("4C 8D 05 ?? ?? ?? ?? 48 8B D3 48 8B CF 48 8B 5C 24 ?? 0F 28 7C 24 ?? 44 0F 28 44 24 ?? 48");
-		int offset = *reinterpret_cast<int*>(sigOffset + 3);
-		uiMaterial = reinterpret_cast<MaterialPtr*>(sigOffset + offset + 7);
+		//uintptr_t sigOffset = FindSignature("4C 8D 05 ?? ?? ?? ?? 48 8B D3 48 8B CF 48 8B 5C 24 ?? 0F 28 7C 24 ?? 44 0F 28 44 24 ?? 48");
+		//int offset = *reinterpret_cast<int*>(sigOffset + 3);
+		//uiMaterial = reinterpret_cast<MaterialPtr*>(sigOffset + offset + 7);
+		uiMaterial = reinterpret_cast<MaterialPtr*>(new mce::MaterialPtr("ui_fill_color"));
 	}
-	if(entityFlatStaticMaterial == nullptr && Game.isInGame()) entityFlatStaticMaterial = reinterpret_cast<MaterialPtr*>(Game.getClientInstance()->itemInHandRenderer->entityLineMaterial.materialPtr);
+	if (entityFlatStaticMaterial == nullptr) {
+		//entityFlatStaticMaterial = reinterpret_cast<MaterialPtr*>(Game.getClientInstance()->itemInHandRenderer->entityLineMaterial.materialPtr);
+		entityFlatStaticMaterial = reinterpret_cast<MaterialPtr*>(new mce::MaterialPtr("selection_overlay"));
+	}
+	if (blendMaterial == nullptr) {
+		blendMaterial = reinterpret_cast<MaterialPtr*>(new mce::MaterialPtr("fullscreen_cube_overlay_blend"));
+	}
 }
 
 void DrawUtils::setColor(float r, float g, float b, float a) {
@@ -149,7 +158,7 @@ float DrawUtils::getTextWidth(std::string* textStr, float textSize, Fonts font) 
 
 	Font* fontPtr = getFont(font);
 
-	float ret = renderCtx->getLineLength(fontPtr, &text, textSize);
+	float ret = renderCtx->getLineLength(fontPtr, &text, textSize, false);
 
 	return ret;
 }
@@ -167,26 +176,25 @@ void DrawUtils::flush() {
 }
 
 void DrawUtils::drawTriangle(const Vec2& p1, const Vec2& p2, const Vec2& p3) {
-	
-	DrawUtils::tess__begin(tesselator, 3, 3);
+	DrawUtils::tess__begin(tessellator, 3, 3);
 
-	tess_vertex(tesselator, p1.x, p1.y, 0);
-	tess_vertex(tesselator, p2.x, p2.y, 0);
-	tess_vertex(tesselator, p3.x, p3.y, 0);
+	tess_vertex(tessellator, p1.x, p1.y, 0);
+	tess_vertex(tessellator, p2.x, p2.y, 0);
+	tess_vertex(tessellator, p3.x, p3.y, 0);
 
-	meshHelper_renderImm(screenContext2d, tesselator, uiMaterial);
+	meshHelper_renderImm(screenContext2d, tessellator, uiMaterial);
 }
 
 
 void DrawUtils::drawQuad(const Vec2& p1, const Vec2& p2, const Vec2& p3, const Vec2& p4) {
-	DrawUtils::tess__begin(tesselator, 1, 4);
+	DrawUtils::tess__begin(tessellator, 1, 4);
 
-	tess_vertex(tesselator, p1.x, p1.y, 0);
-	tess_vertex(tesselator, p2.x, p2.y, 0);
-	tess_vertex(tesselator, p3.x, p3.y, 0);
-	tess_vertex(tesselator, p4.x, p4.y, 0);
+	tess_vertex(tessellator, p1.x, p1.y, 0);
+	tess_vertex(tessellator, p2.x, p2.y, 0);
+	tess_vertex(tessellator, p3.x, p3.y, 0);
+	tess_vertex(tessellator, p4.x, p4.y, 0);
 
-	meshHelper_renderImm(screenContext2d, tesselator, uiMaterial);
+	meshHelper_renderImm(screenContext2d, tessellator, uiMaterial);
 }
 
 void DrawUtils::drawLine(const Vec2& start, const Vec2& end, float lineWidth) {
@@ -200,24 +208,23 @@ void DrawUtils::drawLine(const Vec2& start, const Vec2& end, float lineWidth) {
 	modX *= lineWidth;
 	modY *= lineWidth;
 
-	DrawUtils::tess__begin(tesselator, 3, 6);
+	DrawUtils::tess__begin(tessellator, 3, 6);
 
-	tess_vertex(tesselator, start.x + modX, start.y + modY, 0);
-	tess_vertex(tesselator, start.x - modX, start.y - modY, 0);
-	tess_vertex(tesselator, end.x - modX, end.y - modY, 0);
+	tess_vertex(tessellator, start.x + modX, start.y + modY, 0);
+	tess_vertex(tessellator, start.x - modX, start.y - modY, 0);
+	tess_vertex(tessellator, end.x - modX, end.y - modY, 0);
 
-	tess_vertex(tesselator, start.x + modX, start.y + modY, 0);
-	tess_vertex(tesselator, end.x + modX, end.y + modY, 0);
-	tess_vertex(tesselator, end.x - modX, end.y - modY, 0);
+	tess_vertex(tessellator, start.x + modX, start.y + modY, 0);
+	tess_vertex(tessellator, end.x + modX, end.y + modY, 0);
+	tess_vertex(tessellator, end.x - modX, end.y - modY, 0);
 
-	meshHelper_renderImm(screenContext2d, tesselator, uiMaterial);
+	meshHelper_renderImm(screenContext2d, tessellator, uiMaterial);
 }
 
 void DrawUtils::drawText(const Vec2& pos, std::string* textStr, const MC_Color& color, float textSize, float alpha, Fonts font) {
 	TextHolder text(*textStr);
 	Font* fontPtr = getFont(font);
 	static uintptr_t caretMeasureData = 0xFFFFFFFF;
-
 
 	float posF[4];  // Vec4(startX, startY, endX, endY);
 	posF[0] = pos.x;
@@ -232,13 +239,11 @@ void DrawUtils::drawText(const Vec2& pos, std::string* textStr, const MC_Color& 
 	renderCtx->drawText(fontPtr, posF, &text, color.arr, alpha, 0, &textMeasure, &caretMeasureData);
 }
 
-void DrawUtils::drawBox(const Vec3& lower, const Vec3& upper, float lineWidth, bool outline) {
-	
-	Vec3 diff;
-	diff.x = upper.x - lower.x;
-	diff.y = upper.y - lower.y;
-	diff.z = upper.z - lower.z;
+void DrawUtils::drawBox(const Vec3& lower, const Vec3& upper, float lineWidth, bool fill, int mode) {
+	// Calculate the dimensions of the box
+	Vec3 diff = upper.sub(lower);
 
+	// Create an array of vertices representing the corners of the box
 	Vec3 vertices[8];
 	vertices[0] = Vec3(lower.x, lower.y, lower.z);
 	vertices[1] = Vec3(lower.x + diff.x, lower.y, lower.z);
@@ -249,99 +254,190 @@ void DrawUtils::drawBox(const Vec3& lower, const Vec3& upper, float lineWidth, b
 	vertices[6] = Vec3(lower.x, lower.y + diff.y, lower.z + diff.z);
 	vertices[7] = Vec3(lower.x + diff.x, lower.y + diff.y, lower.z + diff.z);
 
-	// Convert to screen coord
-	std::vector<std::tuple<int, Vec2>> screenCords;
+	if (fill) {
+		// Convert the vertices to screen coordinates
+		std::vector<Vec2> screenCords;
+		for (int i = 0; i < 8; i++) {
+			Vec2 screen;
+			if (refdef->OWorldToScreen(origin, vertices[i], screen, fov, screenSize)) {
+				screenCords.push_back(screen);
+			}
+		}
+
+		// Return if there are less than four points to draw quads with
+		if (screenCords.size() < 8) return;
+
+		// Define the indices of the vertices to use for each quad face
+		std::vector<std::tuple<int, int, int, int>> faces = {
+			{0, 1, 3, 2},  // Bottom face
+			{4, 5, 7, 6},  // Top face
+			{0, 1, 5, 4},  // Front face
+			{2, 3, 7, 6},  // Back face
+			{1, 3, 7, 5},  // Right face
+			{0, 2, 6, 4}   // Left face
+		};
+
+		// Draw the quads to fill the box
+		for (auto face : faces) {
+			DrawUtils::drawQuad(screenCords[std::get<0>(face)], screenCords[std::get<1>(face)], screenCords[std::get<2>(face)], screenCords[std::get<3>(face)]);
+			DrawUtils::drawQuad(screenCords[std::get<3>(face)], screenCords[std::get<2>(face)], screenCords[std::get<1>(face)], screenCords[std::get<0>(face)]);
+		}
+	}
+
+	if (mode == 1 || mode == 2) {
+		// Convert the vertices to screen coordinates
+		std::vector<std::tuple<int, Vec2>> screenCords;
+		for (int i = 0; i < 8; i++) {
+			Vec2 screen;
+			if (refdef->OWorldToScreen(origin, vertices[i], screen, fov, screenSize)) {
+				screenCords.emplace_back(mode == 2 ? (int)screenCords.size() : i, screen);
+			}
+		}
+
+		// Return if there are less than two points to draw lines between
+		if (screenCords.size() < 2) return;
+
+		switch (mode) {
+		case 1: {
+			// Draw lines between all pairs of vertices
+			for (auto it = screenCords.begin(); it != screenCords.end(); it++) {
+				auto from = *it;
+				auto fromOrig = vertices[std::get<0>(from)];
+
+				for (auto to : screenCords) {
+					auto toOrig = vertices[std::get<0>(to)];
+
+					// Determine if the line should be drawn based on the relative positions of the vertices
+					bool shouldDraw = false;
+					// X direction
+					shouldDraw |= fromOrig.y == toOrig.y && fromOrig.z == toOrig.z && fromOrig.x < toOrig.x;
+					// Y direction
+					shouldDraw |= fromOrig.x == toOrig.x && fromOrig.z == toOrig.z && fromOrig.y < toOrig.y;
+					// Z direction
+					shouldDraw |= fromOrig.x == toOrig.x && fromOrig.y == toOrig.y && fromOrig.z < toOrig.z;
+
+					if (shouldDraw) DrawUtils::drawLine(std::get<1>(from), std::get<1>(to), lineWidth);
+				}
+			}
+			return;
+			break;
+		}
+		case 2: {
+			// Find start vertex
+			auto it = screenCords.begin();
+			std::tuple<int, Vec2> start = *it;
+			it++;
+			for (; it != screenCords.end(); it++) {
+				auto cur = *it;
+				if (std::get<1>(cur).x < std::get<1>(start).x) {
+					start = cur;
+				}
+			}
+
+			// Follow outer line
+			std::vector<int> indices;
+
+			auto current = start;
+			indices.push_back(std::get<0>(current));
+			Vec2 lastDir(0, -1);
+			do {
+				float smallestAngle = PI * 2;
+				Vec2 smallestDir;
+				std::tuple<int, Vec2> smallestE;
+				auto lastDirAtan2 = atan2(lastDir.y, lastDir.x);
+				for (auto cur : screenCords) {
+					if (std::get<0>(current) == std::get<0>(cur))
+						continue;
+
+					// angle between vecs
+					Vec2 dir = Vec2(std::get<1>(cur)).sub(std::get<1>(current));
+					float angle = atan2(dir.y, dir.x) - lastDirAtan2;
+					if (angle > PI) {
+						angle -= 2 * PI;
+					} else if (angle <= -PI) {
+						angle += 2 * PI;
+					}
+					if (angle >= 0 && angle < smallestAngle) {
+						smallestAngle = angle;
+						smallestDir = dir;
+						smallestE = cur;
+					}
+				}
+				indices.push_back(std::get<0>(smallestE));
+				lastDir = smallestDir;
+				current = smallestE;
+			} while (std::get<0>(current) != std::get<0>(start) && indices.size() < 8);
+
+			// draw
+
+			Vec2 lastVertex;
+			bool hasLastVertex = false;
+			for (auto& indice : indices) {
+				Vec2 curVertex = std::get<1>(screenCords[indice]);
+				if (!hasLastVertex) {
+					hasLastVertex = true;
+					lastVertex = curVertex;
+					continue;
+				}
+
+				drawLine(lastVertex, curVertex, lineWidth);
+				lastVertex = curVertex;
+			}
+			return;
+			break;
+		}
+		}
+	}
+}
+
+void DrawUtils::draw2DBox(const Vec3& lower, const Vec3& upper, float lineWidth, bool fill, bool corners) {
+	if (Game.getLocalPlayer() == nullptr) return;
+	Vec3 worldPoints[8];
+	worldPoints[0] = Vec3(lower.x, lower.y, lower.z);
+	worldPoints[1] = Vec3(lower.x, lower.y, upper.z);
+	worldPoints[2] = Vec3(upper.x, lower.y, lower.z);
+	worldPoints[3] = Vec3(upper.x, lower.y, upper.z);
+	worldPoints[4] = Vec3(lower.x, upper.y, lower.z);
+	worldPoints[5] = Vec3(lower.x, upper.y, upper.z);
+	worldPoints[6] = Vec3(upper.x, upper.y, lower.z);
+	worldPoints[7] = Vec3(upper.x, upper.y, upper.z);
+
+	std::vector<Vec2> points;
 	for (int i = 0; i < 8; i++) {
-		Vec2 screen;
-		if (refdef->OWorldToScreen(origin, vertices[i], screen, fov, screenSize)) {
-			screenCords.emplace_back(outline ? (int) screenCords.size() : i, screen);
-		}
+		Vec2 result;
+		if (refdef->OWorldToScreen(origin, worldPoints[i], result, fov, screenSize))
+			points.emplace_back(result);
 	}
-	if (screenCords.size() < 2)
-		return;  // No lines possible
+	if (points.size() < 1) return;
 
-	if (!outline) {
-		for (auto it = screenCords.begin(); it != screenCords.end(); it++) {
-			auto from = *it;
-			auto fromOrig = vertices[std::get<0>(from)];
-
-			for (auto to : screenCords) {
-				auto toOrig = vertices[std::get<0>(to)];
-
-				bool shouldDraw = false;
-				// X direction
-				shouldDraw |= fromOrig.y == toOrig.y && fromOrig.z == toOrig.z && fromOrig.x < toOrig.x; 
-				// Y direction
-				shouldDraw |= fromOrig.x == toOrig.x && fromOrig.z == toOrig.z && fromOrig.y < toOrig.y; 
-				// Z direction
-				shouldDraw |= fromOrig.x == toOrig.x && fromOrig.y == toOrig.y && fromOrig.z < toOrig.z; 
-				
-				if (shouldDraw)
-					drawLine(std::get<1>(from), std::get<1>(to), lineWidth);
-			}
-		}
-
-		return;
+	Vec4 resultRect = {points[0].x, points[0].y, points[0].x, points[0].y};
+	for (const auto& point : points) {
+		if (point.x < resultRect.x) resultRect.x = point.x;
+		if (point.y < resultRect.y) resultRect.y = point.y;
+		if (point.x > resultRect.z) resultRect.z = point.x;
+		if (point.y > resultRect.w) resultRect.w = point.y;
 	}
-	// Find start vertex
-	auto it = screenCords.begin();
-	std::tuple<int, Vec2> start = *it;
-	it++;
-	for (; it != screenCords.end(); it++) {
-		auto cur = *it;
-		if (std::get<1>(cur).x < std::get<1>(start).x) {
-			start = cur;
-		}
-	}
+	if (fill) DrawUtils::fillRectangle(Vec2(resultRect.x, resultRect.y), Vec2(resultRect.z, resultRect.w));
+	if (!corners)
+		DrawUtils::drawRectangle(Vec2(resultRect.x, resultRect.y), Vec2(resultRect.z, resultRect.w), lineWidth);
+	else {
+		float length = (resultRect.x - resultRect.z) / 4.f;
 
-	// Follow outer line
-	std::vector<int> indices;
+		// Top left
+		DrawUtils::drawLine(Vec2(resultRect.x, resultRect.y), Vec2(resultRect.x - length, resultRect.y), lineWidth);
+		DrawUtils::drawLine(Vec2(resultRect.x, resultRect.y), Vec2(resultRect.x, resultRect.y - length), lineWidth);
 
-	auto current = start;
-	indices.push_back(std::get<0>(current));
-	Vec2 lastDir(0, -1);
-	do {
-		float smallestAngle = PI * 2;
-		Vec2 smallestDir;
-		std::tuple<int, Vec2> smallestE;
-		auto lastDirAtan2 = atan2(lastDir.y, lastDir.x);
-		for (auto cur : screenCords) {
-			if (std::get<0>(current) == std::get<0>(cur))
-				continue;
+		// Top right
+		DrawUtils::drawLine(Vec2(resultRect.z, resultRect.y), Vec2(resultRect.z + length, resultRect.y), lineWidth);
+		DrawUtils::drawLine(Vec2(resultRect.z, resultRect.y), Vec2(resultRect.z, resultRect.y - length), lineWidth);
 
-			// angle between vecs
-			Vec2 dir = Vec2(std::get<1>(cur)).sub(std::get<1>(current));
-			float angle = atan2(dir.y, dir.x) - lastDirAtan2;
-			if (angle > PI) {
-				angle -= 2 * PI;
-			} else if (angle <= -PI) {
-				angle += 2 * PI;
-			}
-			if (angle >= 0 && angle < smallestAngle) {
-				smallestAngle = angle;
-				smallestDir = dir;
-				smallestE = cur;
-			}
-		}
-		indices.push_back(std::get<0>(smallestE));
-		lastDir = smallestDir;
-		current = smallestE;
-	} while (std::get<0>(current) != std::get<0>(start) && indices.size() < 8);
+		// Bottom left
+		DrawUtils::drawLine(Vec2(resultRect.x, resultRect.w), Vec2(resultRect.x - length, resultRect.w), lineWidth);
+		DrawUtils::drawLine(Vec2(resultRect.x, resultRect.w), Vec2(resultRect.x, resultRect.w + length), lineWidth);
 
-	// draw
-	
-	Vec2 lastVertex;
-	bool hasLastVertex = false;
-	for (auto& indice : indices) {
-		Vec2 curVertex = std::get<1>(screenCords[indice]);
-		if (!hasLastVertex) {
-			hasLastVertex = true;
-			lastVertex = curVertex;
-			continue;
-		}
-		
-		drawLine(lastVertex, curVertex, lineWidth);
-		lastVertex = curVertex;
+		// Bottom right
+		DrawUtils::drawLine(Vec2(resultRect.z, resultRect.w), Vec2(resultRect.z + length, resultRect.w), lineWidth);
+		DrawUtils::drawLine(Vec2(resultRect.z, resultRect.w), Vec2(resultRect.z, resultRect.w + length), lineWidth);
 	}
 }
 
@@ -349,7 +445,7 @@ void DrawUtils::drawImage(std::string filePath, Vec2& imagePos, Vec2& ImageDimen
 	if (texturePtr == nullptr) {
 		texturePtr = new TexturePtr();
 		FilePath file(filePath);
-		renderCtx->getTexture(texturePtr, file);
+		//renderCtx->getTexture(texturePtr, file);
 	}
 
 	__int64 yot = 0;
@@ -357,9 +453,9 @@ void DrawUtils::drawImage(std::string filePath, Vec2& imagePos, Vec2& ImageDimen
 	static uintptr_t flushImageAddr = FindSignature("48 8B C4 55 56 57 41 54 41 55 41 56 41 57 ?? ?? ?? ?? ?? ?? ?? 48 ?? ?? ?? ?? ?? ?? 48 ?? ?? ?? ?? ?? ?? ?? 48 89 58 ?? 0F 29 70 ?? 0F 29 78 ?? 44 0F 29 40 ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 ?? ?? ?? ?? ?? ?? ?? 4D 8B E1 44 0F 28 C2 4C 8B F2 4C 8B F9");
 
 	if (texturePtr != nullptr) {
-		renderCtx->drawImage(texturePtr, imagePos, ImageDimension, yot, idk);
+		//renderCtx->drawImage(texturePtr, imagePos, ImageDimension, yot, idk);
 		MC_Color col(1.f, 1.f, 1.f);
-		renderCtx->flushImages(col, (float)flushImageAddr, (__int64)&hashedString);
+		//renderCtx->flushImages(col, (float)flushImageAddr, (__int64)&hashedString);
 	}
 }
 
@@ -415,49 +511,60 @@ void DrawUtils::drawNameTags(Entity* ent, float textSize, bool drawHealth, bool 
 	}
 }
 
-void DrawUtils::drawEntityBox(Entity* ent, float lineWidth) {
+void DrawUtils::drawEntityBox(Entity* ent, float lineWidth, bool fill) {
 	Vec3 end = ent->eyePos0;
-	AABB render(end, ent->width, ent->height, end.y - ent->aabb.lower.y);
+	AABB render;
+	if (ent->isPlayer()) {
+		render = AABB(end, ent->width, ent->height, ent->height);
+		render.upper.y += 0.2f;
+		render.lower.y += 0.2f;
+	} else
+		render = AABB(end, ent->width, ent->height, 0);
 	render.upper.y += 0.1f;
 
-	drawBox(render.lower, render.upper, lineWidth, true);
+	float LineWidth = (float)fmax(0.5f, 1 / (float)fmax(1, (float)Game.getLocalPlayer()->eyePos0.dist(end)));
+	DrawUtils::drawBox(render.lower, render.upper, lineWidth == 0 ? LineWidth : lineWidth, fill);
 }
 
 void DrawUtils::draw2D(Entity* ent, float lineWidth) {
-	Vec3 base = ent->eyePos0;
-	float ofs = (Game.getLocalPlayer()->yaw + 90.f) * (PI / 180);
+	if (Game.getLocalPlayer() == nullptr) return;
+	Vec3 end = ent->eyePos0;
+	AABB render;
+	if (ent->isPlayer()) {
+		render = AABB(end, ent->width, ent->height, ent->height);
+		render.upper.y += 0.2f;
+		render.lower.y += 0.2f;
+	} else
+		render = AABB(end, ent->width, ent->height, 0);
+	render.upper.y += 0.1f;
 
-	Vec3 corners[4];
-	Vec2 corners2d[4];
+	Vec3 worldPoints[8];
+	worldPoints[0] = Vec3(render.lower.x, render.lower.y, render.lower.z);
+	worldPoints[1] = Vec3(render.lower.x, render.lower.y, render.upper.z);
+	worldPoints[2] = Vec3(render.upper.x, render.lower.y, render.lower.z);
+	worldPoints[3] = Vec3(render.upper.x, render.lower.y, render.upper.z);
+	worldPoints[4] = Vec3(render.lower.x, render.upper.y, render.lower.z);
+	worldPoints[5] = Vec3(render.lower.x, render.upper.y, render.upper.z);
+	worldPoints[6] = Vec3(render.upper.x, render.upper.y, render.lower.z);
+	worldPoints[7] = Vec3(render.upper.x, render.upper.y, render.upper.z);
 
-	corners[0] = Vec3(base.x - ent->width / 1.5f * -sin(ofs), ent->aabb.upper.y + (float)0.1, base.z - ent->width / 1.5f * cos(ofs));
-	corners[1] = Vec3(base.x + ent->width / 1.5f * -sin(ofs), ent->aabb.upper.y + (float)0.1, base.z + ent->width / 1.5f * cos(ofs));
-	corners[2] = Vec3(base.x - ent->width / 1.5f * -sin(ofs), ent->aabb.lower.y, base.z - ent->width / 1.5f * cos(ofs));
-	corners[3] = Vec3(base.x + ent->width / 1.5f * -sin(ofs), ent->aabb.lower.y, base.z + ent->width / 1.5f * cos(ofs));
-
-	if (refdef->OWorldToScreen(origin, corners[0], corners2d[0], fov, screenSize) &&
-		refdef->OWorldToScreen(origin, corners[1], corners2d[1], fov, screenSize) &&
-		refdef->OWorldToScreen(origin, corners[2], corners2d[2], fov, screenSize) &&
-		refdef->OWorldToScreen(origin, corners[3], corners2d[3], fov, screenSize)) {
-		//float length = (corners2d[1].x - corners2d[0].x) / 4.f;
-
-		/*drawLine(corners2d[0], Vec2(corners2d[0].x + length, corners2d[0].y), lineWidth);
-		drawLine(corners2d[0], Vec2(corners2d[0].x, corners2d[0].y + length), lineWidth);
-
-		drawLine(Vec2(corners2d[1].x - length, corners2d[1].y), corners2d[1], lineWidth);
-		drawLine(corners2d[1], Vec2(corners2d[1].x, corners2d[1].y + length), lineWidth);
-
-		drawLine(Vec2(corners2d[2].x, corners2d[2].y - length), corners2d[2], lineWidth);
-		drawLine(corners2d[2], Vec2(corners2d[2].x + length, corners2d[2].y), lineWidth);
-
-		drawLine(Vec2(corners2d[3].x, corners2d[3].y - length), corners2d[3], lineWidth);
-		drawLine(Vec2(corners2d[3].x - length, corners2d[3].y), corners2d[3], lineWidth);*/
-
-		drawLine(corners2d[0], corners2d[1], lineWidth);
-		drawLine(corners2d[0], corners2d[2], lineWidth);
-		drawLine(corners2d[3], corners2d[1], lineWidth);
-		drawLine(corners2d[3], corners2d[2], lineWidth);
+	std::vector<Vec2> points;
+	for (int i = 0; i < 8; i++) {
+		Vec2 result;
+		if (refdef->OWorldToScreen(origin, worldPoints[i], result, fov, screenSize))
+			points.emplace_back(result);
 	}
+	if (points.size() < 1) return;
+
+	Vec4 resultRect = {points[0].x, points[0].y, points[0].x, points[0].y};
+	for (const auto& point : points) {
+		if (point.x < resultRect.x) resultRect.x = point.x;
+		if (point.y < resultRect.y) resultRect.y = point.y;
+		if (point.x > resultRect.z) resultRect.z = point.x;
+		if (point.y > resultRect.w) resultRect.w = point.y;
+	}
+	float LineWidth = (float)fmax(0.5f, 1 / (float)fmax(1, (float)Game.getLocalPlayer()->eyePos0.dist(end)));
+	DrawUtils::drawRectangle(Vec2(resultRect.x, resultRect.y), Vec2(resultRect.z, resultRect.w), lineWidth == 0 ? LineWidth : lineWidth);
 }
 
 void DrawUtils::drawItem(ItemStack* item, const Vec2& itemPos, float opacity, float scale, bool isEnchanted) {
@@ -473,7 +580,7 @@ Vec2 DrawUtils::worldToScreen(const Vec3& world) {
 	refdef->OWorldToScreen(origin, world, ret, fov, screenSize);
 	return ret;
 }
-void DrawUtils::drawLine3d(const Vec3& start, const Vec3& end) {
+void DrawUtils::drawLine3d(const Vec3& start, const Vec3& end, bool onUi) {
 	if(game3dContext == 0 || entityFlatStaticMaterial == 0)
 		return;
 
@@ -487,13 +594,13 @@ void DrawUtils::drawLine3d(const Vec3& start, const Vec3& end) {
 	tess_vertex(myTess, start1.x, start1.y, start1.z);
 	tess_vertex(myTess, end1.x, end1.y, end1.z);
 
-	meshHelper_renderImm(game3dContext, myTess, entityFlatStaticMaterial);
+	meshHelper_renderImm(game3dContext, myTess, onUi ? uiMaterial : blendMaterial);
 }
-void DrawUtils::drawBox3d(const Vec3& lower, const Vec3& upper) {
+void DrawUtils::drawBox3d(const Vec3& lower, const Vec3& upper, float scale, bool onUi) {
 	if (game3dContext == 0 || entityFlatStaticMaterial == 0)
 		return;
 
-	auto myTess = DrawUtils::get3dTessellator();
+	Tessellator* myTess = DrawUtils::get3dTessellator();
 
 	DrawUtils::tess__begin(myTess, 4, 12);
 
@@ -514,38 +621,137 @@ void DrawUtils::drawBox3d(const Vec3& lower, const Vec3& upper) {
 	vertices[5] = Vec3(newLower.x + diff.x, newLower.y + diff.y, newLower.z);
 	vertices[6] = Vec3(newLower.x, newLower.y + diff.y, newLower.z + diff.z);
 	vertices[7] = Vec3(newLower.x + diff.x, newLower.y + diff.y, newLower.z + diff.z);
+	// Scale vertices using glm
+	glm::mat4 rotationMatrix = glm::rotate(glm::mat4(scale), 0.f, glm::vec3(1.0f, 1.0f, 1.0f));
+	Vec3 newLowerReal = newLower.add(0.5f, 0.5f, 0.5f);  // .add(0.4375f, 0.4375f, 0.4375f) is chest
+	for (int i = 0; i < 8; i++) {
+		glm::vec4 rotatedVertex = rotationMatrix * glm::vec4(vertices[i].x - newLowerReal.x, vertices[i].y - newLowerReal.y, vertices[i].z - newLowerReal.z, 0.0f);
+		vertices[i] = Vec3{rotatedVertex.x + newLowerReal.x, rotatedVertex.y + newLowerReal.y, rotatedVertex.z + newLowerReal.z};
+	}
 
-	#define line(m, n) tess_vertex(myTess, m.x, m.y, m.z); \
-		tess_vertex(myTess, n.x, n.y, n.z);
+#define line(m, n)                      \
+	tess_vertex(myTess, m.x, m.y, m.z); \
+	tess_vertex(myTess, n.x, n.y, n.z);
+
+	// Top square
+	line(vertices[4], vertices[5]);
+	line(vertices[5], vertices[7]);
+	line(vertices[7], vertices[6]);
+	line(vertices[6], vertices[4]);
+
+	// Bottom Square
+	line(vertices[0], vertices[1]);
+	line(vertices[1], vertices[3]);
+	line(vertices[3], vertices[2]);
+	line(vertices[2], vertices[0]);
+
+	// Sides
+	line(vertices[0], vertices[4]);
+	line(vertices[1], vertices[5]);
+	line(vertices[2], vertices[6]);
+	line(vertices[3], vertices[7]);
+
+#undef line
 	
-	#define li(m, n) line(vertices[m], vertices[n]);
-
-	li(0, 1);
-	li(1, 3);
-	li(3, 2);
-	li(2, 0);
-
-	li(4, 5);
-	li(5, 7);
-	li(7, 6);
-	li(6, 4);
-
-	li(0, 4);
-	li(1, 5);
-	li(2, 6);
-	li(3, 7);
-
-	#undef li
-	#undef line
-	
-	meshHelper_renderImm(game3dContext, myTess, entityFlatStaticMaterial);
+	meshHelper_renderImm(game3dContext, myTess, onUi ? uiMaterial : blendMaterial);
 }
+
+void DrawUtils::drawBox3dFilled(const Vec3& lower, const Vec3& upper, float scale, bool outline, bool onUi) {
+	if (game3dContext == 0 || entityFlatStaticMaterial == 0)
+		return;
+
+	Tessellator* myTess = DrawUtils::get3dTessellator();
+	Vec3 diff = upper.sub(lower);
+	Vec3 newLower = lower.sub(origin);
+	Vec3 vertices[8] = {
+		{newLower.x, newLower.y, newLower.z},
+		{newLower.x + diff.x, newLower.y, newLower.z},
+		{newLower.x, newLower.y, newLower.z + diff.z},
+		{newLower.x + diff.x, newLower.y, newLower.z + diff.z},
+
+		{newLower.x, newLower.y + diff.y, newLower.z},
+		{newLower.x + diff.x, newLower.y + diff.y, newLower.z},
+		{newLower.x, newLower.y + diff.y, newLower.z + diff.z},
+		{newLower.x + diff.x, newLower.y + diff.y, newLower.z + diff.z}};
+	// Scale vertices using glm
+	glm::mat4 rotationMatrix = glm::rotate(glm::mat4(scale), 0.f, glm::vec3(1.0f, 1.0f, 1.0f));
+	Vec3 newLowerReal = newLower.add(0.5f, 0.5f, 0.5f);  // .add(0.4375f, 0.4375f, 0.4375f) is chest
+	for (int i = 0; i < 8; i++) {
+		glm::vec4 rotatedVertex = rotationMatrix * glm::vec4(vertices[i].x - newLowerReal.x, vertices[i].y - newLowerReal.y, vertices[i].z - newLowerReal.z, 0.0f);
+		vertices[i] = Vec3{rotatedVertex.x + newLowerReal.x, rotatedVertex.y + newLowerReal.y, rotatedVertex.z + newLowerReal.z};
+	}
+
+	DrawUtils::tess__begin(myTess, 1);
+	static int v[48] = {5, 7, 6, 4, 4, 6, 7, 5, 1, 3, 2, 0, 0, 2, 3, 1, 4, 5, 1, 0, 0, 1, 5, 4, 6, 7, 3, 2, 2, 3, 7, 6, 4, 6, 2, 0, 0, 2, 6, 4, 5, 7, 3, 1, 1, 3, 7, 5};
+	for (int i = 0; i < 48; i++) tess_vertex(myTess, vertices[v[i]].x, vertices[v[i]].y, vertices[v[i]].z);
+	meshHelper_renderImm(game3dContext, myTess, onUi ? uiMaterial : blendMaterial);
+
+	if (!outline) return;
+	DrawUtils::tess__begin(myTess, 4, 12);
+#define line(m, n)                      \
+	tess_vertex(myTess, m.x, m.y, m.z); \
+	tess_vertex(myTess, n.x, n.y, n.z);
+
+	// Top square
+	line(vertices[4], vertices[5]);
+	line(vertices[5], vertices[7]);
+	line(vertices[7], vertices[6]);
+	line(vertices[6], vertices[4]);
+
+	// Bottom Square
+	line(vertices[0], vertices[1]);
+	line(vertices[1], vertices[3]);
+	line(vertices[3], vertices[2]);
+	line(vertices[2], vertices[0]);
+
+	// Sides
+	line(vertices[0], vertices[4]);
+	line(vertices[1], vertices[5]);
+	line(vertices[2], vertices[6]);
+	line(vertices[3], vertices[7]);
+
+#undef line
+	meshHelper_renderImm(game3dContext, myTess, onUi ? uiMaterial : blendMaterial);
+}
+
+void DrawUtils::drawCircle(Vec2 pos, Vec2 radius, MC_Color color, double quality) {
+	DrawUtils::setColor(color.r, color.g, color.b, color.a);
+	DrawUtils::tess__begin(tessellator, 5);
+
+	for (int i = 0; i <= 360 / quality; i++) {
+		double x2 = sin(((i * quality * PI) / 180)) * radius.x;
+		double y2 = cos(((i * quality * PI) / 180)) * radius.y;
+		tess_vertex(tessellator, pos.x + x2, pos.y + y2, 0);
+	}
+	meshHelper_renderImm(screenContext2d, tessellator, uiMaterial);
+}
+
+void DrawUtils::drawCircleFilled(Vec2 pos, Vec2 radius, MC_Color color, double quality) {
+	float x;
+	float y;
+	DrawUtils::setColor(color.r, color.g, color.b, color.a);
+	for (double i = 0; i <= 360;) {
+		DrawUtils::tess__begin(tessellator, 3);
+		x = radius.x * (float)cos(i);
+		y = radius.y * (float)sin(i);
+		tess_vertex(tessellator, x + pos.x, y + pos.y, 0);
+		i = i + quality;
+		x = radius.x * (float)cos(i);
+		y = radius.y * (float)sin(i);
+		tess_vertex(tessellator, x + pos.x, y + pos.y, 0);
+		tess_vertex(tessellator, pos.x, pos.y, 0);
+		i = i + quality;
+	}
+
+	meshHelper_renderImm(screenContext2d, tessellator, uiMaterial);
+}
+
 void DrawUtils::fillRectangle(const Vec4& pos, const MC_Color& col, float alpha) {
 	DrawUtils::setColor(col.r, col.g, col.b, alpha);
 	DrawUtils::drawQuad({pos.x, pos.w}, {pos.z, pos.w}, {pos.z, pos.y}, {pos.x, pos.y});
 }
 inline void DrawUtils::tess__begin(Tessellator* tess, int vertexFormat, int numVerticesReserved) {
-	__int64 tesselator = reinterpret_cast<__int64>(tess);
+	__int64 tessellator = reinterpret_cast<__int64>(tess);
 
 	using tess_begin_t = void(__fastcall*)(Tessellator*, int, int);
 	static tess_begin_t tess_begin = reinterpret_cast<tess_begin_t>(FindSignature("48 89 5C 24 ?? 55 48 83 EC ?? 80 B9 ?? ?? ?? ?? 00 45"));

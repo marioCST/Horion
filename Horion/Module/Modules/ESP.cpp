@@ -1,5 +1,5 @@
 #include "ESP.h"
-
+#include "../../FriendList/FriendsManager.h"
 #include "../../../Utils/Target.h"
 
 ESP::ESP() : IModule('O', Category::VISUAL, "Makes it easier to find entities around you.") {
@@ -24,7 +24,7 @@ void doRenderStuff(Entity* ent, bool isRegularEntitie) {
 	if (ent == localPlayer)
 		return;
 	static auto noFriendsModule = moduleMgr->getModule<NoFriends>();
-	if (!noFriendsModule->isEnabled() && FriendList::findPlayer(ent->getNameTag()->getText())) {
+	if (!noFriendsModule->isEnabled() && FriendsManager::findFriend(ent->getNameTag()->getText())) {
 		DrawUtils::setColor(0.1f, 0.9f, 0.1f, 1.f);
 	} else if (Target::isValidTarget(ent)) {
 		if (espMod->doRainbow)
@@ -50,11 +50,9 @@ void doRenderStuff(Entity* ent, bool isRegularEntitie) {
 	} else
 		return;
 	if (espMod->is2d)
-		DrawUtils::draw2D(ent, (float)fmax(0.4f, 1 / (float)fmax(1, localPlayer->eyePos0.dist(ent->eyePos0) * 3.f)));
+		DrawUtils::draw2D(ent, (float)fmax(0.5f, 1 / (float)fmax(1, localPlayer->eyePos0.dist(ent->eyePos0) * 3.f)));
 	else 
-		DrawUtils::drawEntityBox(ent, (float)fmax(0.2f, 1 / (float)fmax(1, localPlayer->eyePos0.dist(ent->eyePos0))));
-	
-	
+		DrawUtils::drawEntityBox(ent, (float)fmax(0.5f, 1 / (float)fmax(1, localPlayer->eyePos0.dist(ent->eyePos0))));
 }
 
 void ESP::onPreRender(MinecraftUIRenderContext* renderCtx) {

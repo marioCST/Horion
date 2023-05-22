@@ -42,9 +42,6 @@ void Hooks::Init() {
 
 		void* fogColorFunc = reinterpret_cast<void*>(FindSignature("41 0F 10 08 48 8B C2 0F"));
 		g_Hooks.Dimension_getFogColorHook = std::make_unique<FuncHook>(fogColorFunc, Hooks::Dimension_getFogColor);
-
-		//void* testy = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 56 57 41 56 48 83 EC ? 48 8B 71 ? 48 8B D9"));
-		//g_Hooks.testyHook = std::make_unique<FuncHook>(testy, Hooks::test);
 		
 		void* timeOfDay = reinterpret_cast<void*>(FindSignature("44 8B C2 B8 ? ? ? ? F7 EA"));
 		g_Hooks.Dimension_getTimeOfDayHook = std::make_unique<FuncHook>(timeOfDay, Hooks::Dimension_getTimeOfDay);
@@ -132,6 +129,12 @@ void Hooks::Init() {
 		//void* Actor_checkFallDamage = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 57 48 83 EC 60 0F 29 74 24 ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 24 ? 48 8B 01"));
 		//g_Hooks.Actor_checkFallDamageHook = std::make_unique<FuncHook>(Actor_checkFallDamage, Hooks::Actor_checkFallDamage);
 
+		void* actorisInWall = reinterpret_cast<void*>(FindSignature("40 53 48 83 EC ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 24 ? 48 8B 01 48 8D 54 24 ? 0F 57 DB 41 B8 ? ? ? ? 48 8B D9 FF 90 ? ? ? ? 48 8B 8B"));
+		g_Hooks.ActorisInWallHook = std::make_unique<FuncHook>(actorisInWall, Hooks::Actor__isInWall);
+
+		//void* testFunc = reinterpret_cast<void*>(FindSignature("40 53 48 83 ec ? 48 8b 05 ? ? ? ? 48 33 c4 48 89 44 24 ? 48 8b 01 48 8d 54 24 ? 0f 57 db 41 b8 ? ? ? ? 48 8b d9 ff 90 ? ? ? ? 48 8b 8b"));
+		//g_Hooks.testFunctionHook = std::make_unique<FuncHook>(testFunc, Hooks::testFunction);
+
 		static constexpr auto counterStart = __COUNTER__ + 1;
 		#define lambda_counter (__COUNTER__ - counterStart)
 
@@ -179,6 +182,8 @@ void Hooks::Init() {
 				logF("LoopbackPacketSenderVtable is invalid");
 			else {
 				g_Hooks.LoopbackPacketSender_sendToServerHook = std::make_unique<FuncHook>(packetSenderVtable[2], Hooks::LoopbackPacketSender_sendToServer);
+
+				g_Hooks.LoopbackPacketSender_sendToClientHook = std::make_unique<FuncHook>(packetSenderVtable[4], Hooks::LoopbackPacketSender_sendToClient); //I use the second sendToClient
 			}
 		} else logF("LoopbackPacketSender is null");
 
@@ -341,6 +346,9 @@ void Hooks::Actor_baseTick(Entity* ent) {
 		g_Hooks.entityList.clear();
 		tickCountThen = tickCountNow;
 	}
+
+	moduleMgr->onBaseTick(ent);
+
 	if (ent->isClientSide()) {
 		EntityListPointerHolder e;
 		e.addedTick = tickCountNow;
@@ -749,6 +757,10 @@ void Hooks::LoopbackPacketSender_sendToServer(LoopbackPacketSender* a, Packet* p
 	static auto autoSneakMod = moduleMgr->getModule<AutoSneak>();
 	static auto blinkMod = moduleMgr->getModule<Blink>();
 	static auto noPacketMod = moduleMgr->getModule<NoPacket>();
+	static auto noSwingMod = moduleMgr->getModule<NoSwing>();
+
+	if (noSwingMod->isEnabled() && noSwingMod->server && packet->isInstanceOf<AnimatePacket>())
+		return;
 
 	if (noPacketMod->isEnabled() && Game.isInGame())
 		return;
@@ -804,6 +816,13 @@ void Hooks::LoopbackPacketSender_sendToServer(LoopbackPacketSender* a, Packet* p
 	} fix emote crashing*/
 
 	oFunc(a, packet);
+}
+
+void Hooks::LoopbackPacketSender_sendToClient(networkhandler* _this, const void* networkIdentifier, Packet* packet, int a4) {
+	auto func = g_Hooks.LoopbackPacketSender_sendToClientHook->GetFastcall<void, networkhandler*, const void*, Packet*, int>();
+	
+	moduleMgr->onSendClientPacket(packet);
+	func(_this, networkIdentifier, packet, a4);
 }
 
 float Hooks::LevelRendererPlayer_getFov(__int64 _this, float a2, bool a3) {
@@ -1068,7 +1087,10 @@ void Hooks::Actor_ascendLadder(Entity* _this) {
 void Hooks::Actor_swing(Entity* _this) {
 	static auto oFunc = g_Hooks.Actor_swingHook->GetFastcall<void, Entity*>();
 	static auto noSwingMod = moduleMgr->getModule<NoSwing>();
-	if (!noSwingMod->isEnabled()) return oFunc(_this);
+	if (noSwingMod->isEnabled() && !noSwingMod->server) 
+		return;
+
+	oFunc(_this);
 }
 
 void Hooks::Actor_startSwimming(Entity* _this) {
@@ -1299,17 +1321,6 @@ void Hooks::Actor__setRot(Entity* _this, Vec2& angle) {
 	func(_this, angle);
 }
 
-void Hooks::test(Weather* _this, float idk) {
-	auto func = g_Hooks.testHook->GetFastcall<void, Weather*, float>();
-	//static auto testModTEst = moduleMgr->getModule<TestModule>();
-
-	//if (testModTEst->isEnabled()) {
-	//	func(_this, idk = 1000);
-	//}
-	
-	func(_this, idk);
-}
-
 void Hooks::InventoryTransactionManager__addAction(InventoryTransactionManager* _this, InventoryAction& action) {
 	auto func = g_Hooks.InventoryTransactionManager__addActionHook->GetFastcall<void, InventoryTransactionManager*, InventoryAction&>();
 
@@ -1392,3 +1403,30 @@ void Hooks::Actor_checkFallDamage(Entity* _this, float f, bool b) {
 
 	// if (_this != Game.getLocalPlayer()) func(_this, f, b);
 }
+
+bool Hooks::Actor__isInWall(Entity* ent) {
+	auto func = g_Hooks.ActorisInWallHook->GetFastcall<bool, Entity*>();
+	static auto nofallMod = moduleMgr->getModule<NoFall>();
+
+	if (nofallMod->isEnabled() && nofallMod->mode.selected == 4 /*&& Game.getLocalPlayer() == ent*/) {
+		return false;
+	}
+
+	return func(ent);
+}
+/*
+void Hooks::testFunction(class networkhandler* _this, const void* networkIdentifier, Packet* packet, int a4) {
+	auto func = g_Hooks.testHook->GetFastcall<void, networkhandler*, const void*, Packet*, int>();
+	static auto test = moduleMgr->getModule<TestModule>();
+	
+	if (test->isEnabled()) {
+		//if (strcmp(packet->getName()->getText(), "SetTitlePacket") != 0) {
+			Game.getClientInstance()->getGuiData()->displayClientMessageF("%s", packet->getName()->getText());
+		//}
+	}
+	if (test->isEnabled() && test->bool1) {
+		return;
+	}
+	moduleMgr->onSendClientPacket(packet);
+	func(_this, networkIdentifier, packet, a4);
+}*/

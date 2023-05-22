@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../../Memory/GameData.h"
-#include "../../FriendList/FriendList.h"
+#include "../../FriendList/FriendsManager.h"
 #include "../../../Utils/keys.h"
 //#include "../../DrawUtils.h"
 
@@ -141,6 +141,8 @@ public:
 	virtual void toggle();
 	virtual bool isEnabled();
 	virtual void onSendPacket(Packet*);
+	virtual void onSendClientPacket(Packet*);
 	virtual bool callWhenDisabled();
 	const char* getTooltip();
+	virtual void onBaseTick(Entity*) {}
 };

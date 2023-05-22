@@ -77,10 +77,6 @@ struct MC_Color {
 	MC_Color lerp(const MC_Color& o, float t) const;
 };
 
-enum VertexFormat {
-
-};
-
 class MatrixStack;
 
 class DrawUtils {
@@ -106,8 +102,11 @@ public:
 	static void drawQuad(const Vec2& p1, const Vec2& p2, const Vec2& p3, const Vec2& p4);
 	static void drawLine(const Vec2& start, const Vec2& end, float lineWidth);  // rgba
 	static void drawLinestrip3d(const std::vector<Vec3>& points);
-	static void drawLine3d(const Vec3& start, const Vec3& end);
-	static void drawBox3d(const Vec3& lower, const Vec3& upper);
+	static void drawLine3d(const Vec3& start, const Vec3& end, bool onUi = false);
+	static void drawBox3d(const Vec3& lower, const Vec3& upper, float scale = 1.f, bool onUi = false);
+	static void drawBox3dFilled(const Vec3& lower, const Vec3& upper, float scale = 1.f, bool outline = false, bool onUi = false);
+	static void drawCircle(Vec2 pos, Vec2 radius, MC_Color color, double quality);
+	static void drawCircleFilled(Vec2 pos, Vec2 radius, MC_Color color, double quality);
 	static void fillRectangle(const Vec4& pos, const MC_Color& col, float alpha);
 	static inline void fillRectangle(const Vec2& start, const Vec2& end) {
 		DrawUtils::drawQuad({start.x, end.y}, {end.x, end.y}, {end.x, start.y}, {start.x, start.y});
@@ -129,9 +128,10 @@ public:
 	static void drawImage(std::string filePath, Vec2& ImagePos, Vec2& ImageDimension, Vec2& idk);
 
 	static void drawText(const Vec2& pos, std::string* text, const MC_Color& color, float textSize = 1, float alpha = 1, Fonts font = Fonts::SMOOTH);
-	static void drawBox(const Vec3& lower, const Vec3& upper, float lineWidth, bool outline = false);
-	static void drawEntityBox(Entity* ent, float lineWidth);
-	static void draw2D(Entity* ent, float lineWidth);
+	static void drawBox(const Vec3& lower, const Vec3& upper, float lineWidth, bool fill = false, int mode = 1);
+	static void draw2DBox(const Vec3& lower, const Vec3& upper, float lineWidth, bool fill = false, bool corners = false);
+	static void drawEntityBox(Entity* ent, float lineWidth = 0.f, bool fill = false);
+	static void draw2D(Entity* ent, float lineWidth = 0.f);
 	static void drawNameTags(Entity* ent, float textSize, bool drawHealth = false, bool useUnicodeFont = false);
 	static void drawItem(ItemStack* item, const Vec2& ItemPos, float opacity, float scale, bool isEnchanted);
 	static float getLerpTime();
