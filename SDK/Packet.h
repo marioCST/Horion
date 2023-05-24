@@ -278,7 +278,7 @@ public:
 	bool hideDisconnectScreen; // 0x30
 
 private:
-	char pad[0x10]; // 0x31
+	char pad2[0x10]; // 0x31
 
 public:
 	TextHolder reason; // 0x40
