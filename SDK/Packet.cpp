@@ -315,7 +315,7 @@ C_InteractPacket::C_InteractPacket(/*enum InteractPacket::Action, class ActorRun
 	vTable = interactPacketVtable;
 }
 
-/*BookEditPacket::BookEditPacket() {
+BookEditPacket::BookEditPacket() {
 	static uintptr_t** bookEditPacketVtable = 0x0;
 	if (bookEditPacketVtable == 0x0) {
 		uintptr_t sigOffset = FindSignature("48 8D 05 ? ? ? ? 48 89 01 48 8D 05 ? ? ? ? 48 89 51 ?");
@@ -328,22 +328,39 @@ C_InteractPacket::C_InteractPacket(/*enum InteractPacket::Action, class ActorRun
 	}
 	memset(this, 0, sizeof(BookEditPacket));
 	vTable = bookEditPacketVtable;
-}*/
+}
 
-/*DisconnectPacket::DisconnectPacket() {
+DisconnectPacket::DisconnectPacket() {
 	static uintptr_t** disconnectPacketVtable = 0x0;
 	if (disconnectPacketVtable == 0x0) {
 		uintptr_t sigOffset = FindSignature("48 8D 05 ? ? ? ? 48 89 01 48 8D 05 ? ? ? ? 48 89 41 ? 48 8B C1 C7 41 18");
 		int offset = *reinterpret_cast<int*>(sigOffset + 3);
-		disconnectPacketVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + /*length of instruction*/ /*7);
+		disconnectPacketVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + 7);
 #ifdef _DEBUG
 		if (disconnectPacketVtable == 0x0 || sigOffset == 0x0)
 			__debugbreak();
 #endif
 	}
-	memset(this, 0, sizeof(DisconnectPacket));  // Avoid overwriting vtable
+	memset(this, 0, sizeof(DisconnectPacket));
 	vTable = disconnectPacketVtable;
-}*/
+}
+
+DisconnectPacket::DisconnectPacket(TextHolder reason, bool hideDisconnectScreen) {
+	static uintptr_t** disconnectPacketVtable = 0x0;
+	if (disconnectPacketVtable == 0x0) {
+		uintptr_t sigOffset = FindSignature("48 8D 05 ? ? ? ? 48 89 01 48 8D 05 ? ? ? ? 48 89 41 ? 48 8B C1 C7 41 18");
+		int offset = *reinterpret_cast<int*>(sigOffset + 3);
+		disconnectPacketVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + 7);
+#ifdef _DEBUG
+		if (disconnectPacketVtable == 0x0 || sigOffset == 0x0)
+			__debugbreak();
+#endif
+	}
+	memset(this, 0, sizeof(DisconnectPacket));
+	vTable = disconnectPacketVtable;
+	this->hideDisconnectScreen = hideDisconnectScreen;
+	this->reason = reason;
+}
 
 ResourcePacksInfoPacket::ResourcePacksInfoPacket() {
 	static uintptr_t** resourcePacksInfoPacketVtable = 0x0;

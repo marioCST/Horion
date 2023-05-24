@@ -229,35 +229,77 @@ public:
 	TextHolder platformChatId;
 };
 
-/* class BookEditPacket : public Packet { // Theoretically ready to use, variable positions in vtable unknown
+class BookEditPacket : public Packet {
 public:
 	BookEditPacket();
 
-	char action;
+private:
+	unsigned char pad[0x30]; // 0x00
 
-	char slot;
-	char page;
-	char secondaryPage;
+public:
+	char action; // 0x30
 
-	TextHolder text;
-	TextHolder photoName;
+private:
+	char pad2[0x4]; // 0x31
 
-	TextHolder title;
-	TextHolder author;
-	int64_t xuid;
-};*/
+public:
+	char slot; // 0x34
 
-/*class DisconnectPacket : public Packet {
+private:
+	char pad3[0x4]; // 0x35
+
+public:
+	char page; // 0x38
+
+private:
+	char pad4[0x4]; // 0x39
+
+public:
+	char secondaryPage; // 0x3C
+
+private:
+	char pad5[0x4]; // 0x3D
+
+public:
+	TextHolder title; // 0x40   Also Text?
+	TextHolder author; // 0x60   Also PhotoName?
+	TextHolder xuid; // 0x80
+};
+
+class DisconnectPacket : public Packet {
 public:
 	DisconnectPacket();
+	DisconnectPacket(TextHolder reason, bool hideDisconnectScreen);
 
-	bool hideDisconnectScreen;
-	TextHolder reason;
-};*/
+private:
+	char pad[0x30]; // 0x0
+
+public:
+	bool hideDisconnectScreen; // 0x30
+
+private:
+	char pad[0x10]; // 0x31
+
+public:
+	TextHolder reason; // 0x40
+};
 
 class ResourcePacksInfoPacket : public Packet {
 public:
 	ResourcePacksInfoPacket();
+
+private:
+	char pad[0x30]; // 0x0
+
+public:
+	bool mustAccept; // 0x30
+	bool scripting; // 0x31
+
+private:
+	char pad2[0x1]; // 0x32
+
+public:
+	bool forceServerPacks; // 0x33
 };
 
 #pragma pack(push, 8)
