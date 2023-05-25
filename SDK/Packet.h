@@ -233,37 +233,33 @@ class BookEditPacket : public Packet {
 public:
 	BookEditPacket();
 
-private:
-	unsigned char pad[0x30]; // 0x00
-
-public:
-	char action; // 0x30
+	char action; // 0x28
 
 private:
-	char pad2[0x4]; // 0x31
+	char pad2[0x3]; // 0x29
 
 public:
-	char slot; // 0x34
+	char slot; // 0x2C
 
 private:
-	char pad3[0x4]; // 0x35
+	char pad3[0x3]; // 0x2D
 
 public:
-	char page; // 0x38
+	char page; // 0x30
 
 private:
-	char pad4[0x4]; // 0x39
+	char pad4[0x3]; // 0x31
 
 public:
-	char secondaryPage; // 0x3C
+	char secondaryPage; // 0x34
 
 private:
-	char pad5[0x4]; // 0x3D
+	char pad5[0x3]; // 0x35
 
 public:
-	TextHolder title; // 0x40   Also Text?
-	TextHolder author; // 0x60   Also PhotoName?
-	TextHolder xuid; // 0x80
+	TextHolder title; // 0x38   Also used as Text
+	TextHolder author; // 0x58   Also used as Photo name
+	TextHolder xuid; // 0x78
 };
 
 class DisconnectPacket : public Packet {
@@ -271,35 +267,27 @@ public:
 	DisconnectPacket();
 	DisconnectPacket(TextHolder reason, bool hideDisconnectScreen);
 
-private:
-	char pad[0x30]; // 0x0
-
-public:
-	bool hideDisconnectScreen; // 0x30
+	bool hideDisconnectScreen; // 0x28
 
 private:
-	char pad2[0x10]; // 0x31
+	char pad2[0xF]; // 0x29
 
 public:
-	TextHolder reason; // 0x40
+	TextHolder reason; // 0x38
 };
 
 class ResourcePacksInfoPacket : public Packet {
 public:
 	ResourcePacksInfoPacket();
 
-private:
-	char pad[0x30]; // 0x0
-
-public:
-	bool mustAccept; // 0x30
-	bool scripting; // 0x31
+	bool mustAccept; // 0x28
+	bool scripting; // 0x29
 
 private:
-	char pad2[0x1]; // 0x32
+	char pad2[0x1]; // 0x2A
 
 public:
-	bool forceServerPacks; // 0x33
+	bool forceServerPacks; // 0x2B
 };
 
 #pragma pack(push, 8)
