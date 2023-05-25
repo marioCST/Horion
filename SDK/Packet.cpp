@@ -82,7 +82,7 @@ MobEquipmentPacket::MobEquipmentPacket(__int64 entityRuntimeId, ItemStack& item,
 InventoryTransactionPacket::InventoryTransactionPacket() {
 	static uintptr_t** InventoryTransactionPacketVtable = 0x0;
 	if (InventoryTransactionPacketVtable == 0x0) {
-		uintptr_t sigOffset = FindSignature("48 8d 05 ? ? ? ? 48 89 45 ? 48 8d 05 ? ? ? ? 48 89 45 ? 89 75");
+		uintptr_t sigOffset = FindSignature("48 8D 05 ? ? ? ? 48 89 45 ? 48 8D 05 ? ? ? ? 48 89 45 ? 89 75");
 		int offset = *reinterpret_cast<int*>(sigOffset + 3);
 		InventoryTransactionPacketVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + /*length of instruction*/ 7);
 #ifdef _DEBUG
@@ -512,7 +512,7 @@ RemoveActorPacket::RemoveActorPacket() { //Client
 PlayerArmorDamagePacket::PlayerArmorDamagePacket() { //Client
 	static uintptr_t** playerArmorDamagePacketVtable = 0x0;
 	if (playerArmorDamagePacketVtable == 0x0) {
-		uintptr_t sigOffset = FindSignature("48 8d 0d ? ? ? ? 48 89 48 ? 33 c9 c7 40");
+		uintptr_t sigOffset = FindSignature("48 8D 0D ? ? ? ? 48 89 48 ? 33 C9 C7 40");
 		int offset = *reinterpret_cast<int*>(sigOffset + 3);
 		playerArmorDamagePacketVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + /*length of instruction*/ 7);
 #ifdef _DEBUG
@@ -527,7 +527,7 @@ PlayerArmorDamagePacket::PlayerArmorDamagePacket() { //Client
 SetHealthPacket::SetHealthPacket() {  // Client
 	static uintptr_t** setHealthPacketVtable = 0x0;
 	if (setHealthPacketVtable == 0x0) {
-		uintptr_t sigOffset = FindSignature("48 8d 15 ? ? ? ? c7 40 ? ? ? ? ? 33 c9 c7 40 ? ? ? ? ? 48 89 48 ? 48 89 48 ? 89 48 ? 89 48 ? c7 40 ? ? ? ? ? c7 40 ? ? ? ? ? 66 c7 40 ? ? ? 48 89 50 ? eb ? 33 c9 8b c1 48 8d 48 ? 48 8d 15 ? ? ? ? 48 89 51 ? 48 89 43 ? 48 8b c3 48 89 0b 48 83 c4 ? 5b c3 48 8d 0d ? ? ? ? e8 ? ? ? ? 83 3d ? ? ? ? ? 0f 85 ? ? ? ? 48 8d 05 ? ? ? ? 48 8d 0d ? ? ? ? 48 89 05 ? ? ? ? e8 ? ? ? ? 48 8d 0d ? ? ? ? e8 ? ? ? ? e9 ? ? ? ? cc cc cc cc cc cc cc cc cc cc cc cc cc cc cc 40 53 48 83 ec ? 48 8b 05");
+		uintptr_t sigOffset = FindSignature("48 8D 15 ? ? ? ? C7 40 ? ? ? ? ? 33 C9 C7 40 ? ? ? ? ? 48 89 48 ? 48 89 48 ? 89 48 ? 89 48 ? C7 40 ? ? ? ? ? C7 40 ? ? ? ? ? 66 C7 40 ? ? ? 48 89 50 ? EB ? 33 C9 8B C1 48 8D 48 ? 48 8D 15 ? ? ? ? 48 89 51 ? 48 89 43 ? 48 8B C3 48 89 0B 48 83 C4 ? 5B C3 48 8D 0D ? ? ? ? E8 ? ? ? ? 83 3D ? ? ? ? ? 0F 85 ? ? ? ? 48 8D 05 ? ? ? ? 48 8D 0D ? ? ? ? 48 89 05 ? ? ? ? E8 ? ? ? ? 48 8D 0D ? ? ? ? E8 ? ? ? ? E9 ? ? ? ? CC CC CC CC CC CC CC CC CC CC CC CC CC CC CC 40 53 48 83 EC ? 48 8B 05");
 		int offset = *reinterpret_cast<int*>(sigOffset + 3);
 		setHealthPacketVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + /*length of instruction*/ 7);
 #ifdef _DEBUG
