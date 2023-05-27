@@ -78,10 +78,20 @@ class Entity {
 private:
 	char pad_0x8[0x130];  // 0x8
 public:
-	float pitch;   // 0x138
-	float yaw;     // 0x13C
-	float pitch2;  // 0x140
-	float yaw2;    // 0x144
+	union {
+		struct {
+			float pitch; // 0x138
+			float yaw;   // 0x13C
+		};
+		Vec2 viewAngles;
+	};
+	union {
+		struct {
+			float pitch2;  // 0x140
+			float yaw2;    // 0x144
+		};
+		Vec2 viewAngles2;
+	};
 private:
 	char pad_0x148[0x10];  // 0x148
 public:
@@ -573,7 +583,7 @@ public:
 		return *reinterpret_cast<class Level **>(reinterpret_cast<__int64>(this) + 0x368);
 	}
 
-	void lerpTo(Vec3 const &pos, Vec2 const &a2, int a3);
+	void lerpTo(Vec3 const &pos, Vec2 const &rot, int steps);
 };
 #pragma pack(pop)
 
@@ -700,8 +710,6 @@ public:
 	virtual __int64 getMovementSettings(void);                                                       // 440
 	virtual __int64 onMovePlayerPacketNormal(Vec3 const &, Vec2 const &, float);                     // 441
 	virtual __int64 _createChunkSource();                                                            // 442
-	Vec2 viewAngles;
-	Vec2 viewAngles2;
 };
 
 class ServerPlayer : public Player {
