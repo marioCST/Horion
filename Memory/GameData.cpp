@@ -14,21 +14,19 @@ size_t AABBHasher::operator()(const AABB& i) const {
 	return Utils::posToHash(i.lower);
 }
 void GameData::retrieveClientInstance() {
-	/*static uintptr_t clientInstanceOffset = 0x0;
+	static uintptr_t clientInstanceOffset = 0x0;
 	uintptr_t sigOffset = 0x0;
 	if (clientInstanceOffset == 0x0) {
-		sigOffset = FindSignature("48 8B 15 ? ? ? ? 4C 8B 02 4C 89 06 40 84 FF 74 0C 48 8D 0D ? ? ? ? E8 ? ? ? ? 48 8B C6 48 8B 4C ? ? 48 33 CC E8 ? ? ? ? 48 8B 5C ? ? 48 8B 74 ? ? 48 83 C4 ? 5F C3 E8 ? ? ? ? 90 CC CC CC CC CC CC CC CC CC 48 89 5C ? ? 48 89 74 ? ? 57 48 83 EC ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 ? ? 48 8B DA 48 8B F1 48 89 4C ? ? 48 8D 0D ? ? ? ? E8 ? ? ? ? 85 C0 ? ? C1 85 C0");
+		sigOffset = FindSignature("48 8B 15 ? ? ? ? 4C 8B 02 4C 89 06 40 84 FF 74 0C 48 8D 0D ? ? ? ? E8 ? ? ? ? 48 8B C6 48 8B 4C ? ? 48 33 CC E8 ? ? ? ? 48 8B 5C ? ? 48 8B 74 ? ? 48 83 C4 ? 5F C3 E8 ? ? ? ? 90 CC CC CC CC CC CC CC CC CC 48 89 5C ? ? 48 89 74 ? ? 57 48 83 EC ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 ? ? 48 8B DA 48 8B F1 48 89 4C ? ? 48 8D 0D ? ? ? ? E8 ? ? ? ? 85 C0 ? ? C1 85 C0 74 11 48 8B 05 ? ? ? ? 48 85 C0 75 05 40 B7 01 EB 13 84 C9 74 0C 48 8D 0D ? ? ? ? E8 ? ? ? ? 40 32 FF 40 84 FF 75 0F 48 8D 0D ? ? ? ? E8 ? ? ? ? 40 B7 01 48 85 DB 74 46 48 8B D3 E8 ? ? ? ? 48 8B 15 ? ? ? ? 4C 8B 02 4C 89 06 40 84 FF 74 0C 48 8D 0D ? ? ? ? E8 ? ? ? ? 48 8B C6 48 8B 4C ? ? 48 33 CC E8 ? ? ? ? 48 8B 5C ? ? 48 8B 74 ? ? 48 83 C4 ? 5F C3 E8 ? ? ? ? 90 CC CC CC CC CC CC CC CC CC 40 53 48 83 EC ? 48 8B D9");
 		if (sigOffset != 0x0) {
-			int offset = *reinterpret_cast<int*>((sigOffset + 3));                                                 // Get Offset from code
-			clientInstanceOffset = sigOffset - g_Data.gameModule->ptrBase + offset + /*length of instruction*/ /*7;  // Offset is relative
+			int offset = *reinterpret_cast<int*>((sigOffset + 3));
+			clientInstanceOffset = sigOffset - g_Data.gameModule->ptrBase + offset + 7;
 			logF("client: %llX", clientInstanceOffset);
 		}
-	}*/
-	// clientInstanceOffset = 0x03CD5058;  // pointer scanned, can't find good signatures so it'll stay
-	g_Data.clientInstance = reinterpret_cast<C_ClientInstance*>(g_Data.slimMem->ReadPtr<uintptr_t*>(g_Data.gameModule->ptrBase + 0x049253C8, {0x38, 0x8, 0x0}));
+	}
+	g_Data.clientInstance = reinterpret_cast<C_ClientInstance*>(g_Data.slimMem->ReadPtr<uintptr_t*>(clientInstanceOffset, {0x0, 0x0, 0x48}));
 #ifdef _DEBUG
 	if (g_Data.clientInstance == 0)
-		logF("Client Instance is 0");
 		throw std::exception("Client Instance is 0");
 #endif
 }
@@ -101,7 +99,7 @@ void GameData::hide() {
 }
 
 void GameData::updateGameData(C_GameMode* gameMode) {
-	//retrieveClientInstance();
+	retrieveClientInstance();
 	g_Data.localPlayer = g_Data.getLocalPlayer();
 
 	if (g_Data.localPlayer != nullptr && gameMode->player == g_Data.localPlayer) {  // GameMode::tick might also be run on the local server
@@ -165,34 +163,6 @@ void GameData::setRakNetInstance(C_RakNetInstance* raknet) {
 }
 
 void GameData::forEachEntity(std::function<void(C_Entity*, bool)> callback) {
-	/*//Player EntityList
-	C_EntityList* entityList = (C_EntityList*)g_Data.getLocalPlayer()->level;
-	uintptr_t start = ((uintptr_t)entityList + 0x70);
-	uintptr_t stop = ((uintptr_t)entityList + 0x78);
-	start = *(uintptr_t*)start;
-	stop = *(uintptr_t*)stop;
-	//logF("size: %i", (stop - start) / sizeof(uintptr_t*));
-	while (start < stop) {
-		C_Entity* ent = *(C_Entity**)start;
-		if (ent != nullptr)
-			callback(ent, false);
-		start += 8;
-	}
-	// New EntityList
-	{
-		// MultiplayerLevel::directTickEntities
-		__int64 region = reinterpret_cast<__int64>(g_Data.getLocalPlayer()->region);
-		__int64* entityIdMap = *(__int64**)(*(__int64*)(region + 0x20) + 0x138i64);
-		for (__int64* i = (__int64*)*entityIdMap; i != entityIdMap; i = (__int64*)*i) {
-			__int64 actor = i[3];
-			// !isRemoved() && !isGlobal()
-			if (actor && !*(char*)(actor + 993) && !*(char*)(actor + 994)) {
-				C_Entity* ent = reinterpret_cast<C_Entity*>(actor);
-				callback(ent, false);
-			}
-		}
-	}*/
-
 	if (localPlayer && localPlayer->level) {
 		for (const auto& ent : g_Hooks.entityList)
 			if (ent.ent != nullptr) callback(ent.ent, false);

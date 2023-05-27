@@ -110,7 +110,7 @@ private:
 	vec3_t origin;           //0x0890
 public:
 	vec3_t& getOrigin() {
-		return *(vec3_t*)((char*)this + (0x970));
+		return *(vec3_t*)((char*)this + (0x7B8));
 	}
 
 	__int64 getLevelRendererPlayer() {
@@ -145,17 +145,17 @@ public:
 };
 
 class MinecraftGame {
-	char pad_0000[0x110];  //0x0000
+	char pad_0000[0x118];  //0x0000
 public:
-	C_FontRepository* fontRepository;  //0x00110
+	C_FontRepository* fontRepository;  //0x00118
 private:
-	char pad_0100[0x8];  //0x00118
+	char pad_0100[0x8];  //0x00120
 public:
-	C_Font* mcFont;  //0x00120
+	C_Font* mcFont;  //0x00128
 private:
-	char pad_0128[0x18];  //0x00128
+	char pad_0128[0x28];  //0x00130
 public:
-	C_FontRepository* fontRepository1;  //0x0140
+	C_FontRepository* fontRepository1;  //0x0150
 private:
 	char pad_0148[0x1D0];  //0x0148
 public:
@@ -878,19 +878,12 @@ public:
 	}
 
 	C_GuiData* getGuiData() {
-		return (C_GuiData*)*reinterpret_cast<__int64*>(reinterpret_cast<C_GuiData*>(reinterpret_cast<__int64>(this) + 0x4E8));
+		return (C_GuiData*)*reinterpret_cast<__int64*>(reinterpret_cast<C_GuiData*>(reinterpret_cast<__int64>(this) + 0x500));
 	};
 
-	C_LocalPlayer* getLocalPlayer() {
-		if (this != nullptr) {
-			__int64 ptr = *reinterpret_cast<__int64*>(reinterpret_cast<__int64>(this) + 0x18); // Level Renderer
-			if (ptr > 0x1000000000 && ptr < 0xF00000000000) {
-				C_LocalPlayer* res = *reinterpret_cast<C_LocalPlayer**>(ptr + 0xB8); // Offset from Level Renderer
-				if (reinterpret_cast<__int64>(res) < 0xF00000000000) return res;
-			}
-		}
-		return nullptr;
-	}
+	inline C_LocalPlayer* getLocalPlayer() {
+		return Utils::CallVFunc<24, C_LocalPlayer*>(this);
+	};
 
 	inline C_GameSettingsInput* getGameSettingsInput() { return this->ptr->ptr->ptr->settingsInput; };
 };

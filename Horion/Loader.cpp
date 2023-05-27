@@ -11,22 +11,6 @@ bool isRunning = true;
 #pragma comment(lib, "MinHook.x86.lib")
 #endif
 
-typedef void(__thiscall* ClientInstanceHook)(C_ClientInstance*, void*);
-ClientInstanceHook _CITick;
-
-void clientInstanceHook(C_ClientInstance* CI, void* a2) {
-	g_Data.clientInstance = CI;
-
-	static bool sent = false;
-
-	if (!sent) {
-		logF("ClientInstance: %llX", CI);
-		sent = true;
-	}
-
-	_CITick(CI, a2);
-}
-
 DWORD WINAPI keyThread(LPVOID lpParam) {
 	logF("Key thread started");
 
@@ -327,9 +311,6 @@ DWORD WINAPI start(LPVOID lpParam) {
 	logF("Starting up...");
 	logF("MSC v%i at %s", _MSC_VER, __TIMESTAMP__);
 
-	/*DWORD conThread;
-	CreateThread(NULL, NULL, (LPTHREAD_START_ROUTINE)injectorConnectionThread, lpParam, NULL, &conThread);
-	logF("InjCon: %i", conThread);*/
 	init();
 
 	DWORD procId = GetCurrentProcessId();
@@ -340,14 +321,6 @@ DWORD WINAPI start(LPVOID lpParam) {
 	gameModule = mem.GetModule(L"Minecraft.Windows.exe");  // Get Module for Base Address
 
 	MH_Initialize();
-
-	/*uintptr_t clientInstanceSig = FindSignature("40 53 56 57 48 81 EC ? ? ? ? 44");
-
-	if (MH_CreateHook((void*)clientInstanceSig, &clientInstanceHook, reinterpret_cast<LPVOID*>(&_CITick)) == MH_OK) {
-		MH_EnableHook((void*)clientInstanceSig);
-		logF("Enabled ClientInstance Tick");
-	}*/
-
 	GameData::initGameData(gameModule, &mem, (HMODULE)lpParam);
 	Target::init(g_Data.getPtrLocalPlayer());
 
@@ -356,14 +329,6 @@ DWORD WINAPI start(LPVOID lpParam) {
 	DWORD keyThreadId;
 	CreateThread(nullptr, NULL, (LPTHREAD_START_ROUTINE)keyThread, lpParam, NULL, &keyThreadId);  // Checking Keypresses
 	logF("KeyT: %i", keyThreadId);
-
-	/*logF("Waiting for injector");
-	while (!g_Data.isInjectorConnectionActive()) {
-		Sleep(10);
-		if (!isRunning)
-			ExitThread(0);
-	}
-	logF("Injector found");*/
 
 	cmdMgr->initCommands();
 	logF("Initialized command manager (1/3)");
