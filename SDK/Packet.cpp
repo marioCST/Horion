@@ -330,10 +330,10 @@ BookEditPacket::BookEditPacket() {
 	vTable = bookEditPacketVtable;
 }
 
-/*DisconnectPacket::DisconnectPacket() {
+DisconnectPacket::DisconnectPacket() {
 	static uintptr_t** disconnectPacketVtable = 0x0;
 	if (disconnectPacketVtable == 0x0) {
-		uintptr_t sigOffset = FindSignature("48 8D 05 ? ? ? ? 48 89 01 48 8D 05 ? ? ? ? 48 89 41 ? 48 8B C1 C7 41 18");
+		uintptr_t sigOffset = FindSignature("48 8D 05 ? ? ? ? 48 89 45 ? 44 88 75 ? 4C");
 		int offset = *reinterpret_cast<int*>(sigOffset + 3);
 		disconnectPacketVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + 7);
 #ifdef _DEBUG
@@ -348,7 +348,7 @@ BookEditPacket::BookEditPacket() {
 DisconnectPacket::DisconnectPacket(TextHolder reason, bool hideDisconnectScreen) {
 	static uintptr_t** disconnectPacketVtable = 0x0;
 	if (disconnectPacketVtable == 0x0) {
-		uintptr_t sigOffset = FindSignature("48 8D 05 ? ? ? ? 48 89 01 48 8D 05 ? ? ? ? 48 89 41 ? 48 8B C1 C7 41 18");
+		uintptr_t sigOffset = FindSignature("48 8D 05 ? ? ? ? 48 89 45 ? 44 88 75 ? 4C");
 		int offset = *reinterpret_cast<int*>(sigOffset + 3);
 		disconnectPacketVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + 7);
 #ifdef _DEBUG
@@ -365,7 +365,7 @@ DisconnectPacket::DisconnectPacket(TextHolder reason, bool hideDisconnectScreen)
 ResourcePacksInfoPacket::ResourcePacksInfoPacket() {
 	static uintptr_t** resourcePacksInfoPacketVtable = 0x0;
 	if (resourcePacksInfoPacketVtable == 0x0) {
-		uintptr_t sigOffset = FindSignature("48 8D 05 ? ? ? ? 48 89 51 ? 48 89 01 48 8B C1 48 C7 81");
+		uintptr_t sigOffset = FindSignature("48 8D 0D ? ? ? ? ? ? 00 C7 40 08 ? ? ? ? C7 40 0C ? ? ? ? 48 8D 05 ? ? ? ? 48 89 02 33 C0 48 89 42 ? 48 89 42 ? 89 42 38 89 42 40 48 89 42 ? 48 89 42 ? 48 89 42 ? 48 89 42");
 		int offset = *reinterpret_cast<int*>(sigOffset + 3);
 		resourcePacksInfoPacketVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + 7);
 #ifdef _DEBUG
@@ -375,7 +375,7 @@ ResourcePacksInfoPacket::ResourcePacksInfoPacket() {
 	}
 	memset(this, 0, sizeof(ResourcePacksInfoPacket));  // Avoid overwriting vtable
 	vTable = resourcePacksInfoPacketVtable;
-}*/
+}
 
 SetPlayerGameTypePacket::SetPlayerGameTypePacket() {
 	static uintptr_t** setPlayerGameTypePacketVtable = 0x0;
