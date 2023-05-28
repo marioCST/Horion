@@ -318,7 +318,7 @@ C_InteractPacket::C_InteractPacket(/*enum InteractPacket::Action, class ActorRun
 BookEditPacket::BookEditPacket() {
 	static uintptr_t** bookEditPacketVtable = 0x0;
 	if (bookEditPacketVtable == 0x0) {
-		uintptr_t sigOffset = FindSignature("48 8D 05 ? ? ? ? 48 89 01 48 8D 05 ? ? ? ? 48 89 51 ?");
+		uintptr_t sigOffset = FindSignature("48 8D 05 ? ? ? ? 48 89 01 ? ? 42 30 88 41 30 8B 42 34 89 41 34 8B 42 38 89 41 38 8B 42 3C 89 41 3C 48 83 C1 ?");
 		int offset = *reinterpret_cast<int*>(sigOffset + 3);
 		bookEditPacketVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + 7);
 #ifdef _DEBUG
@@ -330,7 +330,7 @@ BookEditPacket::BookEditPacket() {
 	vTable = bookEditPacketVtable;
 }
 
-DisconnectPacket::DisconnectPacket() {
+/*DisconnectPacket::DisconnectPacket() {
 	static uintptr_t** disconnectPacketVtable = 0x0;
 	if (disconnectPacketVtable == 0x0) {
 		uintptr_t sigOffset = FindSignature("48 8D 05 ? ? ? ? 48 89 01 48 8D 05 ? ? ? ? 48 89 41 ? 48 8B C1 C7 41 18");
@@ -367,7 +367,7 @@ ResourcePacksInfoPacket::ResourcePacksInfoPacket() {
 	if (resourcePacksInfoPacketVtable == 0x0) {
 		uintptr_t sigOffset = FindSignature("48 8D 05 ? ? ? ? 48 89 51 ? 48 89 01 48 8B C1 48 C7 81");
 		int offset = *reinterpret_cast<int*>(sigOffset + 3);
-		resourcePacksInfoPacketVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + /*length of instruction*/ 7);
+		resourcePacksInfoPacketVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + 7);
 #ifdef _DEBUG
 		if (resourcePacksInfoPacketVtable == 0x0 || sigOffset == 0x0)
 			__debugbreak();
@@ -375,7 +375,7 @@ ResourcePacksInfoPacket::ResourcePacksInfoPacket() {
 	}
 	memset(this, 0, sizeof(ResourcePacksInfoPacket));  // Avoid overwriting vtable
 	vTable = resourcePacksInfoPacketVtable;
-}
+}*/
 
 SetPlayerGameTypePacket::SetPlayerGameTypePacket() {
 	static uintptr_t** setPlayerGameTypePacketVtable = 0x0;
