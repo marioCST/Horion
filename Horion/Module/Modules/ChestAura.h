@@ -9,14 +9,14 @@ private:
 	bool enderchests = false;
 
 public:
-	C_MoveInputHandler* inputHandler = nullptr;
+	MoveInputHandler* inputHandler = nullptr;
 	ChestAura();
 	~ChestAura();
 
-	std::vector<vec3_ti> chestlist;
+	std::vector<Vec3i> chestlist;
 
 	// Inherited via IModule
 	virtual const char* getModuleName() override;
-	virtual void onTick(C_GameMode* gm) override;
+	virtual void onTick(GameMode* gm) override;
 	virtual void onDisable() override;
 };

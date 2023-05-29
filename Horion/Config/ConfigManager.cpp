@@ -2,6 +2,7 @@
 
 #include <windows.storage.h>
 #include <wrl.h>
+#include "../../Utils/Logger.h"
 
 using namespace ABI::Windows::Storage;
 using namespace Microsoft::WRL;
@@ -37,8 +38,7 @@ ConfigManager::ConfigManager() {
 	roamingFolder = GetRoamingFolderPath();
 }
 
-ConfigManager::~ConfigManager() {
-}
+ConfigManager::~ConfigManager() {}
 
 void ConfigManager::loadConfig(std::string name, bool create) {
 	
@@ -70,22 +70,26 @@ void ConfigManager::loadConfig(std::string name, bool create) {
 				std::string prefix = currentConfigObj["prefix"];
 				cmdMgr->prefix = prefix.at(0);
 			}
+			if (currentConfigObj.contains("friends")) {
+				std::vector<std::string> Friends = currentConfigObj["friends"];
+				friends.loadList(Friends);
+			}
 		}
 
 		if (create) 
 			saveConfig();
 
-		if (g_Data.getLocalPlayer() != nullptr) {
+		if (Game.getLocalPlayer() != nullptr) {
 			static bool helpedUser = false;
-			g_Data.getGuiData()->displayClientMessageF("[%sHorion%s] %sSuccessfully %s config %s%s%s!", GOLD, WHITE, GREEN, !configExists ? "created" : "loaded", GRAY, name.c_str(), GREEN);
+			Game.getGuiData()->displayClientMessageF("[%sHorion%s] %sSuccessfully %s config %s%s%s!", GOLD, WHITE, GREEN, !configExists ? "created" : "loaded", GRAY, name.c_str(), GREEN);
 			if (!helpedUser && name != "default") {
 				helpedUser = true;
-				g_Data.getGuiData()->displayClientMessageF("[%sHorion%s] %sEnter \"%s%cconfig load default%s\" to load your old config!", GOLD, WHITE, YELLOW, WHITE, cmdMgr->prefix, YELLOW);
+				Game.getGuiData()->displayClientMessageF("[%sHorion%s] %sEnter \"%s%cconfig load default%s\" to load your old config!", GOLD, WHITE, YELLOW, WHITE, cmdMgr->prefix, YELLOW);
 			}
 		}
 	} else {
-		if (g_Data.getLocalPlayer() != nullptr) 
-			g_Data.getGuiData()->displayClientMessageF("[%sHorion%s] %sCould not load config %s%s%s!", GOLD, WHITE, RED, GRAY, name.c_str(), RED);
+		if (Game.getLocalPlayer() != nullptr) 
+			Game.getGuiData()->displayClientMessageF("[%sHorion%s] %sCould not load config %s%s%s!", GOLD, WHITE, RED, GRAY, name.c_str(), RED);
 	}
 
 	delete[] fullPath;
@@ -93,7 +97,7 @@ void ConfigManager::loadConfig(std::string name, bool create) {
 
 void ConfigManager::saveConfig() {
 	logF("Saving config %s", currentConfig.c_str());
-	size_t allocSize = currentConfig.size() + roamingFolder.size() + 20;  // std::wstring::size() can be wierd so lets make sure this actually fits
+	size_t allocSize = currentConfig.size() + roamingFolder.size() + 20;  // std::wstring::size() can be weird so lets make sure this actually fits
 	char* fullPath = new char[allocSize];
 	sprintf_s(fullPath, allocSize, "%S\\%s.h", roamingFolder.c_str(), currentConfig.c_str());
 
@@ -102,6 +106,7 @@ void ConfigManager::saveConfig() {
 	std::string prefix;
 	prefix.push_back(cmdMgr->prefix);
 	currentConfigObj["prefix"] = prefix;
+	currentConfigObj["friends"] = friends.getList();
 
 	std::ofstream o(fullPath, std::ifstream::binary);
 	o << std::setw(4) << currentConfigObj << std::endl;

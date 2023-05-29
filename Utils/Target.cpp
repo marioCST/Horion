@@ -1,20 +1,19 @@
 ﻿#include "Target.h"
 
 #include <regex>
+#include "../Horion/FriendList/FriendsManager.h"
 
 #include "../Horion/Module/ModuleManager.h"
 
-C_LocalPlayer** localPlayer;
+LocalPlayer** localPlayer;
 
-void Target::init(C_LocalPlayer** cl) {
+void Target::init(LocalPlayer** cl) {
 	localPlayer = cl;
 }
 
-bool Target::isValidTarget(C_Entity* ent) {
-	if (ent == nullptr)
-		return false;
+bool Target::isValidTarget(Entity* ent) {
 
-	auto localPlayer = g_Data.getLocalPlayer();
+	auto localPlayer = Game.getLocalPlayer();
 
 	if (ent == localPlayer)
 		return false;
@@ -24,6 +23,8 @@ bool Target::isValidTarget(C_Entity* ent) {
 	static auto teams = moduleMgr->getModule<Teams>();
 	static auto noFriends = moduleMgr->getModule<NoFriends>();
 
+	if (!Game.isInGame())
+		return false;
 	if (!ent->isAlive())
 		return false;
 
@@ -32,16 +33,34 @@ bool Target::isValidTarget(C_Entity* ent) {
 	if (antibot->isEntityIdCheckEnabled() && entityTypeId <= 130 && entityTypeId != 63)
 		return false;
 
-	if (entityTypeId == 63) {
+	if (ent->isPlayer()) {
 		if (teams->isColorCheckEnabled()) {
+			std::string targetName = ent->getNameTag()->getText();
+			std::string localName = localPlayer->getNameTag()->getText();
+
+			if (targetName.size() > 2 && localName.size() > 2) {
+				targetName = std::string(targetName, 0, targetName.find('\n'));
+				localName = std::string(localName, 0, localName.find('\n'));
+
+				std::string colorTargetName = std::regex_replace(targetName, std::regex(u8"§r"), "");
+				std::string colorLocalName = std::regex_replace(localName, std::regex(u8"§r"), "");
+				char colorTarget = colorTargetName[colorTargetName.find(u8"§") + 2];
+				char colorLocal = colorLocalName[colorLocalName.find(u8"§") + 2];
+
+				if (colorLocal == colorTarget)
+					return false;
+			}
+
+			/*
 			auto targetName = ent->getNameTag();
 			auto localName = localPlayer->getNameTag();
 			if (targetName->getTextLength() > 2 && localName->getTextLength() > 2) {
 				auto colorTargetName = std::regex_replace(targetName->getText(), std::regex("\\§r"), "");
 				auto colorLocalName = std::regex_replace(localName->getText(), std::regex("\\§r"), "");
-				if (colorTargetName.at(0) == colorLocalName.at(0)) 
+				if (colorTargetName.at(0) == colorLocalName.at(0))
 					return false;
 			}
+			*/
 		}
 		if (teams->isAlliedCheckEnabled()) {
 			if (localPlayer->isAlliedTo(ent)) return false;
@@ -52,10 +71,10 @@ bool Target::isValidTarget(C_Entity* ent) {
 	if (antibot->isNameCheckEnabled() && !Target::containsOnlyASCII(ent->getNameTag()->getText()))
 		return false;
 
-	if (!noFriends->isEnabled() && FriendList::findPlayer(ent->getNameTag()->getText()))
+	if (!noFriends->isEnabled() && FriendsManager::findFriend(ent->getNameTag()->getText()))
 		return false;
 
-	if (antibot->isInvisibleCheckEnabled() && ent->isInvisible() )
+	if (antibot->isInvisibleCheckEnabled() && ent->isInvisible())
 		return false;
 
 	if (antibot->isOtherCheckEnabled() && (ent->isSilent() || ent->isImmobile() || ent->getNameTag()->getTextLength() < 1 || std::string(ent->getNameTag()->getText()).find(std::string("\n")) != std::string::npos))
@@ -71,6 +90,7 @@ bool Target::isValidTarget(C_Entity* ent) {
 	if (antibot->isExtraCheckEnabled() && !ent->canShowNameTag())
 		return false;
 
+	return (ent != nullptr);
 	return true;
 }
 

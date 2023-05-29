@@ -8,17 +8,19 @@ GiveCommand::GiveCommand() : IMCCommand("give", "spawn items", "<itemName> <coun
 
 GiveCommand::~GiveCommand() {
 }
-
+bool isValidNBT(std::string &tag) {
+	return tag.size() > 1 && tag.front() == MojangsonToken::COMPOUND_START.getSymbol() && tag.back() == MojangsonToken::COMPOUND_END.getSymbol();
+}
 bool GiveCommand::execute(std::vector<std::string> *args) {
 	assertTrue(args->size() > 2);
 
 	int itemId = 0;
 	uint32_t fullCount = static_cast<uint32_t>(assertInt(args->at(2)));
 	unsigned int stackCount = fullCount / 64;  // Get the amount of stacks we have.
-	char count = fullCount % 64;               // Get the amount we have left.
-	char itemData = 0;
+	unsigned int count = fullCount % 64;
+	unsigned int itemData = 0;
 	if (args->size() > 3) {
-		itemData = static_cast<char>(assertInt(args->at(3)));
+		itemData = assertInt(args->at(3));
 	}
 
 	try {
@@ -66,33 +68,26 @@ bool GiveCommand::execute(std::vector<std::string> *args) {
 		}
 		if (!success) return true;
 	}
-	C_Inventory *inv = g_Data.getLocalPlayer()->getSupplies()->inventory;
-	C_ItemStack *item = g_Data.getLocalPlayer()->getSelectedItem();
+	Inventory *inv = Game.getLocalPlayer()->getSupplies()->inventory;
+	ItemStack *item = Game.getLocalPlayer()->getSelectedItem();
 	if (args->size() > 4) {
-		std::string tag;
-		tag = Utils::getClipboardText();
-		if (args->size() > 4) {
-			g_Data.getLocalPlayer()->getTransactionManager()->addInventoryAction(C_InventoryAction(0, nullptr, nullptr, item, nullptr, 1, 507, 99999));
-		}
-
-		if (tag.size() > 1 && tag.front() == MojangsonToken::COMPOUND_START.getSymbol() && tag.back() == MojangsonToken::COMPOUND_END.getSymbol()) {
-			if (args->size() > 4) {
-				item->setUserData(std::move(Mojangson::parseTag(tag)));
-			}
+		std::string tag = Utils::getClipboardText();
+		if (isValidNBT(tag)) {
+			item->setUserData(std::move(Mojangson::parseTag(tag)));
 		} else {
 			clientMessageF("%sInvalid NBT tag!", RED);
 			return true;
 		}
 
 		if (args->size() > 4) {
-			g_Data.getLocalPlayer()->getTransactionManager()->addInventoryAction(C_InventoryAction(0, nullptr, nullptr, item, nullptr, 1, 507, 99999));
+			Game.getLocalPlayer()->getTransactionManager()->addInventoryAction(InventoryAction(0, nullptr, nullptr, item, nullptr, 1, 507, 99999));
 		}
 		clientMessageF("%s%s", GREEN, "Successfully loaded mojangson !");
 	}
 	if (args->size() > 4) {
-		C_InventoryAction *firstAction = nullptr;
-		auto transactionMan = g_Data.getLocalPlayer()->getTransactionManager();
-		firstAction = new C_InventoryAction(0, item, nullptr, 507, 99999);
+		InventoryAction *firstAction = nullptr;
+		auto transactionMan = Game.getLocalPlayer()->getTransactionManager();
+		firstAction = new InventoryAction(0, item, nullptr, 507, 99999);
 		transactionMan->addInventoryAction(*firstAction);
 		inv->addItemToFirstEmptySlot(item);
 	}
@@ -102,90 +97,66 @@ bool GiveCommand::execute(std::vector<std::string> *args) {
 }
 
 bool GiveCommand::giveItem(uint8_t count, int itemId, uint8_t itemData, std::string &tag) {
-	C_Inventory *inv = g_Data.getLocalPlayer()->getSupplies()->inventory;
-	C_ItemStack *itemStack = nullptr;
-	auto transactionManager = g_Data.getLocalPlayer()->getTransactionManager();
+	Inventory *inv = Game.getLocalPlayer()->getSupplies()->inventory;
+	ItemStack *itemStack = nullptr;
+	auto transactionManager = Game.getLocalPlayer()->getTransactionManager();
 
-	std::unique_ptr<void *> ItemPtr = std::make_unique<void *>();
-	C_Item ***cStack = ItemRegistry::getItemFromId(ItemPtr.get(), itemId);
+	void *ItemPtr;
+	Item ***cStack = ItemRegistry::getItemFromId(&ItemPtr, itemId);
 	if (cStack == nullptr || *cStack == nullptr || **cStack == nullptr) {
 		clientMessageF("%sInvalid item ID!", RED);
 		return false;
 	}
-	itemStack = new C_ItemStack(***cStack, count, itemData);
-
-	if (itemStack != nullptr) {
-		itemStack->count = count;
-	}
+	itemStack = new ItemStack(***cStack, count, itemData);
 
 	int slot = inv->getFirstEmptySlot();
 
 	if (tag.size() > 1 && tag.front() == MojangsonToken::COMPOUND_START.getSymbol() && tag.back() == MojangsonToken::COMPOUND_END.getSymbol()) {
-		//itemStack->setUserData(std::move(Mojangson::parseTag(tag)));
 		itemStack->fromTag(*Mojangson::parseTag(tag));
 	}
 
 	ItemDescriptor *desc = new ItemDescriptor((*itemStack->item)->itemId, itemData);
 
-	// If we add the second action, Only one stack will come through for some reason.
-	// Otherwise all stacks will come through but will be buggy till dropped or
-	// till the world is saved then reloaded.
-
-	C_InventoryAction *firstAction = new C_InventoryAction(slot, desc, nullptr, itemStack, nullptr, count, 507, 99999);
-	//C_InventoryAction *secondAction = new C_InventoryAction(slot, nullptr, desc, nullptr, itemStack, count);
+	InventoryAction *firstAction = new InventoryAction(slot, desc, nullptr, itemStack, nullptr, count, 507, 99999);
 
 	transactionManager->addInventoryAction(*firstAction);
-	//transactionManager->addInventoryAction(*secondAction);
-
-	delete firstAction;
-	//delete secondAction;
-	delete desc;
 
 	inv->addItemToFirstEmptySlot(itemStack);
+
+	delete desc;
+	delete firstAction;
 	return true;
 }
 
 bool GiveCommand::giveItem(uint8_t count, TextHolder &text, uint8_t itemData, std::string &tag) {
-	C_Inventory *inv = g_Data.getLocalPlayer()->getSupplies()->inventory;
-	C_ItemStack *itemStack = nullptr;
-	auto transactionManager = g_Data.getLocalPlayer()->getTransactionManager();
+	Inventory *inv = Game.getLocalPlayer()->getSupplies()->inventory;
+	ItemStack *itemStack = nullptr;
+	auto transactionManager = Game.getLocalPlayer()->getTransactionManager();
 
-	std::unique_ptr<void *> ItemPtr = std::make_unique<void *>();
-	std::unique_ptr<void *> buffer = std::make_unique<void *>();
-	C_Item ***cStack = ItemRegistry::lookUpByName(ItemPtr.get(), buffer.get(), text);
+	void *ItemPtr;
+	void *buffer;
+	Item ***cStack = ItemRegistry::lookUpByName(&ItemPtr, &buffer, text);
 	if (*cStack == nullptr) {
 		clientMessageF("%sInvalid item name!", RED);
 		return false;
 	}
-	itemStack = new C_ItemStack(***cStack, count, itemData);
-
-	if (itemStack != nullptr) {
-		itemStack->count = count;
-	}
+	itemStack = new ItemStack(***cStack, count, itemData);
 
 	int slot = inv->getFirstEmptySlot();
 
 	if (tag.size() > 1 && tag.front() == MojangsonToken::COMPOUND_START.getSymbol() && tag.back() == MojangsonToken::COMPOUND_END.getSymbol()) {
-		//itemStack->setUserData(std::move(Mojangson::parseTag(tag)));
 		itemStack->fromTag(*Mojangson::parseTag(tag));
 	}
 
 	ItemDescriptor *desc = new ItemDescriptor((*itemStack->item)->itemId, itemData);
 
-	// If we add the second action, Only one stack will come through for some reason.
-	// Otherwise all stacks will come through but will be buggy till dropped or
-	// till the world is saved then reloaded.
-
-	C_InventoryAction *firstAction = new C_InventoryAction(slot, desc, nullptr, itemStack, nullptr, count, 507, 99999);
-	//C_InventoryAction *secondAction = new C_InventoryAction(slot, nullptr, desc, nullptr, itemStack, count);
+	InventoryAction *firstAction = new InventoryAction(slot, desc, nullptr, itemStack, nullptr, count, 507, 99999);
 
 	transactionManager->addInventoryAction(*firstAction);
-	//transactionManager->addInventoryAction(*secondAction);
-
-	delete firstAction;
-	//delete secondAction;
-	delete desc;
 
 	inv->addItemToFirstEmptySlot(itemStack);
+
+	delete desc;
+	delete firstAction;
 	return true;
 }

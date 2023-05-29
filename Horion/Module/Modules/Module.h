@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../../Memory/GameData.h"
-#include "../../FriendList/FriendList.h"
+#include "../../FriendList/FriendsManager.h"
 #include "../../../Utils/keys.h"
 //#include "../../DrawUtils.h"
 
@@ -14,8 +14,7 @@ enum class Category {
 	PLAYER = 3,
 	WORLD = 4,
 	MISC = 5,
-	CUSTOM = 6,
-	CLIENT = 7
+	CLIENT = 6
 };
 
 struct EnumEntry {
@@ -92,7 +91,7 @@ private:
 	bool enabled = false;
 	int keybind = 0x0;
 	bool extended = false;
-	vec2_t ModulePos;
+	Vec2 ModulePos;
 private:
 	Category category;
 	const char* tooltip;
@@ -114,7 +113,7 @@ public:
 
 	const Category getCategory() { return category; };
 
-	inline vec2_t* getPos() { return &ModulePos; };
+	inline Vec2* getPos() { return &ModulePos; };
 
 	inline std::vector<SettingEntry*>* getSettings() { return &settings; };
 
@@ -123,23 +122,27 @@ public:
 	virtual int getKeybind();
 	virtual void setKeybind(int key);
 	virtual bool allowAutoStart();
-	virtual void onWorldTick(C_GameMode*);
-	virtual void onTick(C_GameMode*);
+	virtual void onWorldTick(GameMode*);
+	virtual void onTick(GameMode*);
 	virtual void onKeyUpdate(int key, bool isDown);
+	virtual void onKey(int key, bool isDown, bool& shouldCancel);
 	virtual void onEnable();
 	virtual void onDisable();
-	virtual void onAttack(C_Entity*);
-	virtual void onPreRender(C_MinecraftUIRenderContext* renderCtx);
-	virtual void onPostRender(C_MinecraftUIRenderContext* renderCtx);
+	virtual void onAttack(Entity*);
+	virtual void onPreRender(MinecraftUIRenderContext* renderCtx);
+	virtual void onPostRender(MinecraftUIRenderContext* renderCtx);
 	virtual void onLevelRender();
-	virtual void onMove(C_MoveInputHandler*);
+	virtual void onMove(MoveInputHandler*);
+	virtual void onPlayerTick(Player*);
 	virtual void onLoadConfig(void* conf);
 	virtual void onSaveConfig(void* conf);
 	virtual bool isFlashMode();
 	virtual void setEnabled(bool enabled);
 	virtual void toggle();
 	virtual bool isEnabled();
-	virtual void onSendPacket(C_Packet*);
+	virtual void onSendPacket(Packet*);
+	virtual void onSendClientPacket(Packet*);
 	virtual bool callWhenDisabled();
 	const char* getTooltip();
+	virtual void onBaseTick(Entity*) {}
 };

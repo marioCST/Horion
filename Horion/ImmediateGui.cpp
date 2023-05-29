@@ -1,11 +1,14 @@
 #include "ImmediateGui.h"
 
-ImmediateGui HImGui;
+ImmediateGui HorionGui;
 
 ComponentInfo::ComponentInfo(int id) : id(id) {
 }
 
-ButtonInfo::ButtonInfo(int id, vec2_t pos, bool centered) : ComponentInfo(id), pos(pos), centered(centered) {
+ButtonInfo::ButtonInfo(int id, Vec2 pos, bool centered) : ComponentInfo(id), pos(pos), centered(centered) {
+}
+
+ImageButtonInfo::ImageButtonInfo(int id, Vec2 pos, bool centered) : ButtonInfo(id, pos, centered) {
 }
 
 void ButtonInfo::calculateSize(const char* txt) {
@@ -13,12 +16,12 @@ void ButtonInfo::calculateSize(const char* txt) {
 	size = {DrawUtils::getTextWidth(&str), DrawUtils::getFont(Fonts::SMOOTH)->getLineHeight()};
 }
 
-bool ButtonInfo::isInSelectableSurface(vec2_t mouse) {
-	vec4_t surface = getSelectableSurface();
+bool ButtonInfo::isInSelectableSurface(Vec2 mouse) {
+	Vec4 surface = getSelectableSurface();
 	return surface.contains(&mouse);
 }
 
-vec4_t ButtonInfo::getSelectableSurface() {
+Vec4 ButtonInfo::getSelectableSurface() {
 	if (centered) {
 		return {pos.x - padding - size.x / 2,
 				pos.y - padding - size.y / 2,
@@ -32,18 +35,19 @@ vec4_t ButtonInfo::getSelectableSurface() {
 	}
 }
 
-void ButtonInfo::draw(vec2_t mousePos, const char* label) {
+void ButtonInfo::draw(Vec2 mousePos, const char* label) {
 	calculateSize(label);
 	auto surface = getSelectableSurface();
-	vec2_t textPos = pos;
+	Vec2 textPos = pos;
 	std::string str(label);
 	if (centered) {
 		textPos.x -= DrawUtils::getTextWidth(&str) / 2;
 		textPos.y -= DrawUtils::getFont(Fonts::SMOOTH)->getLineHeight() / 2;
 	}
-		
+	
 	DrawUtils::drawText(textPos, &str, MC_Color());
 	if (isInSelectableSurface(mousePos)) {  // Mouse hovering over us
+		if (DrawUtils::isLeftClickDown) surface = surface.shrink(0.8f);  // shrink the button when pressed
 		DrawUtils::fillRectangle(surface, MC_Color(85, 85, 85), 1);
 		canClickB = true;
 	} else {
@@ -52,41 +56,53 @@ void ButtonInfo::draw(vec2_t mousePos, const char* label) {
 	}		
 }
 
-void ImmediateGui::onMouseClickUpdate(int key, bool isDown) {
-	switch (key) {
-	case 1:  // Left Click
-		leftMb.nextIsDown = true;
-		break;
-	case 2:  // Right Click
-		rightMb.nextIsDown = true;
-		break;
+void ImageButtonInfo::updateSize(Vec2 size) {
+	this->size = size;
+}
+
+void ImageButtonInfo::draw(Vec2 mousePos, const char* location) {
+	auto surface = getSelectableSurface();
+	Vec2 imagePos = pos;
+	Vec2 imageSize = size;
+
+	if (centered) {
+		imagePos.x -= imageSize.x / 2;
+		imagePos.y -= imageSize.y / 2;
 	}
+
+	if (isInSelectableSurface(mousePos)) {
+		if (DrawUtils::isLeftClickDown) {
+			surface = surface.shrink(0.8f);
+			imageSize.x *= 0.95f;
+			imageSize.y *= 0.95f;
+
+			imagePos.x += imagePos.x * 0.025f;
+			imagePos.y += imagePos.y * 0.025f;
+		}
+
+		DrawUtils::fillRectangle(surface, MC_Color(85, 85, 85), 0.2f);
+		canClickB = true;
+	} else {
+		//DrawUtils::fillRectangle(surface, MC_Color(12, 12, 12), 1);
+		canClickB = false;
+	}
+
+	DrawUtils::drawImage(location, imagePos, imageSize, Vec2(0, 0));
 }
 
 void ImmediateGui::startFrame() {
-	vec2_t windowSize = g_Data.getClientInstance()->getGuiData()->windowSize;
-	vec2_t windowSizeReal = g_Data.getClientInstance()->getGuiData()->windowSizeReal;
-	mousePos = *g_Data.getClientInstance()->getMousePos();
+	Vec2 windowSize = Game.getClientInstance()->getGuiData()->windowSize;
+	Vec2 windowSizeReal = Game.getClientInstance()->getGuiData()->windowSizeReal;
+	mousePos = *Game.getClientInstance()->getMousePos();
 	mousePos = mousePos.div(windowSizeReal);
 	mousePos = mousePos.mul(windowSize);
 
-	leftMb.update();
-	rightMb.update();
-
-	if (g_Data.getClientInstance()->getMouseGrabbed()) {
-		leftMb.isClicked = false;
-		rightMb.isClicked = false;
-
-		mousePos = {-1000, 1000};
+	if (Game.canUseMoveKeys()) {
+		mousePos = {-1, -1};
 	}
 }
 
-void ImmediateGui::endFrame() {
-	leftMb.isClicked = false;
-	rightMb.isClicked = false;
-}
-
-bool ImmediateGui::Button(const char* label, vec2_t pos, bool centered) {
+bool ImmediateGui::Button(const char* label, Vec2 pos, bool centered) {
 	auto id = Utils::getCrcHash(label);
 	if (components.find(id) == components.end()) {  // Create new button
 		components[id] = std::make_shared<ButtonInfo>(id, pos, centered);
@@ -96,7 +112,27 @@ bool ImmediateGui::Button(const char* label, vec2_t pos, bool centered) {
 
 	button->updatePos(pos);
 	button->draw(mousePos, label);
-	if (button->canClick() && leftMb.trySteal()) {  // Click
+	if (button->canClick() && DrawUtils::shouldToggleLeftClick) {  // Click
+		DrawUtils::shouldToggleLeftClick = false;
+		return true;
+	}
+
+	return false;
+}
+
+bool ImmediateGui::ImageButton(const char* location, Vec2 pos, Vec2 size, bool centered) {
+	auto id = Utils::getCrcHash(location);
+	if (components.find(id) == components.end()) {  // Create new button
+		components[id] = std::make_shared<ImageButtonInfo>(id, pos, centered);
+	}
+	auto comp = components[id];
+	auto button = dynamic_cast<ImageButtonInfo*>(comp.get());
+
+	button->updatePos(pos);
+	button->updateSize(size);
+	button->draw(mousePos, location);
+	if (button->canClick() && DrawUtils::shouldToggleLeftClick) {  // Click
+		DrawUtils::shouldToggleLeftClick = false;
 		return true;
 	}
 

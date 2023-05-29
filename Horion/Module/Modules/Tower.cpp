@@ -13,38 +13,38 @@ const char* Tower::getModuleName() {
 	return ("Tower");
 }
 
-bool Tower::tryTower(vec3_t blockBelow) {
-	C_GameSettingsInput* input = g_Data.getClientInstance()->getGameSettingsInput();
+bool Tower::tryTower(Vec3 blockBelow) {
+	GameSettingsInput* input = Game.getClientInstance()->getGameSettingsInput();
 
 	if (input == nullptr)
 		return false;
 
 	blockBelow = blockBelow.floor();
 
-	DrawUtils::drawBox(blockBelow, vec3_t(blockBelow).add(1), 0.4f);
+	DrawUtils::drawBox(blockBelow, Vec3(blockBelow).add(1), 0.4f);
 
-	C_Block* block = g_Data.getLocalPlayer()->region->getBlock(vec3_ti(blockBelow));
-	C_BlockLegacy* blockLegacy = (block->blockLegacy);
+	Block* block = Game.getLocalPlayer()->region->getBlock(Vec3i(blockBelow));
+	BlockLegacy* blockLegacy = (block->blockLegacy);
 	if (blockLegacy->material->isReplaceable) {
-		vec3_ti blok(blockBelow);
+		Vec3i blok(blockBelow);
 
 		// Find neighbour
-		static std::vector<vec3_ti*> checklist;
+		static std::vector<Vec3i*> checklist;
 		if (checklist.empty()) {
-			checklist.push_back(new vec3_ti(0, -1, 0));
-			checklist.push_back(new vec3_ti(0, 1, 0));
+			checklist.push_back(new Vec3i(0, -1, 0));
+			checklist.push_back(new Vec3i(0, 1, 0));
 
-			checklist.push_back(new vec3_ti(0, 0, -1));
-			checklist.push_back(new vec3_ti(0, 0, 1));
+			checklist.push_back(new Vec3i(0, 0, -1));
+			checklist.push_back(new Vec3i(0, 0, 1));
 
-			checklist.push_back(new vec3_ti(-1, 0, 0));
-			checklist.push_back(new vec3_ti(1, 0, 0));
+			checklist.push_back(new Vec3i(-1, 0, 0));
+			checklist.push_back(new Vec3i(1, 0, 0));
 		}
 		bool foundCandidate = false;
 		int i = 0;
 		for (auto current : checklist) {
-			vec3_ti calc = blok.sub(*current);
-			if (!((g_Data.getLocalPlayer()->region->getBlock(calc)->blockLegacy))->material->isReplaceable) {
+			Vec3i calc = blok.sub(*current);
+			if (!((Game.getLocalPlayer()->region->getBlock(calc)->blockLegacy))->material->isReplaceable) {
 				// Found a solid block to click
 				foundCandidate = true;
 				blok = calc;
@@ -53,13 +53,13 @@ bool Tower::tryTower(vec3_t blockBelow) {
 			i++;
 		}
 		if (foundCandidate && GameData::isKeyDown(*input->spaceBarKey)) {
-			vec3_t moveVec;
-			moveVec.x = g_Data.getLocalPlayer()->velocity.x;
+			Vec3 moveVec;
+			moveVec.x = Game.getLocalPlayer()->velocity.x;
 			moveVec.y = motion;
-			moveVec.z = g_Data.getLocalPlayer()->velocity.z;
-			g_Data.getLocalPlayer()->lerpMotion(moveVec);
+			moveVec.z = Game.getLocalPlayer()->velocity.z;
+			Game.getLocalPlayer()->lerpMotion(moveVec);
 			bool idk = true;
-			g_Data.getCGameMode()->buildBlock(&blok, i, idk);
+			Game.getGameMode()->buildBlock(&blok, i, idk);
 
 			return true;
 		}
@@ -67,22 +67,22 @@ bool Tower::tryTower(vec3_t blockBelow) {
 	return false;
 }
 
-void Tower::onPostRender(C_MinecraftUIRenderContext* renderCtx) {
-	if (g_Data.getLocalPlayer() == nullptr)
+void Tower::onPostRender(MinecraftUIRenderContext* renderCtx) {
+	if (Game.getLocalPlayer() == nullptr)
 		return;
-	if (!g_Data.canUseMoveKeys())
+	if (!Game.canUseMoveKeys())
 		return;
-	auto selectedItem = g_Data.getLocalPlayer()->getSelectedItem();
+	auto selectedItem = Game.getLocalPlayer()->getSelectedItem();
 	if (!selectedItem->isValid() || !(*selectedItem->item)->isBlock())  // Block in hand?
 		return;
 
-	vec3_t blockBelow = g_Data.getLocalPlayer()->eyePos0;  // Block below the player
-	blockBelow.y -= g_Data.getLocalPlayer()->height;
+	Vec3 blockBelow = Game.getLocalPlayer()->eyePos0;  // Block below the player
+	blockBelow.y -= Game.getLocalPlayer()->height;
 	blockBelow.y -= 0.5f;
 
 	// Adjustment by velocity
-	float speed = g_Data.getLocalPlayer()->velocity.magnitudexy();
-	vec3_t vel = g_Data.getLocalPlayer()->velocity;
+	float speed = Game.getLocalPlayer()->velocity.magnitudexy();
+	Vec3 vel = Game.getLocalPlayer()->velocity;
 	vel.normalize();  // Only use values from 0 - 1
 
 	if (!tryTower(blockBelow)) {
@@ -90,7 +90,7 @@ void Tower::onPostRender(C_MinecraftUIRenderContext* renderCtx) {
 			blockBelow.z -= vel.z * 0.4f;
 			if (!tryTower(blockBelow)) {
 				blockBelow.x -= vel.x * 0.4f;
-				if (!tryTower(blockBelow) && g_Data.getLocalPlayer()->isSprinting()) {
+				if (!tryTower(blockBelow) && Game.getLocalPlayer()->isSprinting()) {
 					blockBelow.z += vel.z;
 					blockBelow.x += vel.x;
 					tryTower(blockBelow);

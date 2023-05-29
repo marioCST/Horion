@@ -7,14 +7,14 @@ private:
 	bool silent = true;
 	bool predict = false;
 	bool visualize = false;
-	vec2_t angle;
+	Vec2 angle;
 
 public:
 	BowAimbot();
 	~BowAimbot();
 
-	virtual void onPostRender(C_MinecraftUIRenderContext* renderCtx) override;
-	virtual void onSendPacket(C_Packet* packet) override;
+	virtual void onPostRender(MinecraftUIRenderContext* renderCtx) override;
+	virtual void onSendPacket(Packet* packet) override;
 
 	// Inherited via IModule
 	virtual const char* getModuleName() override;

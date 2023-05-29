@@ -1,4 +1,5 @@
 #include "MidClick.h"
+#include "../../FriendList/FriendsManager.h"
 
 MidClick::MidClick() : IModule(0, Category::PLAYER, "Click a player with your mouse wheel to add em as a friend.") {
 }
@@ -10,21 +11,21 @@ const char* MidClick::getModuleName() {
 	return "MidClick";
 }
 
-void MidClick::onTick(C_GameMode* gm) {
-	C_Entity* entity = g_Data.getLocalPlayer()->level->getEntity();
+void MidClick::onTick(GameMode* gm) {
+	Entity* entity = Game.getLocalPlayer()->level->getEntity();
 	if (entity == nullptr) 
 		return;
 
 	std::string name = entity->getNameTag()->getText();
 
 	if (GameData::isWheelDown() && !hasClicked) {
-		if (!FriendList::findPlayer(name)) {
-			FriendList::addPlayerToList(name);
-			g_Data.getGuiData()->displayClientMessageF("%sSuccessfully added %s %sto your friendlist.", GREEN, name.c_str(), GREEN);
+		if (!FriendsManager::findFriend(name)) {
+			FriendsManager::addFriendToList(name);
+			Game.getGuiData()->displayClientMessageF("%sSuccessfully added %s %sto your friendlist.", GREEN, name.c_str(), GREEN);
 		} else {
 			std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-			FriendList::removePlayer(name);
-			g_Data.getGuiData()->displayClientMessageF("%sSuccessfully removed %s %sfrom your friendlist.", GREEN, name.c_str(), GREEN);
+			FriendsManager::removeFriend(name);
+			Game.getGuiData()->displayClientMessageF("%sSuccessfully removed %s %sfrom your friendlist.", GREEN, name.c_str(), GREEN);
 		}
 		hasClicked = true;
 	} else if (!GameData::isWheelDown()) {

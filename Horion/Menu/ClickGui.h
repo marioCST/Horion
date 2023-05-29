@@ -20,11 +20,11 @@ struct ClickWindow {
 		size.x = 30;
 		size.y = 30;
 	}
-	vec2_t pos;
-	vec2_t size;
+	Vec2 pos;
+	Vec2 size;
 	bool isExtended = true;
 	bool isInAnimation = false;
-	float animation = 0.1;
+	float animation = 0.1f;
 	const char* name;
 	std::map<unsigned int, std::shared_ptr<ClickModule>> moduleMap;
 
@@ -67,9 +67,6 @@ private:
 			case Category::MISC:
 				categoryName = "Misc";
 				break;
-			case Category::CUSTOM:
-				categoryName = "Scripts";
-				break;
 			case Category::CLIENT:
 				categoryName = "Client";
 				break;
@@ -82,7 +79,6 @@ public:
 	static void init();
 	static void render();
 	static void onKeyUpdate(int key, bool isDown);
-	static void onMouseClickUpdate(int key, bool isDown);
 	static void onWheelScroll(bool direction); // true = up, false = down
 	static void onLoadConfig(void* confVoid);
 	static void onSaveConfig(void* confVoid);

@@ -5,7 +5,7 @@
 class Tower : public IModule {
 private:
 	float motion = 0.5f;
-	bool tryTower(vec3_t blockBelow);
+	bool tryTower(Vec3 blockBelow);
 
 public:
 	Tower();
@@ -13,5 +13,5 @@ public:
 
 	// Inherited via IModule
 	virtual const char* getModuleName() override;
-	virtual void onPostRender(C_MinecraftUIRenderContext* renderCtx) override;
+	virtual void onPostRender(MinecraftUIRenderContext* renderCtx) override;
 };

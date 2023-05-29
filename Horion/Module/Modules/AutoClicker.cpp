@@ -8,27 +8,24 @@ AutoClicker::AutoClicker() : IModule(0, Category::COMBAT, "A simple autoclicker,
 	registerBoolSetting("Hold", &hold, hold);
 }
 
-AutoClicker::~AutoClicker() {
-}
+AutoClicker::~AutoClicker() {}
 
 const char* AutoClicker::getModuleName() {
-	return ("AutoClicker");
+	return "AutoClicker";
 }
 
-void AutoClicker::onTick(C_GameMode* gm) {
+void AutoClicker::onTick(GameMode* gm) {
 	if ((GameData::isLeftClickDown() || !hold) && GameData::canUseMoveKeys()) {
-		C_LocalPlayer* localPlayer = g_Data.getLocalPlayer();
-		Level* level = g_Data.getLocalPlayer()->level;
+		LocalPlayer* player = Game.getLocalPlayer();
+		Level* level = player->level;
 		Odelay++;
 
 		if (Odelay >= delay) {
-			auto selectedItem = localPlayer->getSelectedItem();
+			auto selectedItem = player->getSelectedItem();
 			if (weapons && selectedItem->getAttackingDamageWithEnchants() < 1)
 				return;
 
-			g_Data.leftclickCount++;
-
-			localPlayer->swingArm();
+			player->swingArm();
 
 			if (level->hasEntity() != 0)
 				gm->attack(level->getEntity());
@@ -36,7 +33,7 @@ void AutoClicker::onTick(C_GameMode* gm) {
 				bool isDestroyed = false;
 				gm->startDestroyBlock(level->block, level->blockSide, isDestroyed);
 				gm->stopDestroyBlock(level->block);
-				if (isDestroyed && localPlayer->region->getBlock(level->block)->blockLegacy->blockId != 0)
+				if (isDestroyed && player->region->getBlock(level->block)->blockLegacy->blockId != 0)
 					gm->destroyBlock(&level->block, 0);
 			}
 			Odelay = 0;
@@ -45,12 +42,11 @@ void AutoClicker::onTick(C_GameMode* gm) {
 
 	if (rightclick) {
 		if ((GameData::isRightClickDown() || !hold) && GameData::canUseMoveKeys()) {
-			Level* level = g_Data.getLocalPlayer()->level;
+			Level* level = Game.getLocalPlayer()->level;
 			Odelay++;
 			if (Odelay >= delay) {
-				g_Data.rightclickCount++;
 				bool idk = true;
-				gm->buildBlock(new vec3_ti(level->block), level->blockSide, idk);
+				gm->buildBlock(new Vec3i(level->block), level->blockSide, idk);
 				Odelay = 0;
 			}
 		}

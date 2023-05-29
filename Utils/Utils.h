@@ -4,11 +4,11 @@
 #define WIN32_LEAN_AND_MEAN
 #endif
 
-#include <fstream>
-#include <sstream>
 #include <algorithm>
 #include <ctime>
+#include <fstream>
 #include <random>
+#include <sstream>
 #include <vector>
 
 //#include "xorstr.h"
@@ -223,11 +223,19 @@ static inline void ImSwap(T& a, T& b) {
 
 #ifdef JM_XORSTR_HPP
 #define FindSignature(szSignature) Utils::FindSignatureModule("Minecraft.Windows.exe", xorstr_(szSignature))
+#define GetOffsetFromSig(szSignature, offset) Utils::getOffsetFromSignature(xorstr_(szSignature), offset)
+#define GetVtableFromSig(szSignature, offset) Utils::getVtableFromSignature(xorstr_(szSignature), offset)
+#define PatchBytes(src, newBytes, size) Utils::patchBytes(src, newBytes, size)
+#define NopBytes(src, size) Utils::nopBytes(src, size)
 #else
 #define FindSignature(szSignature) Utils::FindSignatureModule("Minecraft.Windows.exe", szSignature)
+#define GetOffsetFromSig(szSignature, offset) Utils::getOffsetFromSignature(szSignature, offset)
+#define GetVtableFromSig(szSignature, offset) Utils::getVtableFromSignature(szSignature, offset)
+#define PatchBytes(src, newBytes, size) Utils::patchBytes(src, newBytes, size)
+#define NopBytes(src, size) Utils::nopBytes(src, size)
 #endif
 
-struct vec3_ti;
+struct Vec3i;
 
 class Utils {
 public:
@@ -237,7 +245,7 @@ public:
 		return ((mut & 0x7FFFFFui64) | ((static_cast<unsigned int>(in) >> 8u) & 0x800000u) /*copy sign bit*/) << by;
 	}
 
-	static size_t posToHash(const vec3_ti& pos);
+	static size_t posToHash(const Vec3i& pos);
 
 	template <typename type>
 	static inline auto lerp(type a, type b, float t) -> type {
@@ -439,6 +447,15 @@ public:
 
 	static uintptr_t FindSignatureModule(const char* szModule, const char* szSignature);
 
+	static uintptr_t getOffsetFromSignature(const char* szSignature, int offset);
+	
+	static uintptr_t** getVtableFromSignature(const char* szSignature, int offset);
+
+	template <typename T>
+	static T readPointer(std::uintptr_t ptrAddress, std::initializer_list<std::uintptr_t> Offsets) {
+		return Game.getSlimMem()->ReadPtr<T>(Game.getModule()->ptrBase + ptrAddress, Offsets);
+	};
+
 	static void GetCurrentSystemTime(tm& timeInfo);
 
 	static void ApplySystemTime(std::stringstream* ss);
@@ -475,4 +492,10 @@ public:
 	}
 
 	static std::string getRttiBaseClassName(void* ptr);
+
+	static void nopBytes(void* dst, unsigned int size);
+	
+	static void copyBytes(void* src, void* dst, unsigned int size);
+	
+	static void patchBytes(void* dst, void* src, unsigned int size);
 };

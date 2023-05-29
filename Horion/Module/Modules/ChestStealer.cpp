@@ -13,26 +13,25 @@ const char* ChestStealer::getModuleName() {
 	return ("ChestStealer");
 }
 
-void ChestStealer::chestScreenController_tick(C_ChestScreenController* c) {
-	if (c != nullptr && !g_Data.getLocalPlayer()->canOpenContainerScreen()) {
+void ChestStealer::chestScreenController_tick(ChestScreenController* c) {
+	if (c != nullptr && !Game.getLocalPlayer()->canOpenContainerScreen()) {
+		delay++;
 		std::vector<int> items = {};
 		auto invcleanerMod = moduleMgr->getModule<InventoryCleaner>();
 		for (int i = 0; i < 54; i++) {
-			C_ItemStack* stack = c->_getItemStack(TextHolder("container_items"), i);
+			ItemStack* stack = c->_getItemStack(TextHolder("container_items"), i);
 			if (stack != nullptr && stack->item != NULL)
 				if (!enhanced || invcleanerMod->stackIsUseful(stack))
 					items.push_back(i);
 		}
-		if (!items.empty()) {
+		if (!items.empty() && !Game.getLocalPlayer()->getSupplies()->inventory->isFull()) {
 			for (int i : items) {
-				c->handleAutoPlace(0x7FFFFFFF, "container_items", i);
+				if (delay > setDelay && setDelay > 0) {
+					c->handleAutoPlace("container_items", i);
+					delay = 0;
+				} else if (setDelay == 0)
+					c->handleAutoPlace("container_items", i);
 			}
-		} else  {
-			delay++;
-			if (delay > setDelay) {
-				c->tryExit();
-				delay = 0;
-			}
-		}
+		} else c->tryExit();
 	}
 }

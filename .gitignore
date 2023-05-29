@@ -498,3 +498,6 @@ MigrationBackup/
 .vscode/
 
 # End of https://www.toptal.com/developers/gitignore/api/cmake,clion+all,visualstudio,c++
+
+# Extra
+*.mcpack

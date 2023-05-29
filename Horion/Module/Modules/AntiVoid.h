@@ -6,14 +6,14 @@
 class AntiVoid : public IModule {
 private:
 	int distance = 5;
-	vec3_t savepos;
+	Vec3 savepos;
 
 public:
-	C_MoveInputHandler* inputHandler = nullptr;
+	MoveInputHandler* inputHandler = nullptr;
 	AntiVoid();
 	~AntiVoid();
 
 	// Inherited via IModule
 	virtual const char* getModuleName() override;
-	virtual void onTick(C_GameMode* gm) override;
+	virtual void onTick(GameMode* gm) override;
 };

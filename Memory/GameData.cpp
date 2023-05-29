@@ -8,14 +8,15 @@
 #include "../Utils/Utils.h"
 #include "Hooks.h"
 
-GameData g_Data;
+GameData Game;
+bool GameData::keys[0x256];
+SlimUtils::SlimMem* GameData::slimMem;
 
 size_t AABBHasher::operator()(const AABB& i) const {
 	return Utils::posToHash(i.lower);
 }
 void GameData::retrieveClientInstance() {
 	static uintptr_t clientInstanceOffset = 0x0;
-	uintptr_t sigOffset = 0x0;
 	if (clientInstanceOffset == 0x0) {
 		sigOffset = FindSignature("48 8B 15 ? ? ? ? 4C 8B 02 4C 89 06 40 84 FF 74 0C 48 8D 0D ? ? ? ? E8 ? ? ? ? 48 8B C6 48 8B 4C ? ? 48 33 CC E8 ? ? ? ? 48 8B 5C ? ? 48 8B 74 ? ? 48 83 C4 ? 5F C3 E8 ? ? ? ? 90 CC CC CC CC CC CC CC CC CC 48 89 5C ? ? 48 89 74 ? ? 57 48 83 EC ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 ? ? 48 8B DA 48 8B F1 48 89 4C ? ? 48 8D 0D ? ? ? ? E8 ? ? ? ? 85 C0 ? ? C1 85 C0 74 11 48 8B 05 ? ? ? ? 48 85 C0 75 05 40 B7 01 EB 13 84 C9 74 0C 48 8D 0D ? ? ? ? E8 ? ? ? ? 40 32 FF 40 84 FF 75 0F 48 8D 0D ? ? ? ? E8 ? ? ? ? 40 B7 01 48 85 DB 74 46 48 8B D3 E8 ? ? ? ? 48 8B 15 ? ? ? ? 4C 8B 02 4C 89 06 40 84 FF 74 0C 48 8D 0D ? ? ? ? E8 ? ? ? ? 48 8B C6 48 8B 4C ? ? 48 33 CC E8 ? ? ? ? 48 8B 5C ? ? 48 8B 74 ? ? 48 83 C4 ? 5F C3 E8 ? ? ? ? 90 CC CC CC CC CC CC CC CC CC 40 53 48 83 EC ? 48 8B D9");
 		if (sigOffset != 0x0) {
@@ -26,13 +27,13 @@ void GameData::retrieveClientInstance() {
 	}
 	g_Data.clientInstance = reinterpret_cast<C_ClientInstance*>(g_Data.slimMem->ReadPtr<uintptr_t*>(clientInstanceOffset, {0x0, 0x0, 0x48}));
 #ifdef _DEBUG
-	if (g_Data.clientInstance == 0)
+	if (Game.clientInstance == 0)
 		throw std::exception("Client Instance is 0");
 #endif
 }
 
 bool GameData::canUseMoveKeys() {
-	MinecraftGame* mc = g_Data.clientInstance->minecraftGame;
+	MinecraftGame* mc = Game.clientInstance->minecraftGame;
 	if (mc == nullptr) {
 		return false;
 	}
@@ -41,19 +42,9 @@ bool GameData::canUseMoveKeys() {
 }
 
 bool GameData::isKeyDown(int key) {
-	static uintptr_t keyMapOffset = 0x0;
-	if (keyMapOffset == 0x0) {
-		uintptr_t sigOffset = FindSignature("48 83 EC ? ? ? C1 4C 8D 05 ? ? ? ? 89 54 24 ? 88 4C 24 ? 41 89 14");
-		if (sigOffset != 0x0) {
-			int offset = *reinterpret_cast<int*>((sigOffset + 3));                                         // Get Offset from code
-			keyMapOffset = sigOffset - g_Data.gameModule->ptrBase + offset + /*length of instruction*/ 7;  // Offset is relative
-			logF("KeyMap: %llX", keyMapOffset + g_Data.gameModule->ptrBase);
-		}
-	}
-	// All keys are mapped as bools, though aligned as ints (4 byte)
-	// key0 00 00 00 key1 00 00 00 key2 00 00 00 ...
-	return *reinterpret_cast<bool*>(g_Data.gameModule->ptrBase + keyMapOffset + ((uintptr_t)key * 0x4));
+	return keys[(int)key];
 }
+
 bool GameData::isKeyPressed(int key) {
 	if (isKeyDown(key)) {
 		while (isKeyDown(key))
@@ -64,164 +55,161 @@ bool GameData::isKeyPressed(int key) {
 }
 
 bool GameData::isRightClickDown() {
-	if (g_Data.hidController == 0)
+	if (Game.hidController == 0)
 		return false;
-	return g_Data.hidController->rightClickDown;
+	return Game.hidController->rightClickDown;
 }
 
 bool GameData::isLeftClickDown() {
-	if (g_Data.hidController == 0)
+	if (Game.hidController == 0)
 		return false;
-	return g_Data.hidController->leftClickDown;
+	return Game.hidController->leftClickDown;
 }
 
 bool GameData::isWheelDown() {
-	if (g_Data.hidController == 0)
+	if (Game.hidController == 0)
 		return false;
-	return g_Data.hidController->wheelDown;
+	return Game.hidController->wheelDown;
 }
 
 bool GameData::shouldTerminate() {
-	return g_Data.shouldTerminateB;
+	return Game.shouldTerminateB;
 }
 
 void GameData::terminate() {
-	g_Data.getClientInstance()->minecraft->setTimerSpeed(20.f);
-	g_Data.shouldTerminateB = true;
+	Game.getClientInstance()->minecraft->setTimerSpeed(20.f);
+	g_Hooks.entityList.clear();
+	Game.shouldTerminateB = true;
 }
 
 bool GameData::shouldHide() {
-	return g_Data.shouldHideB;
+	return Game.shouldHideB;
 }
 
 void GameData::hide() {
-	g_Data.shouldHideB = !(g_Data.shouldHideB);
+	Game.shouldHideB = !(Game.shouldHideB);
 }
 
-void GameData::updateGameData(C_GameMode* gameMode) {
+void GameData::updateGameData(GameMode* gameMode) {
 	retrieveClientInstance();
-	g_Data.localPlayer = g_Data.getLocalPlayer();
+	Game.localPlayer = Game.getLocalPlayer();
 
-	if (g_Data.localPlayer != nullptr && gameMode->player == g_Data.localPlayer) {  // GameMode::tick might also be run on the local server
-		g_Data.gameMode = gameMode;
-		QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&g_Data.lastUpdate));
+	if (Game.localPlayer != nullptr && gameMode->player == Game.localPlayer) {
+		Game.gameMode = gameMode;
+		QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&Game.lastUpdate));
 
-		if (g_Data.localPlayer != nullptr) {
-			C_GuiData* guiData = g_Data.clientInstance->getGuiData();
-
+		if (Game.localPlayer != nullptr) {
+			GuiData* guiData = Game.clientInstance->getGuiData();
 			if (guiData != nullptr) {
-				{
-					auto vecLock = Logger::GetTextToPrintLock();
-					auto* stringPrintVector = Logger::GetTextToPrint();
-#ifdef _DEBUG
-					int numPrinted = 0;
-					std::vector<TextForPrint>::iterator it;
-					for (it = stringPrintVector->begin(); it != stringPrintVector->end(); ++it) {
-						numPrinted++;
-						if (numPrinted > 20) {
-							break;
-						}
-
-						guiData->displayClientMessageNoSendF("%s%s%s%s", GOLD, it->time, RESET, it->text);
-					}
-					stringPrintVector->erase(stringPrintVector->begin(), it);
-#else
-					stringPrintVector->clear();
-#endif
-				}
-				{
-					auto lock = std::lock_guard<std::mutex>(g_Data.textPrintLock);
-
-					auto& stringPrintVector = g_Data.textPrintList;
-					int numPrinted = 0;
-					std::vector<std::string>::iterator it;
-					for (it = stringPrintVector.begin(); it != stringPrintVector.end(); ++it) {
-						numPrinted++;
-						if (numPrinted > 20) {
-							break;
-						}
-
-						guiData->displayClientMessageNoSendF(it->c_str());
-					}
-					stringPrintVector.erase(stringPrintVector.begin(), it);
-				}
+				displayMessages(guiData);
 			}
 		}
 	}
 }
 
-void GameData::EntityList_tick(C_EntityList* list) {
-	g_Data.entityList = list;
-}
+void GameData::displayMessages(GuiData* guiData) {
+	auto vecLock = Logger::GetTextToPrintLock();
+	auto* stringPrintVector = Logger::GetTextToPrint();
+#ifdef _DEBUG
+	int numPrinted = 0;
+	std::vector<TextForPrint>::iterator it;
+	for (it = stringPrintVector->begin(); it != stringPrintVector->end(); ++it) {
+		numPrinted++;
+		if (numPrinted > 20) {
+			break;
+		}
 
-void GameData::setHIDController(C_HIDController* Hid) {
-	g_Data.hidController = Hid;
-}
+		guiData->displayClientMessageNoSendF("%s%s%s%s", GOLD, it->time, RESET, it->text);
+	}
+	stringPrintVector->erase(stringPrintVector->begin(), it);
+#else
+	stringPrintVector->clear();
+#endif
+	{
+		auto lock = std::lock_guard<std::mutex>(Game.textPrintLock);
 
-void GameData::setRakNetInstance(C_RakNetInstance* raknet) {
-	g_Data.raknetInstance = raknet;
-}
+		auto& stringPrintVector = Game.textPrintList;
+		int numPrinted = 0;
+		std::vector<std::string>::iterator it;
+		for (it = stringPrintVector.begin(); it != stringPrintVector.end(); ++it) {
+			numPrinted++;
+			if (numPrinted > 20) {
+				break;
+			}
 
-void GameData::forEachEntity(std::function<void(C_Entity*, bool)> callback) {
-	if (localPlayer && localPlayer->level) {
-		for (const auto& ent : g_Hooks.entityList)
-			if (ent.ent != nullptr) callback(ent.ent, false);
+			guiData->displayClientMessageNoSendF(it->c_str());
+		}
+		stringPrintVector.erase(stringPrintVector.begin(), it);
 	}
 }
 
-void GameData::addChestToList(C_ChestBlockActor* chest) {
+void GameData::EntityList_tick(EntityList* list) {
+	Game.entityList = list;
+}
+
+void GameData::setHIDController(HIDController* Hid) {
+	Game.hidController = Hid;
+}
+
+void GameData::setRakNetInstance(RakNetInstance* raknet) {
+	Game.raknetInstance = raknet;
+}
+
+void GameData::forEachEntity(std::function<void(Entity*, bool)> callback) {
+	if (this->localPlayer && this->localPlayer->level) {
+		for (const auto& ent : g_Hooks.entityList) if (ent.ent != nullptr && ent.ent->isPlayer()) callback(ent.ent, false); //Only get players from this list
+		for (const auto& ent : Game.getLocalPlayer()->level->getMiscEntityList())
+			if (ent != nullptr && ent->getEntityTypeId() >= 1 && ent->getEntityTypeId() <= 999999999 && !ent->isPlayer()) callback(ent, false); //get everythign else from this
+	}
+}
+
+void GameData::forEachPlayer(std::function<void(Entity*, bool)> callback) {
+	if (this->localPlayer && this->localPlayer->level) {
+		for (const auto& ent : g_Hooks.entityList) if (ent.ent != nullptr && ent.ent->isPlayer()) callback(ent.ent, false); //get all players
+	}
+}
+
+void GameData::forEachMob(std::function<void(Entity*, bool)> callback) {
+	if (this->localPlayer && this->localPlayer->level) {
+		for (const auto& ent : Game.getLocalPlayer()->level->getMiscEntityList())
+			if (ent != nullptr && ent->getEntityTypeId() >= 1 && ent->getEntityTypeId() <= 999999999 && !ent->isPlayer()) callback(ent, false); //get all entities that are not players
+	}
+}
+
+void GameData::addChestToList(ChestBlockActor* chest) {
 	if (chest == nullptr || !chest->isMainSubchest())
 		return;
 	AABB chestAabb = chest->getFullAABB();
-	std::lock_guard<std::mutex> listGuard(g_Data.chestListMutex);
-	if (g_Data.chestList.count(chestAabb) > 0)
+	std::lock_guard<std::mutex> listGuard(Game.chestListMutex);
+	if (Game.chestList.count(chestAabb) > 0)
 		return;
 
-	g_Data.chestList.insert(chestAabb);
+	Game.chestList.insert(chestAabb);
 }
 
 void GameData::initGameData(const SlimUtils::SlimModule* gameModule, SlimUtils::SlimMem* slimMem, void* hDllInst) {
-	g_Data.gameModule = gameModule;
-	g_Data.slimMem = slimMem;
-	g_Data.hDllInst = hDllInst;
-	g_Data.networkedData.xorKey = rand() % 0xFFFF | ((rand() % 0xFFFF) << 16);
+	Game.gameModule = gameModule;
+	Game.slimMem = slimMem;
+	Game.hDllInst = hDllInst;
 	retrieveClientInstance();
-#ifdef _DEBUG
-	logF("base: %llX", g_Data.getModule()->ptrBase);
-	logF("clientInstance %llX", g_Data.clientInstance);
-	logF("localPlayer %llX", g_Data.getLocalPlayer());
-	if (g_Data.clientInstance != nullptr) {
-		logF("minecraftGame: %llX", g_Data.clientInstance->minecraftGame);
-		logF("levelRenderer: %llX", g_Data.clientInstance->levelRenderer);
-	}
 
+#ifdef _DEBUG
+	logF("Base: %llX", Game.getModule()->ptrBase);
+	if (Game.clientInstance != nullptr) {
+		logF("ClientInstance: %llX", Game.clientInstance);
+		logF("LocalPlayer: %llX", Game.getLocalPlayer());
+		logF("MinecraftGame: %llX", Game.clientInstance->minecraftGame);
+		logF("LevelRenderer: %llX", Game.clientInstance->levelRenderer);
+	}
 #endif
 }
-void GameData::sendPacketToInjector(HorionDataPacket horionDataPack) {
-	if (!isInjectorConnectionActive())
-		throw std::exception("Horion injector connection not active");
-	if (horionDataPack.dataArraySize >= 3000) {
-		logF("Tried to send data packet with array size: %i %llX", horionDataPack.dataArraySize, horionDataPack.data.get());
-		throw std::exception("Data packet data too big");
-	}
 
-	horionToInjectorQueue.push(horionDataPack);
-}
-void GameData::callInjectorResponseCallback(int id, std::shared_ptr<HorionDataPacket> packet) {
-	if (injectorToHorionResponseCallbacks.find(id) == injectorToHorionResponseCallbacks.end()) {
-		logF("No response callback for request with id=%i!", id);
-		return;
-	}
-	injectorToHorionResponseCallbacks[id](packet);
-	injectorToHorionResponseCallbacks.erase(id);
-}
 void GameData::log(const char* fmt, ...) {
-	auto lock = std::lock_guard<std::mutex>(g_Data.textPrintLock);
 	va_list arg;
 	va_start(arg, fmt);
 	char message[300];
-	vsprintf_s(message, 300, fmt, arg);
-	std::string msg(message);
-	g_Data.textPrintList.push_back(msg);
+	vsprintf_s(message, fmt, arg);
 	va_end(arg);
+	std::unique_lock<std::mutex> lock(Game.textPrintLock);
+	Game.textPrintList.emplace_back(message);
 }

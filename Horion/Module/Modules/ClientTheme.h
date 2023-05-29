@@ -3,10 +3,11 @@
 
 class ClientTheme : public IModule {
 public:
-	SettingEnum Theme;
+	SettingEnum Theme = SettingEnum(this);
 	ClientTheme();
 	~ClientTheme();
 
 	// Inherited via IModule
 	virtual const char* getModuleName() override;
+	virtual void onPreRender(MinecraftUIRenderContext* renderCtx) override;
 };

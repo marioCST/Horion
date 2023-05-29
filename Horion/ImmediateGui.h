@@ -16,59 +16,44 @@ protected:
 };
 
 class ButtonInfo : public ComponentInfo {
-private:
-	vec2_t pos;
-	vec2_t size;
+protected:
+	Vec2 pos;
+	Vec2 size;
 	bool centered;
 	float padding = 3.f;
 	bool canClickB = false;
 
 public:
-	ButtonInfo(int id, vec2_t pos, bool centered = false);
+	ButtonInfo(int id, Vec2 pos, bool centered = false);
 	virtual ~ButtonInfo(){};
 
 	void calculateSize(const char*);
-	bool isInSelectableSurface(vec2_t mouse);
-	vec4_t getSelectableSurface();
-	void draw(vec2_t mousePos, const char* label);
+	bool isInSelectableSurface(Vec2 mouse);
+	Vec4 getSelectableSurface();
+	virtual void draw(Vec2 mousePos, const char* label);
 	bool canClick() { return canClickB; };
-	void updatePos(vec2_t pos) { pos = pos; }
+	void updatePos(Vec2 pos) { pos = pos; }
 	
 };
 
+class ImageButtonInfo : public ButtonInfo {
+public:
+	ImageButtonInfo(int id, Vec2 pos, bool centered = false);
+	virtual ~ImageButtonInfo(){};
 
-struct KeyInfo {
-	bool isDown;     // Held down right now
-	bool isClicked;  // Did it go down this frame
-	bool nextIsDown;
-
-	void update() {
-		if (!isDown && nextIsDown)
-			isClicked = true;
-		isDown = nextIsDown;
-	}
-
-	bool trySteal() {
-		if (isClicked) {
-			isClicked = false;
-			return true;
-		}
-		return false;
-	}
+	virtual void draw(Vec2 mousePos, const char* location) override;
+	void updateSize(Vec2 size);
 };
 
 class ImmediateGui {
 private:
-	vec2_t mousePos;
-	KeyInfo leftMb;
-	KeyInfo rightMb;
+	Vec2 mousePos;
 	std::map<unsigned int, std::shared_ptr<ComponentInfo>> components;
 
 public:
-	void onMouseClickUpdate(int key, bool isDown);
 	void startFrame();
-	void endFrame();
-	bool Button(const char* label, vec2_t pos, bool centered = false);
+	bool Button(const char* label, Vec2 pos, bool centered = false);
+	bool ImageButton(const char* location, Vec2 pos, Vec2 size, bool centered = false);
 };
 
-extern ImmediateGui HImGui;
+extern ImmediateGui HorionGui;

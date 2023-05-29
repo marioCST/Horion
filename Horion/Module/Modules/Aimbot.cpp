@@ -20,17 +20,17 @@ const char* Aimbot::getModuleName() {
 }
 
 struct CompareTargetEnArray {
-	bool operator()(C_Entity* lhs, C_Entity* rhs) {
-		C_LocalPlayer* localPlayer = g_Data.getLocalPlayer();
+	bool operator()(Entity* lhs, Entity* rhs) {
+		LocalPlayer* localPlayer = Game.getLocalPlayer();
 		return (*lhs->getPos()).dist(*localPlayer->getPos()) < (*rhs->getPos()).dist(*localPlayer->getPos());
 	}
 };
 
-void Aimbot::onPostRender(C_MinecraftUIRenderContext* renderCtx) {
-	C_LocalPlayer* localPlayer = g_Data.getLocalPlayer();
+void Aimbot::onPostRender(MinecraftUIRenderContext* renderCtx) {
+	LocalPlayer* localPlayer = Game.getLocalPlayer();
 	if (localPlayer == nullptr)
 		return;
-	C_EntityList* entList = g_Data.getEntityList();
+	EntityList* entList = Game.getEntityList();
 	if (entList == nullptr)
 		return;
 	size_t listSize = entList->getListSize();
@@ -39,18 +39,18 @@ void Aimbot::onPostRender(C_MinecraftUIRenderContext* renderCtx) {
 		return;
 	}
 
-	vec3_t origin = g_Data.getClientInstance()->levelRenderer->getOrigin();
+	Vec3 origin = Game.getClientInstance()->levelRenderer->getOrigin();
 
 	//Loop through all our players and retrieve their information
-	static std::vector<C_Entity*> targetList;
+	static std::vector<Entity*> targetList;
 	targetList.clear();
 	for (size_t i = 0; i < listSize; i++) {
-		C_Entity* currentEntity = entList->get(i);
+		Entity* currentEntity = entList->get(i);
 
 		if (!Target::isValidTarget(currentEntity))
 			continue;
 
-		float dist = (*currentEntity->getPos()).dist(*g_Data.getLocalPlayer()->getPos());
+		float dist = (*currentEntity->getPos()).dist(*Game.getLocalPlayer()->getPos());
 
 		if (dist < range)
 			targetList.push_back(currentEntity);
@@ -58,16 +58,16 @@ void Aimbot::onPostRender(C_MinecraftUIRenderContext* renderCtx) {
 
 	if (targetList.size() > 0) {
 		std::sort(targetList.begin(), targetList.end(), CompareTargetEnArray());
-		vec2_t angle = origin.CalcAngle(*targetList[0]->getPos());
-		vec2_t appl = angle.sub(localPlayer->viewAngles).normAngles();
+		Vec2 angle = origin.CalcAngle(*targetList[0]->getPos());
+		Vec2 appl = angle.sub(localPlayer->viewAngles).normAngles();
 		appl.x = -appl.x;
 		if ((appl.x < verticalrange && appl.x > -verticalrange) && (appl.y < horizontalrange && appl.y > -horizontalrange) && GameData::canUseMoveKeys()) {
-			C_PlayerInventoryProxy* supplies = g_Data.getLocalPlayer()->getSupplies();
-			C_ItemStack* item = supplies->inventory->getItemStack(supplies->selectedHotbarSlot);
+			PlayerInventoryProxy* supplies = Game.getLocalPlayer()->getSupplies();
+			ItemStack* item = supplies->inventory->getItemStack(supplies->selectedHotbarSlot);
 			if (sword && !(item->getItem()->isWeapon()))
 				return;
 
-			if (click && !g_Data.isLeftClickDown())
+			if (click && !Game.isLeftClickDown())
 				return;
 
 			if (!lock) {

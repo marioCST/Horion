@@ -2,41 +2,43 @@
 #include "../../../Utils/Utils.h"
 
 EnchantCommand::EnchantCommand() : IMCCommand("enchant", "Enchants items", "<enchantment> [level] <mode: auto / manual : 1/0>") {
-	enchantMap["protection"] = 0;
-	enchantMap["fire_protection"] = 1;
-	enchantMap["feather_falling"] = 2;
-	enchantMap["blast_protection"] = 3;
-	enchantMap["projectile_protection"] = 4;
-	enchantMap["thorns"] = 5;
-	enchantMap["respiration"] = 6;
-	enchantMap["depth_strider"] = 7;
-	enchantMap["aqua_affinity"] = 8;
-	enchantMap["frost_walker"] = 25;
-	enchantMap["sharpness"] = 9;
-	enchantMap["smite"] = 10;
-	enchantMap["bane_of_arthropods"] = 11;
-	enchantMap["knockback"] = 12;
-	enchantMap["fire_aspect"] = 13;
-	enchantMap["looting"] = 14;
-	enchantMap["channeling"] = 32;
-	enchantMap["impaling"] = 29;
-	enchantMap["loyalty"] = 31;
-	enchantMap["riptide"] = 30;
-	enchantMap["silktouch"] = 16;
-	enchantMap["fortune"] = 18;
-	enchantMap["unbreaking"] = 17;
-	enchantMap["efficiency"] = 15;
-	enchantMap["mending"] = 26;
-	enchantMap["power"] = 19;
-	enchantMap["punch"] = 20;
-	enchantMap["flame"] = 21;
-	enchantMap["infinity"] = 22;
-	enchantMap["multishot"] = 33;
-	enchantMap["quick_charge"] = 35;
-	enchantMap["piercing"] = 34;
-	enchantMap["luck_of_sea"] = 23;
-	enchantMap["lure"] = 24;
-	enchantMap["soul_speed"] = 36;
+	enchantMap = {
+		{"protection", 0},
+		{"fire_protection", 1},
+		{"feather_falling", 2},
+		{"blast_protection", 3},
+		{"projectile_protection", 4},
+		{"thorns", 5},
+		{"respiration", 6},
+		{"depth_strider", 7},
+		{"aqua_affinity", 8},
+		{"frost_walker", 25},
+		{"sharpness", 9},
+		{"smite", 10},
+		{"bane_of_arthropods", 11},
+		{"knockback", 12},
+		{"fire_aspect", 13},
+		{"looting", 14},
+		{"channeling", 32},
+		{"impaling", 29},
+		{"loyalty", 31},
+		{"riptide", 30},
+		{"silktouch", 16},
+		{"fortune", 18},
+		{"unbreaking", 17},
+		{"efficiency", 15},
+		{"mending", 26},
+		{"power", 19},
+		{"punch", 20},
+		{"flame", 21},
+		{"infinity", 22},
+		{"multishot", 33},
+		{"quick_charge", 35},
+		{"piercing", 34},
+		{"luck_of_sea", 23},
+		{"lure", 24},
+		{"soul_speed", 36}
+	};
 }
 
 EnchantCommand::~EnchantCommand() {
@@ -71,26 +73,26 @@ bool EnchantCommand::execute(std::vector<std::string>* args) {
 	if (args->size() > 3)
 		isAuto = static_cast<bool>(assertInt(args->at(3)));
 
-	C_PlayerInventoryProxy* supplies = g_Data.getLocalPlayer()->getSupplies();
-	C_Inventory* inv = supplies->inventory;
-	C_InventoryTransactionManager* manager = g_Data.getLocalPlayer()->getTransactionManager();
+	PlayerInventoryProxy* supplies = Game.getLocalPlayer()->getSupplies();
+	Inventory* inv = supplies->inventory;
+	InventoryTransactionManager* manager = Game.getLocalPlayer()->getTransactionManager();
 
 	int selectedSlot = supplies->selectedHotbarSlot;
-	C_ItemStack* item = inv->getItemStack(selectedSlot);
+	ItemStack* item = inv->getItemStack(selectedSlot);
 
-	C_InventoryAction* firstAction = nullptr;
-	C_InventoryAction* secondAction = nullptr;
+	InventoryAction* firstAction = nullptr;
+	InventoryAction* secondAction = nullptr;
 
 	ItemDescriptor* desc = nullptr;
 	desc = new ItemDescriptor((*item->item)->itemId, 0); 
 
 	if (isAuto) {
 		{
-			firstAction = new C_InventoryAction(supplies->selectedHotbarSlot, desc, nullptr, item, nullptr, item->count);
-			if (strcmp(g_Data.getRakNetInstance()->serverIp.getText(), "mco.mineplex.com") == 0)
-				secondAction = new C_InventoryAction(0, nullptr, desc, nullptr, item, item->count, 32766, 100);
+			firstAction = new InventoryAction(supplies->selectedHotbarSlot, desc, nullptr, item, nullptr, item->count);
+			if (strcmp(Game.getRakNetInstance()->serverIp.getText(), "mco.mineplex.com") == 0)
+				secondAction = new InventoryAction(0, nullptr, desc, nullptr, item, item->count, 32766, 100);
 			else 
-				secondAction = new C_InventoryAction(0, nullptr, desc, nullptr, item, item->count, 507, 99999);
+				secondAction = new InventoryAction(0, nullptr, desc, nullptr, item, item->count, 507, 99999);
 			manager->addInventoryAction(*firstAction);
 			manager->addInventoryAction(*secondAction);
 			delete firstAction;
@@ -98,9 +100,9 @@ bool EnchantCommand::execute(std::vector<std::string>* args) {
 		}
 	}
 
-	using getEnchantsFromUserData_t = void(__fastcall*)(C_ItemStack*, void*);
+	using getEnchantsFromUserData_t = void(__fastcall*)(ItemStack*, void*);
 	using addEnchant_t = bool(__fastcall*)(void*, __int64);
-	using saveEnchantsToUserData_t = void(__fastcall*)(C_ItemStack*, void*);
+	using saveEnchantsToUserData_t = void(__fastcall*)(ItemStack*, void*);
 
 	static getEnchantsFromUserData_t getEnchantsFromUserData = reinterpret_cast<getEnchantsFromUserData_t>(FindSignature("48 89 5C 24 ? 55 56 57 48 81 EC ? ? ? ? 48 8B F2 48 8B D9 48 89 54 24 ? 33 FF 89 7C 24 ? E8 ? ? ? ? 84 C0"));
 	static addEnchant_t addEnchant = reinterpret_cast<addEnchant_t>(FindSignature("48 89 5C 24 ?? 48 89 54 24 ?? 57 48 83 EC ?? 45 0F"));
@@ -122,14 +124,14 @@ bool EnchantCommand::execute(std::vector<std::string>* args) {
 
 			if (addEnchant(EnchantData, enchantPair)) {  // Upper 4 bytes = level, lower 4 bytes = enchant type
 				saveEnchantsToUserData(item, EnchantData);
-				__int64 proxy = reinterpret_cast<__int64>(g_Data.getLocalPlayer()->getSupplies());
+				__int64 proxy = reinterpret_cast<__int64>(Game.getLocalPlayer()->getSupplies());
 				if (!*(uint8_t*)(proxy + 168))
-					(*(void(__fastcall**)(unsigned long long, unsigned long long, C_ItemStack*))(**(unsigned long long**)(proxy + 176) + 72i64))(
+					(*(void(__fastcall**)(unsigned long long, unsigned long long, ItemStack*))(**(unsigned long long**)(proxy + 176) + 72i64))(
 						*(unsigned long long*)(proxy + 176),
 						*(unsigned int*)(proxy + 16),
 						item);  // Player::selectItem
 
-				 //g_Data.getLocalPlayer()->sendInventory();
+				 //Game.getLocalPlayer()->sendInventory();
 			}
 			free(EnchantData);
 		}
@@ -145,14 +147,14 @@ bool EnchantCommand::execute(std::vector<std::string>* args) {
 
 		if (addEnchant(EnchantData, enchantPair)) {  // Upper 4 bytes = level, lower 4 bytes = enchant type
 			saveEnchantsToUserData(item, EnchantData);
-			__int64 proxy = reinterpret_cast<__int64>(g_Data.getLocalPlayer()->getSupplies());
+			__int64 proxy = reinterpret_cast<__int64>(Game.getLocalPlayer()->getSupplies());
 			if (!*(uint8_t*)(proxy + 168))
-				(*(void(__fastcall**)(unsigned long long, unsigned long long, C_ItemStack*))(**(unsigned long long**)(proxy + 176) + 72i64))(
+				(*(void(__fastcall**)(unsigned long long, unsigned long long, ItemStack*))(**(unsigned long long**)(proxy + 176) + 72i64))(
 					*(unsigned long long*)(proxy + 176),
 					*(unsigned int*)(proxy + 16),
 					item);  // Player::selectItem
 
-			//g_Data.getLocalPlayer()->sendInventory();
+			//Game.getLocalPlayer()->sendInventory();
 			clientMessageF("%sEnchant successful!", GREEN);
 		} else
 			clientMessageF("%sEnchant failed, try using a lower enchant-level", RED);
@@ -161,11 +163,11 @@ bool EnchantCommand::execute(std::vector<std::string>* args) {
 	}
 
 	if (isAuto) {
-		if (strcmp(g_Data.getRakNetInstance()->serverIp.getText(), "mco.mineplex.com") == 0)
-			firstAction = new C_InventoryAction(0, desc, nullptr, item, nullptr, item->count, 32766, 100);
+		if (strcmp(Game.getRakNetInstance()->serverIp.getText(), "mco.mineplex.com") == 0)
+			firstAction = new InventoryAction(0, desc, nullptr, item, nullptr, item->count, 32766, 100);
 		else
-			firstAction = new C_InventoryAction(0, desc, nullptr, item, nullptr, item->count, 507, 99999);
-		secondAction = new C_InventoryAction(supplies->selectedHotbarSlot, nullptr, desc, nullptr, item, item->count);
+			firstAction = new InventoryAction(0, desc, nullptr, item, nullptr, item->count, 507, 99999);
+		secondAction = new InventoryAction(supplies->selectedHotbarSlot, nullptr, desc, nullptr, item, item->count);
 		manager->addInventoryAction(*firstAction);
 		manager->addInventoryAction(*secondAction);
 		delete firstAction;

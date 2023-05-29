@@ -4,23 +4,22 @@ Glide::Glide() : IModule(0, Category::MOVEMENT, "Float down like a chicken.") {
 	registerFloatSetting("Value", &glideMod, glideMod, -2, 1);
 }
 
-Glide::~Glide() {
-}
+Glide::~Glide() {}
 
 const char* Glide::getModuleName() {
 	if (isEnabled()) {
-		static char modName[30];  // This is kinda ghetto rn, there should be a better way to make this...
-		sprintf_s(modName, 30, "Glide [%.2f]", glideModEffective);
+		static char modName[30];
+		snprintf(modName, 30, "Glide [%.2f]", glideModEffective);
 		return modName;
-	} else
-		return ("Glide");
+	}
+	return "Glide";
 }
 
-void Glide::onTick(C_GameMode* gm) {
+void Glide::onTick(GameMode* gm) {
 	glideModEffective = glideMod;
-	C_GameSettingsInput* input = g_Data.getClientInstance()->getGameSettingsInput();
+	GameSettingsInput* input = Game.getClientInstance()->getGameSettingsInput();
 
-	if (g_Data.canUseMoveKeys()) {
+	if (Game.canUseMoveKeys()) {
 		if (GameData::isKeyDown(*input->spaceBarKey))
 			glideModEffective += 0.2f;
 		if (GameData::isKeyDown(*input->sneakKey))

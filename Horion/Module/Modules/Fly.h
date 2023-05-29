@@ -13,12 +13,12 @@ public:
 	Fly();
 	~Fly();
 
-	SettingEnum mode;
+	SettingEnum mode = SettingEnum(this);
 
 	// Inherited via IModule
 	virtual void onEnable() override;
 	virtual const char* getModuleName() override;
-	virtual void onTick(C_GameMode* gm) override;
+	virtual void onTick(GameMode* gm) override;
 	virtual void onDisable() override;
-	virtual void onMove(C_MoveInputHandler* input) override;
+	virtual void onMove(MoveInputHandler* input) override;
 };

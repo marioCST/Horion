@@ -19,16 +19,17 @@
 #include "../../path/JoeMovementController.h"
 #include "../../path/goals/JoeGoal.h"
 #include "../../path/goals/JoeGoalXZ.h"
-
+#include "../../ImmediateGui.h"
+#include <chrono>  // for std::this_thread::sleep_for()
+#include <thread>
+#include "../../../Memory/Hooks.h"
+//#include "../../../Memory/SlimMem.h"
+//#include "../../../Memory/GameData.cpp"
 using json = nlohmann::json;
 
 
 TestModule::TestModule() : IModule(0, Category::MISC, "For testing purposes only!") {
-	enum1 = SettingEnum(this)
-		.addEntry(EnumEntry("1", 1))
-		.addEntry(EnumEntry("2", 2))
-		.addEntry(EnumEntry("3", 3));
-	
+	enum1.addEntry(EnumEntry("1", 1)).addEntry(EnumEntry("2", 2)).addEntry(EnumEntry("3", 3));
 	registerFloatSetting("float1", &float1, 0, -10, 10);
 	registerIntSetting("int1", &int1, 0, -10, 10);
 	registerEnumSetting("Enum1", &enum1, 0);
@@ -47,22 +48,68 @@ bool TestModule::isFlashMode() {
 }
 
 void TestModule::onEnable() {
+	LocalPlayer* player = Game.getLocalPlayer();
+	Inventory* inv = player->getSupplies()->inventory;
+	if (player != nullptr) {
+	}
+	//PlayerHotbarPacket packet;
+	//packet = PlayerHotbarPacket(1, 10, false);
+	//Game.getClientInstance()->loopbackPacketSender->sendToServer(&packet);
 }
 
-void TestModule::onTick(C_GameMode* gm) {
+void TestModule::onTick(GameMode* gm) {
 }
 
-void TestModule::onMove(C_MoveInputHandler* hand){
+void TestModule::onMove(MoveInputHandler* hand){
 }
 
-void TestModule::onPostRender(C_MinecraftUIRenderContext* renderCtx) {
+void TestModule::onPreRender(MinecraftUIRenderContext* renderCtx) {
+	/* LocalPlayer* player = Game.getLocalPlayer();
+	Inventory* inv = player->getSupplies()->inventory;
+	Vec2 pos = Vec2(Game.getGuiData()->heightReal, Game.getGuiData()->widthReal);
+	pos.x / 2.55;
+	pos.y / 2.55;
+	if (player != nullptr) {
+		for (int i = 0; i <= 35; i++) {
+			ItemStack* item = inv->getItemStack(i);
+			//if (item->item != nullptr) {
+				//std::string itemName = TextHolder(item->getItem()->name).getText();
+				DrawUtils::drawItem(item, pos, 10.f, 1.f, false);
+				pos.x += 20;
+			}
+		}
+	}
+	if (HorionGui.Button("Test Button", Vec2(200, 200), true)) {  // Check if button is pressed. When it gets pressed it sends the message.
+		clientMessageF("Test Button Was Clicked");
+	}*/
 }
 
-void TestModule::onSendPacket(C_Packet* p) {
+void TestModule::onPostRender(MinecraftUIRenderContext* renderCtx) {
+}
+
+void TestModule::onSendPacket(Packet* p) {
+	if (p->isInstanceOf<PlayerHotbarPacket>()) {
+		PlayerHotbarPacket* packet = reinterpret_cast<PlayerHotbarPacket*>(p);
+		//packet->dimension = 1;
+		//logF("%i", packet->numTransactions);
+	}
+}
+
+void TestModule::onSendClientPacket(Packet* p) {
+	if (p->isInstanceOf<PlayerHotbarPacket>()) {
+		PlayerHotbarPacket* packet = reinterpret_cast<PlayerHotbarPacket*>(p);
+		//packet->dimension = 1;
+		//logF("%s", packet->name);
+	}
 }
 
 void TestModule::onDisable() {
 }
 
 void TestModule::onLevelRender() {
+}
+
+void TestModule::onKey(int key, bool isDown, bool& cancel) {
+	//Cancel W key for testing to make sure this works
+	//if (key == 'W' && isDown) cancel = true;
 }
