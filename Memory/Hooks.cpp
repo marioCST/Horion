@@ -120,8 +120,7 @@ void Hooks::Init() {
 		//void* Actor_handleFallDistanceOnServer = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 48 89 74 24 ? 57 48 83 EC 50 48 8B 99 ? ? ? ? 48 8B F1 48 8B B9"));
 		//g_Hooks.Actor_handleFallDistanceOnServerHook = std::make_unique<FuncHook>(Actor_handleFallDistanceOnServer, Hooks::Actor_handleFallDistanceOnServer);
 
-		// Broken
-		//void* Actor_causeFallDamage = reinterpret_cast<void*>(FindSignature("40 53 48 83 EC 40 48 8B D9 0F 29 74 24 ? 48 8B 89 ? ? ? ? 0F"));
+		//void* Actor_causeFallDamage = reinterpret_cast<void*>(FindSignature("40 56 48 83 EC 40 48 8B F1 0F"));
 		//g_Hooks.Actor_causeFallDamageHook = std::make_unique<FuncHook>(Actor_causeFallDamage, Hooks::Actor_causeFallDamage);
 
 		//void* Actor_checkFallDamage = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 57 48 83 EC 60 0F 29 74 24 ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 24 ? 48 8B 01"));
