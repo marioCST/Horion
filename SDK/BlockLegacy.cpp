@@ -4,11 +4,11 @@
 #include "../Utils/Logger.h"
 #include "../Utils/Utils.h"
 Block* BlockSource::getBlock(const Vec3i& block) {
-	using getBlock_t = Block*(__fastcall*)(C_BlockSource*, const Vec3i&);
+	using getBlock_t = Block*(__fastcall*)(BlockSource*, const Vec3i&);
 	static getBlock_t getBlock = reinterpret_cast<getBlock_t>(FindSignature("48 89 5C ? ? 48 89 74 ? ? 57 48 83 EC ? 80 79 50 ? 48"));
 	return getBlock(this, block);
 }
-BlockActor* BlockSource::getBlockEntity(const Vec3& block) {
+BlockActor* BlockSource::getBlockEntity(const Vec3i& block) {
 	using getBlockEntity_t = BlockActor*(__fastcall*)(BlockSource*, const Vec3i&);
 	static getBlockEntity_t getBlockEntity = reinterpret_cast<getBlockEntity_t>(FindSignature("48 89 5C ? ? 48 89 74 ? ? 57 48 83 EC ? 48 8B 01 48 8B FA 48 8B D9 48"));
 	return getBlockEntity(this, block);
