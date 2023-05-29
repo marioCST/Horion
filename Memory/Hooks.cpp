@@ -85,7 +85,7 @@ void Hooks::Init() {
 		void* autoComplete = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 55 56 57 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 24 ? 41 8B D9"));
 		g_Hooks.PleaseAutoCompleteHook = std::make_unique<FuncHook>(autoComplete, Hooks::PleaseAutoComplete);
 
-		void* fullbright = reinterpret_cast<void*>(FindSignature("48 83 EC ? 80 B9 ? ? ? ? ? 48 8D 54 24 ? 48 8B 01 74 ? 41 B8 ? ? ? ? FF 50 ? 48 8B 10 48 85 D2 74 ? 48 8B 42 ? 48 8B 88 ? ? ? ? 48 85 C9 74 ? E8 ? ? ? ? 48 83 C4 ? C3 F3 0F 10 42 ? 48 83 C4 ? C3 41 B8 ? ? ? ? FF 50 ? 48 8B 10 48 85 D2 75 ? E8 ? ? ? ? CC E8 ? ? ? ? CC CC CC CC CC CC CC CC CC CC F3 0F 11 4C 24"));
+		void* fullbright = reinterpret_cast<void*>(FindSignature("48 83 EC ? 80 B9 ? ? ? ? ? 48 8D 54 24 ? 48 8B 01 74 ? 41 B8 ? ? ? ? FF 50 ? 48 8B 10 48 85 D2 74 ? 48 8B 42 ? 48 8B 88 ? ? ? ? 48 85 C9 74 ? E8 ? ? ? ? 48 83 C4 ? C3 F3 0F 10 42 ? 48 83 C4 ? C3 41 B8 ? ? ? ? FF 50 ? 48 8B 10 48 85 D2 75 ? E8 ? ? ? ? CC E8 ? ? ? ? CC CC CC CC CC CC CC CC CC CC 40 53 48 83 EC ? 48 8B 01"));
 		g_Hooks.GetGammaHook = std::make_unique<FuncHook>(fullbright, Hooks::GetGamma);
 
 		void* RakNetInstance__tick = reinterpret_cast<void*>(FindSignature("48 89 5C 24 10 48 89 74 24 18 55 57 41 54 41 56 41 57 48 8D AC 24 20 FD FF FF 48 81 EC E0 03 00 00"));
@@ -194,34 +194,11 @@ void Hooks::Init() {
 			}
 		} else logF("MoveTurnInput is null");
 
-		// GameMode::vtable
-		{
-			uintptr_t** gameModeVtable = GetVtableFromSig("48 8D 05 ? ? ? ? 48 89 01 48 89 51 ? 48 C7 41 ? ? ? ? ? C7 41 18 ? ? ? ? 44 88 61 ? 4C 89 61", 3);
-			if (gameModeVtable == 0x0)
-				logF("C_GameMode signature not working!!!");
-			else {
-				g_Hooks.GameMode_startDestroyBlockHook = std::make_unique<FuncHook>(gameModeVtable[1], Hooks::GameMode_startDestroyBlock);
-
-				g_Hooks.GameMode_getPickRangeHook = std::make_unique<FuncHook>(gameModeVtable[10], Hooks::GameMode_getPickRange);
-
-				g_Hooks.GameMode_attackHook = std::make_unique<FuncHook>(gameModeVtable[14], Hooks::GameMode_attack);
-			}
-		}
-		
-		// BlockLegacy::vtable
-		{
-			uintptr_t** blockLegacyVtable = GetVtableFromSig("48 8D 05 ? ? ? ? 48 89 01 48 89 59 ? 48 89 59 ?", 3);
-			if (blockLegacyVtable == 0x0)
-				logF("C_BlockLegacy signature not working!!!");
-			else {
-			}
-		}
-
 		// LocalPlayer::vtable
 		{
 			uintptr_t** localPlayerVtable = GetVtableFromSig("48 8D 05 ? ? ? ? 48 89 01 FF 15 ? ? ? ? 48 8B 08", 3);
 			if (localPlayerVtable == 0x0)
-				logF("C_LocalPlayer signature not working!!!");
+				logF("LocalPlayer signature not working!!!");
 			else {
 				g_Hooks.Actor_startSwimmingHook = std::make_unique<FuncHook>(localPlayerVtable[201], Hooks::Actor_startSwimming);
 
@@ -247,15 +224,25 @@ void Hooks::Init() {
 			}
 		}
 
-		// MoveInputHandler::vtable
+		// GameMode::vtable
 		{
-			uintptr_t** moveInputVtable = GetVtableFromSig("48 8D 05 ? ? ? ? 48 89 51 ? 48 89 51 ? 48 C7 41", 3);
-			if (moveInputVtable == 0x0)
-				logF("C_MoveInputHandler signature not working!!!");
+			uintptr_t sigOffset = FindSignature("48 8D 05 ? ? ? ? 48 89 01 48 89 51 ? 48 C7 41 ? ? ? ? ? C7 41 18 ? ? ? ? 44 88 61 ? 4C 89 61");
+			int offset = *reinterpret_cast<int*>(sigOffset + 3);
+			uintptr_t** gameModeVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + /*length of instruction*/ 7);
+			if (gameModeVtable == 0x0 || sigOffset == 0x0)
+				logF("GameMode signature not working!!!");
 			else {
-				g_Hooks.MoveInputHandler_tickHook = std::make_unique<FuncHook>(moveInputVtable[1], Hooks::MoveInputHandler_tick);
+				g_Hooks.GameMode_startDestroyBlockHook = std::make_unique<FuncHook>(gameModeVtable[1], Hooks::GameMode_startDestroyBlock);
+
+				g_Hooks.GameMode_getPickRangeHook = std::make_unique<FuncHook>(gameModeVtable[10], Hooks::GameMode_getPickRange);
+
+				g_Hooks.GameMode_attackHook = std::make_unique<FuncHook>(gameModeVtable[14], Hooks::GameMode_attack);
 			}
 		}
+		
+		// BlockLegacy 48 8D 05 ? ? ? ? 48 89 01 48 89 59 ? 48 89 59 ?
+
+		// MoveInputHandler 48 8D 05 ? ? ? ? 48 89 51 ? 48 89 51 ? 48 C7 41
 
 		// PackAccessStrategy vtables for isTrusted
 		{
@@ -266,7 +253,7 @@ void Hooks::Init() {
 				g_Hooks.DirectoryPackAccessStrategy__isTrustedHook = std::make_unique<FuncHook>(directoryPackVtable[6], Hooks::DirectoryPackAccessStrategy__isTrusted);
 			}
 
-			uintptr_t** directoryPackVtable2 = GetVtableFromSig("48 8D 05 ? ? ? ? 48 89 01 4C 8D A9 ? ? ? ? 49 8B 45", 3); // Was 48 8D 05 ?? ?? ?? ?? 48 89 03 49 8D 57 in 1.18.2
+			uintptr_t** directoryPackVtable2 = GetVtableFromSig("48 8D 05 ? ? ? ? 48 89 01 4C 8D A9 ? ? ? ? 49 8B 45", 3);
 			
 			{
 				g_Hooks.ZipPackAccessStrategy__isTrustedHook = std::make_unique<FuncHook>(directoryPackVtable2[6], Hooks::ReturnTrue);
