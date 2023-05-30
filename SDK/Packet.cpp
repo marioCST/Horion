@@ -8,7 +8,7 @@ TextHolder* Packet::getName() {
 LevelSoundEventPacket::LevelSoundEventPacket() {
 	static uintptr_t** LevelSoundEventPacketVtable = 0x0;
 	if (LevelSoundEventPacketVtable == 0x0) {
-		uintptr_t sigOffset = FindSignature("48 8D 0D ? ? ? ? 48 89 4D ? C7 45 ? ? ? ? ? F2 0F 10 00 F2 0F 11 45 ? 8B 40 ? 89 45 ? C7 45");
+		uintptr_t sigOffset = FindSignature("48 8D 05 ? ? ? ? 48 89 01 89 51 30 F2");
 		int offset = *reinterpret_cast<int*>(sigOffset + 3);
 		LevelSoundEventPacketVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + /*length of instruction*/ 7);
 #ifdef _DEBUG
@@ -23,7 +23,7 @@ LevelSoundEventPacket::LevelSoundEventPacket() {
 PlayerAuthInputPacket::PlayerAuthInputPacket() {
 	static uintptr_t** PlayerAuthInputPacketVtable = 0x0;
 	if (PlayerAuthInputPacketVtable == 0x0) {
-		uintptr_t sigOffset = FindSignature("48 8D 0D ? ? ? ? 0F 57 C0 0F 11 00 C7 40 ? ? ? ? ? C7 40 ? ? ? ? ? 48 8D 05 ? ? ? ? 48 89 02 33 C0 48 89 42");
+		uintptr_t sigOffset = FindSignature("48 8D 0D ? ? ? ? ? ? C0 ? ? 00 C7 40 08 ? ? ? ? C7 40 0C ? ? ? ? 48 8D 05 ? ? ? ? 48 89 02 33 C0 48 89 42 ? 48 89 4A ? 33 C9");
 		int offset = *reinterpret_cast<int*>(sigOffset + 3);
 		PlayerAuthInputPacketVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + /*length of instruction*/ 7);
 #ifdef _DEBUG
@@ -37,7 +37,7 @@ PlayerAuthInputPacket::PlayerAuthInputPacket() {
 PlayerAuthInputPacket::PlayerAuthInputPacket(Vec3 pos, float pitch, float yaw, float yawUnused) {
 	static uintptr_t** PlayerAuthInputPacketVtable = 0x0;
 	if (PlayerAuthInputPacketVtable == 0x0) {
-		uintptr_t sigOffset = FindSignature("48 8D 0D ? ? ? ? 0F 57 C0 0F 11 00 C7 40 ? ? ? ? ? C7 40 ? ? ? ? ? 48 8D 05 ? ? ? ? 48 89 02 33 C0 48 89 42");
+		uintptr_t sigOffset = FindSignature("48 8D 0D ? ? ? ? ? ? C0 ? ? 00 C7 40 08 ? ? ? ? C7 40 0C ? ? ? ? 48 8D 05 ? ? ? ? 48 89 02 33 C0 48 89 42 ? 48 89 4A ? 33 C9");
 		int offset = *reinterpret_cast<int*>(sigOffset + 3);
 		PlayerAuthInputPacketVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + /*length of instruction*/ 7);
 #ifdef _DEBUG
@@ -79,7 +79,7 @@ MobEquipmentPacket::MobEquipmentPacket(__int64 entityRuntimeId, ItemStack& item,
 		MobEquimentPacketConstructor(this, entityRuntimeId, item, hotbarSlot, inventorySlot, 0);
 }
 
-InventoryTransactionPacket::InventoryTransactionPacket() {
+InventoryTransactionPacket::InventoryTransactionPacket() { // Broken
 	static uintptr_t** InventoryTransactionPacketVtable = 0x0;
 	if (InventoryTransactionPacketVtable == 0x0) {
 		uintptr_t sigOffset = FindSignature("48 8D 15 ? ? ? ? C7 40 ? ? ? ? ? 33 C9 C7 40 ? ? ? ? ? 48 89 48 28 48 89 48 30 89 48 38 89 48 40 48 89 48 48 48 89 48 50");
@@ -147,7 +147,7 @@ C_MovePlayerPacket::C_MovePlayerPacket(LocalPlayer* player, Vec3 pos) {
 PlayerActionPacket::PlayerActionPacket() {
 	static uintptr_t** playerActionPacketVtable = 0x0;
 	if (playerActionPacketVtable == 0x0) {
-		uintptr_t sigOffset = FindSignature("48 8D 0D ? ? ? ? 48 89 4D ? 66 0F 7F 45 ? C7 45 ? ? ? ? ? 48 89 45 ? 49 8B 8D");
+		uintptr_t sigOffset = FindSignature("48 8D 0D ? ? ? ? 48 89 4D ? 66 ? ? 45 ? 66 ? ? 0D ? ? ? ? 66 ? ? 4D ? 48 89 45 ? 49 8B 8F ? ? ? ? 48 8B 01 48 8D 55 ? FF 50 08 49 8B 8F");
 		int offset = *reinterpret_cast<int*>(sigOffset + 3);
 		playerActionPacketVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + /*length of instruction*/ 7);
 #ifdef _DEBUG
@@ -177,7 +177,7 @@ C_SubChunkRequestPacket::C_SubChunkRequestPacket() {
 C_EmotePacket::C_EmotePacket() {
 	static uintptr_t** emotePacketVtable = 0x0;
 	if (emotePacketVtable == 0x0) {
-		uintptr_t sigOffset = FindSignature("48 8D 0D ? ? ? ? 48 89 8D ? ? ? ? 48 89 85 ? ? ? ? 48 89 BD");
+		uintptr_t sigOffset = FindSignature("48 8D 0D ? ? ? ? 48 89 8D ? ? ? ? 48 89 85 ? ? ? ? 48 89 9D");
 		int offset = *reinterpret_cast<int*>(sigOffset + 3);
 		emotePacketVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset + /*length of instruction*/ 7);
 #ifdef _DEBUG
@@ -190,7 +190,7 @@ C_EmotePacket::C_EmotePacket() {
 }
 //48 8D 15 ? ? ? ? C7 40 ? ? ? ? ? 33 C9 C7 40 ? ? ? ? ? 48 89 48 28 48 89 48 30 89 48 38 89 48 40 48 89 48 48 48 89 48 58 C7 40 ? ? ? ? ? C7 40 ? ? ? ? ? 66 C7 40 ? ? ? 48 89 50 10 48 C7 40 ? ? ? ? ? EB 04 33 C9 8B C1 48 8D 48 10 48 8D 15 ? ? ? ? 48 89 51 20 48 89 43 08 48 8B C3 48 89 0B 48 83 C4 30 5B C3 48 8D 0D ? ? ? ? E8 ? ? ? ? 83 3D ? ? ? ? ? 0F 85 ? ? ? ? 48 8D 05 ? ? ? ? 48 8D 0D ? ? ? ? 48 89 05 ? ? ? ? E8 ? ? ? ? 48 8D 0D ? ? ? ? E8 ? ? ? ? E9 ? ? ? ? CC CC CC CC CC CC CC CC CC CC CC CC CC CC CC 40 53 48 83 EC 30 65 48 8B 04 25 ? ? ? ? 48 8B D9 48 89 4C 24 ? BA ? ? ? ? 48 8B 08 8B 04 0A 39 05 ? ? ? ? 0F 8F ? ? ? ? E8 ? ? ? ? 48 8B C8 BA ? ? ? ? 48 8B 00 FF 50 08 48 89 44 24 ? 48 85 C0 74 4F
 //Model Form Response packet
-AnimatePacket::AnimatePacket() {
+AnimatePacket::AnimatePacket() { // Broken
 	static uintptr_t** animatePacketVtable = 0x0;
 	if (animatePacketVtable == 0x0) {
 		uintptr_t sigOffset = FindSignature("48 8D 15 ? ? ? ? C7 40 ? ? ? ? ? 33 C9 C7 40 ? ? ? ? ? 48 89 48 28 48 89 48 30 89 48 38 48 89 48 40 48 89 48 48 C7 40 ? ? ? ? ? C7 40 ? ? ? ? ? 66 C7 40 ? ? ? 48 89 50 10 EB 04 33 C9 8B C1 48 8D 48 10 48 8D 15 ? ? ? ? 48 89 51 20 48 89 43 08 48 8B C3 48 89 0B 48 83 C4 30 5B C3 48 8D 0D ? ? ? ? E8 ? ? ? ? 83 3D ? ? ? ? ? 0F 85 ? ? ? ? 48 8D 05 ? ? ? ? 48 8D 0D ? ? ? ? 48 89 05 ? ? ? ? E8 ? ? ? ? 48 8D 0D ? ? ? ? E8 ? ? ? ? E9 ? ? ? ? CC CC CC CC CC CC CC CC CC CC 40 53 48 83 EC 30 65 48 8B 04 25 ? ? ? ? 48 8B D9 48 89 4C 24 ? BA ? ? ? ? 48 8B 08 8B 04 0A 39 05 ? ? ? ? 0F 8F ? ? ? ? E8 ? ? ? ? 48 8B C8 BA ? ? ? ? 48 8B 00 FF 50 08 48 89 44 24 ? 48 85 C0 74 62");
