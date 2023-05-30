@@ -16,7 +16,7 @@ void Godmode::onTick(GameMode* gm) {
 	delay++;
 	if (delay >= regendelay) {
 		delay = 0;
-		gm->player->causeFallDamage((float) regenvalue);
+		gm->player->causeFallDamage((float) regenvalue, 1, 0);
 	}
 }
 

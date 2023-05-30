@@ -293,7 +293,7 @@ public:
 	virtual bool isSurfaceMob(void);															// 106
 	virtual bool isReferenceType(void);															// 107
 	virtual bool getReturnPolicy(void);															// 108
-	virtual bool isRemotePlayer(void);															// 109
+	virtual bool isPlayer(void);																// 109
 	virtual bool isReferenceType2(void);														// 110
 	virtual bool isAffectedByWaterBottle(void);													// 111
 	virtual bool canAttack(Entity *, bool);														// 112
@@ -366,13 +366,13 @@ public:
 	virtual int getDimensionId(int *);															// 180
 	virtual bool canChangeDimensions(void);														// 181
 	virtual __int64 changeDimension(int, bool);													// 182
-	virtual __int64 changeDimension(__int64 const &);											// 183
-	virtual __int64 getSourceUniqueID(void);													// 184
+	virtual __int64 changeDimension2(__int64 const &);											// 183
+	virtual __int64 getSourceUniqueID2(void);													// 184
 	virtual __int64 checkFallDamage(float, bool);												// 185
 	virtual __int64 causeFallDamage(float, float, __int64);										// 186
 	virtual __int64 handleFallDistanceOnServer(float, float, bool);								// 187
 	virtual __int64 playSynchronizedSound(__int64, Vec3 const &, int, bool);					// 188
-	virtual __int64 playSynchronizedSound(__int64, Vec3 const &, Block const &, bool);			// 189
+	virtual __int64 playSynchronizedSound2(__int64, Vec3 const &, Block const &, bool);			// 189
 	virtual __int64 onSynchedFlagUpdate(int, long, long);										// 190
 	virtual __int64 onSynchedDataUpdate(int);													// 191
 	virtual bool canAddPassenger(Entity *);														// 192
