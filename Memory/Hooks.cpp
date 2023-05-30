@@ -245,7 +245,7 @@ void Hooks::Init() {
 		// MoveInputHandler 48 8D 05 ? ? ? ? 48 89 51 ? 48 89 51 ? 48 C7 41
 
 		// PackAccessStrategy vtables for isTrusted
-		{
+		/*{
 			
 			uintptr_t** directoryPackVtable = GetVtableFromSig("48 8D 05 ? ? ? ? 49 89 06 49 8D 76 ? 45 33 E4", 3);
 
@@ -259,7 +259,7 @@ void Hooks::Init() {
 				g_Hooks.ZipPackAccessStrategy__isTrustedHook = std::make_unique<FuncHook>(directoryPackVtable2[6], Hooks::ReturnTrue);
 			}
 			g_Hooks.SkinRepository___checkSignatureFileInPack = std::make_unique<FuncHook>(FindSignature("48 89 5C 24 ? 57 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 24 ? 48 8B 79"), Hooks::ReturnTrue);
-		}
+		}*/
 		logF("Vtables initialized");
 	}
 
