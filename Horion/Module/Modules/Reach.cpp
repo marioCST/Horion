@@ -27,7 +27,7 @@ void Reach::onEnable() {
 	if (type.selected == 0) {
 		static uintptr_t sigOffset = 0x0;
 		if (sigOffset == 0x0) {
-			sigOffset = FindSignature("F3 0F 10 05 ? ? ? ? 41 0F 28 D9");
+			sigOffset = FindSignature("F3 0F 10 05 ? ? ? ? E8 ? ? ? ? F3 0F 2C ? 0F 28 C6");
 
 			if (sigOffset != 0x0) {
 				int offset = *reinterpret_cast<int*>((sigOffset + 4));  // Get Offset from code
@@ -42,7 +42,7 @@ void Reach::onEnable() {
 #endif
 		}
 	} else {
-		uintptr_t reachOff = Utils::getBase() + 0x398A878; // Reach offset
+		uintptr_t reachOff = Utils::getBase() + 0x3F0F818; // Reach offset
 
 		unsigned char arr[4];
 
@@ -57,7 +57,7 @@ void Reach::onDisable() {
 		if (reachPtr != 0)
 			VirtualProtect(reachPtr, sizeof(float), oldProtect, &oldProtect);
 	} else {
-		uintptr_t reachOff = Utils::getBase() + 0x398A878; // Reach offset
+		uintptr_t reachOff = Utils::getBase() + 0x3F0F818; // Reach offset
 		PatchBytes((BYTE*)reachOff, (BYTE*)"\x00\x00\x40\x40" /*3*/, 4);
 	}
 }
