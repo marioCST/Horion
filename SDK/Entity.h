@@ -45,14 +45,14 @@ public:
 
 	void playSound(std::string sound, Vec3 const &position, float volume, float pitch) {
 		using playSound_t = void(__fastcall *)(Level *, TextHolder *, Vec3 const &, float, float);
-		static playSound_t func = reinterpret_cast<playSound_t>(Utils::getBase() + 0x2B73BE0);  // 48 89 5C 24 ? 48 89 6C 24 ? 48 89 74 24 ? 57 48 83 EC ? 48 8B 81 ? ? ? ? 33 FF 48 2B 81 ? ? ? ? 49 8B F0 48 C1 F8 ? 48 8B EA
+		static playSound_t func = reinterpret_cast<playSound_t>(Utils::getBase() + 0x2B76180);  // 48 89 5c 24 ? 48 89 6c 24 ? 48 89 74 24 ? 57 48 83 ec ? 48 8b 81 ? ? ? ? 33 ff 48 2b 81 ? ? ? ? 49 8b f0 48 c1 f8 ? 48 8b ea
 		if (func != nullptr) func(this, &TextHolder(sound), position, volume, pitch);
 	}
 
 	// Credits to hacker hansen for this
 	std::vector<Entity *> getMiscEntityList() {
 		using entityList_t = std::int64_t *(__fastcall *)(Level *, void *);
-		static entityList_t func = reinterpret_cast<entityList_t>(Utils::getBase() + 0x2B7DAE0);  // 48 89 5C 24 ? 56 57 41 56 48 83 EC ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 24 ? 48 8B F2 4C 8B F1 48 89 54 24 ? 33 C9
+		static entityList_t func = reinterpret_cast<entityList_t>(Utils::getBase() + 0x2B80090);  // 48 89 5c 24 ? 56 57 41 56 48 83 ec ? 48 8b 05 ? ? ? ? 48 33 c4 48 89 44 24 ? 48 8b f2 4c 8b f1 48 89 54 24 ? 33 c9
 		if (func != nullptr) {
 			std::unique_ptr<char[]> alloc = std::make_unique<char[]>(0x18);
 			std::int64_t *listStart = func(this, alloc.get());
