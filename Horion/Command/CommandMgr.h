@@ -35,6 +35,7 @@
 #include "Commands/XpCommand.h"
 #include "Commands/PathCommand.h"
 #include "Commands/SetLoreCommand.h"
+#include "Commands/SeedCommand.h"
 
 #ifdef _DEBUG
 #include "Commands/TestCommand.h"

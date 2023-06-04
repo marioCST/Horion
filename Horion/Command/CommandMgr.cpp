@@ -43,6 +43,7 @@ void CommandMgr::initCommands() {
 	commandList.push_back(new HideCommand());
 	commandList.push_back(new HelpCommand());
 	commandList.push_back(new BindCommand());
+	commandList.push_back(new SeedCommand());
 	commandList.push_back(new EjectCommand());
 	commandList.push_back(new TopCommand());
 	commandList.push_back(new NbtCommand());
