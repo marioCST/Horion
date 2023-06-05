@@ -37,6 +37,7 @@
 #include "Commands/SetLoreCommand.h"
 #include "Commands/SeedCommand.h"
 #include "Commands/RenameCommand.h"
+#include "Commands/RepairCommand.h"
 
 #ifdef _DEBUG
 #include "Commands/TestCommand.h"
