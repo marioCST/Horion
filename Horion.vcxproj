@@ -193,6 +193,7 @@
     <ClCompile Include="Horion\Command\Commands\PathCommand.cpp" />
     <ClCompile Include="Horion\Command\Commands\PlayerTeleportCommand.cpp" />
     <ClCompile Include="Horion\Command\Commands\RelativeTeleportCommand.cpp" />
+    <ClCompile Include="Horion\Command\Commands\RenameCommand.cpp" />
     <ClCompile Include="Horion\Command\Commands\SayCommand.cpp" />
     <ClCompile Include="Horion\Command\Commands\SeedCommand.cpp" />
     <ClCompile Include="Horion\Command\Commands\ServerCommand.cpp" />
@@ -366,6 +367,7 @@
     <ClInclude Include="Horion\Command\Commands\PathCommand.h" />
     <ClInclude Include="Horion\Command\Commands\PlayerTeleportCommand.h" />
     <ClInclude Include="Horion\Command\Commands\RelativeTeleportCommand.h" />
+    <ClInclude Include="Horion\Command\Commands\RenameCommand.h" />
     <ClInclude Include="Horion\Command\Commands\SayCommand.h" />
     <ClInclude Include="Horion\Command\Commands\SeedCommand.h" />
     <ClInclude Include="Horion\Command\Commands\ServerCommand.h" />

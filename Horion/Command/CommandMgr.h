@@ -36,6 +36,7 @@
 #include "Commands/PathCommand.h"
 #include "Commands/SetLoreCommand.h"
 #include "Commands/SeedCommand.h"
+#include "Commands/RenameCommand.h"
 
 #ifdef _DEBUG
 #include "Commands/TestCommand.h"

@@ -35,6 +35,7 @@ void CommandMgr::initCommands() {
 	commandList.push_back(new ServerCommand());
 	commandList.push_back(new UnbindCommand());
 	commandList.push_back(new ToggleCommand());
+	commandList.push_back(new RenameCommand());
 	commandList.push_back(new PanicCommand());
 	commandList.push_back(new PathCommand());
 	commandList.push_back(new DupeCommand());

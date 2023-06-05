@@ -81,6 +81,13 @@ void ItemStack::setLore(std::string customLore) {
 	setCustomLore(this, vec);
 }
 
+void ItemStack::setName(std::string customName) {
+	using setCustomName_t = void(__fastcall *)(ItemStack *, TextHolder *);
+	setCustomName_t setCustomName = reinterpret_cast<setCustomName_t>(FindSignature("48 89 5C 24 18 48 89 74 24 ? 55 57 41 54 41 56 41 57 48 8D 6C 24 ? 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 45 ? 4C 8B FA 45 33 E4 45 8B F4 44 89 65 ? 48 8B 41 08"));
+	TextHolder name = customName;
+	setCustomName(this, &name);
+}
+
 void ItemStack::setVtable(void) {
 	static uintptr_t sigOffset = FindSignature("48 8D 05 ? ? ? ? 48 89 07 4C 8D 83");
 	int offset = *reinterpret_cast<int *>(sigOffset + 3);

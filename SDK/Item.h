@@ -333,6 +333,7 @@ public:
 	}
 
 	void setLore(std::string lore);
+	void setName(std::string name);
 
 private:
 	inline void setVtable(void);
