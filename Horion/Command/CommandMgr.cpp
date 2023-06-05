@@ -25,6 +25,7 @@ void CommandMgr::initCommands() {
 	commandList.push_back(new WaypointCommand());
 	commandList.push_back(new GameModeCommand());
 	commandList.push_back(new TeleportCommand());
+	commandList.push_back(new DeviceIDCommand());
 	commandList.push_back(new SpammerCommand());
 	commandList.push_back(new ModulesCommand());
 	commandList.push_back(new EnchantCommand());

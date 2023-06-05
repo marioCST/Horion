@@ -593,6 +593,49 @@ class Player : public Entity {
 public:
 	PlayerInventoryProxy *getSupplies();
 
+	int getDeviceID();
+
+	const char* getDeviceName() {
+		int deviceID = this->getDeviceID();
+
+		switch (deviceID) {
+		case -1:
+			return "Unknown";
+		case 1:
+			return "Android";
+		case 2:
+			return "iOS";
+		case 3:
+			return "OSX";
+		case 4:
+			return "Amazon";
+		case 5:
+			return "GearVR";
+		case 6:
+			return "Hololens";
+		case 7:
+			return "Win10";
+		case 8:
+			return "WIN32";
+		case 9:
+			return "Dedicated";
+		case 10:
+			return "TVOS";
+		case 11:
+			return "PlayStation";
+		case 12:
+			return "Nintendo";
+		case 13:
+			return "Xbox";
+		case 14:
+			return "WindowsPhone";
+		case 15:
+			return "Linux";
+		default:
+			return "Unknown";
+		}
+	}
+
 	ItemStack *getSelectedItem() {
 		auto supplies = this->getSupplies();
 		return supplies->inventory->getItemStack(supplies->selectedHotbarSlot);

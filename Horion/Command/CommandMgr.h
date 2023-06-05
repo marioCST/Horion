@@ -38,6 +38,7 @@
 #include "Commands/SeedCommand.h"
 #include "Commands/RenameCommand.h"
 #include "Commands/RepairCommand.h"
+#include "Commands/DeviceIDCommand.h"
 
 #ifdef _DEBUG
 #include "Commands/TestCommand.h"

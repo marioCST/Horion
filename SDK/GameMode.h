@@ -44,4 +44,5 @@ public:
 	Player *player;
 
 	void survivalDestroyBlockHack(Vec3i const &block, int face, bool &isDestroyedOut, bool isFirst);
+	void baseUseItem(ItemStack &stack);
 };
