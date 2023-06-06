@@ -9,8 +9,7 @@ PlayerTeleportCommand::~PlayerTeleportCommand() {
 
 bool PlayerTeleportCommand::execute(std::vector<std::string>* args) {
 	assertTrue(Game.getLocalPlayer() != nullptr);
-	clientMessageF("%sCurrently crashing", RED);
-	/* assertTrue(args->size() > 1);  // .playertp <player>
+	assertTrue(args->size() > 1);  // .playertp <player>
 	std::string nameOfPlayer = args->at(1);
 	assertTrue(!nameOfPlayer.empty());
 	std::string nameOfPlayerLower = std::string(nameOfPlayer);
@@ -60,6 +59,6 @@ bool PlayerTeleportCommand::execute(std::vector<std::string>* args) {
 		return true;
 	}
 	Game.getLocalPlayer()->setPos(pos);
-	clientMessageF("[%sHorion%s] %sTeleported to %s", GOLD, WHITE, GREEN, playerName.c_str());*/
+	clientMessageF("[%sHorion%s] %sTeleported to %s", GOLD, WHITE, GREEN, playerName.c_str());
 	return true;
 }

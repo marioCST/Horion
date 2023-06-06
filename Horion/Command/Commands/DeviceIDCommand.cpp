@@ -13,15 +13,20 @@ bool DeviceIDCommand::execute(std::vector<std::string>* args) {
 		clientMessageF("%sYour device: %s%s", GREEN, GRAY, player->getDeviceNameLocal());
 	}
 	else {
-		/*std::string nameOfPlayer = args->at(1);
+		std::string nameOfPlayer = args->at(1);
 		assertTrue(!nameOfPlayer.empty());
 		std::string nameOfPlayerLower = std::string(nameOfPlayer);
 		std::transform(nameOfPlayerLower.begin(), nameOfPlayerLower.end(), nameOfPlayerLower.begin(), ::tolower);
 		nameOfPlayerLower = Utils::sanitize(nameOfPlayerLower);
 
 		EntityList* entList = Game.getEntityList();
+
+		if (entList == nullptr) {
+			clientMessageF("%sInvalid entity list", RED);
+			return true;
+		}
+
 		size_t listSize = entList->getListSize();
-		Vec3 pos;
 
 		if (listSize > 5000) {
 			return true;
@@ -37,6 +42,9 @@ bool DeviceIDCommand::execute(std::vector<std::string>* args) {
 				break;
 
 			if (currentEntity == Game.getLocalPlayer())  // Skip Local player
+				continue;
+
+			if (currentEntity->getNameTag() == nullptr)
 				continue;
 
 			std::string name(currentEntity->getNameTag()->getText());
@@ -55,8 +63,7 @@ bool DeviceIDCommand::execute(std::vector<std::string>* args) {
 			return true;
 		}
 
-		clientMessageF("%sDevice from %s%s%s: %s%s", GREEN, GRAY, tar->getNameTag()->getText(), GREEN, GRAY, tar->getDeviceName());*/
-		clientMessageF("%sCurrently crashing", RED);
+		clientMessageF("%sDevice from %s%s%s: %s%s", GREEN, GRAY, tar->getNameTag()->getText(), GREEN, GRAY, tar->getDeviceName());
 	}
 
 	return true;
