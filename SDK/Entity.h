@@ -142,7 +142,11 @@ public:
 	int32_t damageTime;               // 0x738
 	int32_t damageAnimationDuration;  // 0x73C
 private:
-	char pad_0x740[0x218];  // 0x740
+	char pad_0x740[0x8];  // 0x740
+public:
+	int deviceIdentifier; // 0x748
+private:
+	char pad_0x74C[0x20C]; // 0x74C
 public:
 	bool isFlying;  // 0x958
 private:
@@ -761,6 +765,23 @@ class ServerPlayer : public Player {
 class LocalPlayer : public Player {
 public:
 	void unlockAchievements();
+
+	const char* getDeviceNameLocal() {
+		int deviceID = this->deviceIdentifier;
+
+		switch (deviceID) {
+		case -1:
+			return "Unknown";
+		case 0:
+			return "Win10";
+		case 1:
+			return "WindowsPhone";
+		case 2:
+			return "Xbox";
+		default:
+			return "Unknown";
+		}
+	}
 
 	void swingArm() {
 		// using SwingArm = void(__thiscall*)(void*);

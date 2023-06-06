@@ -10,7 +10,7 @@ bool DeviceIDCommand::execute(std::vector<std::string>* args) {
 	if (args->size() < 2) {
 		auto player = Game.getLocalPlayer();
 
-		clientMessageF("%sYour device: %s%s", GREEN, GRAY, player->getDeviceName());
+		clientMessageF("%sYour device: %s%s", GREEN, GRAY, player->getDeviceNameLocal());
 	}
 	else {
 		/*std::string nameOfPlayer = args->at(1);
@@ -33,20 +33,20 @@ bool DeviceIDCommand::execute(std::vector<std::string>* args) {
 		for (size_t i = 0; i < listSize; i++) {
 			Entity* currentEntity = entList->get(i);
 
-			std::string name(currentEntity->getNameTag()->getText());
-
-			std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-
-			if (currentEntity == 0)
+			if (currentEntity == nullptr)
 				break;
 
 			if (currentEntity == Game.getLocalPlayer())  // Skip Local player
 				continue;
 
+			std::string name(currentEntity->getNameTag()->getText());
+
+			std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+
 			if (name.find(nameOfPlayerLower) == std::string::npos)
 				continue;
 
-			tar = static_cast<Player*>(currentEntity);
+			tar = reinterpret_cast<Player*>(currentEntity);
 			break;
 		}
 
