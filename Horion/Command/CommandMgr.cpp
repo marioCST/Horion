@@ -39,6 +39,7 @@ void CommandMgr::initCommands() {
 	commandList.push_back(new RenameCommand());
 	commandList.push_back(new RepairCommand());
 	commandList.push_back(new PanicCommand());
+	commandList.push_back(new EjectCommand());
 	commandList.push_back(new PathCommand());
 	commandList.push_back(new DupeCommand());
 	commandList.push_back(new BruhCommand());
@@ -47,7 +48,6 @@ void CommandMgr::initCommands() {
 	commandList.push_back(new HelpCommand());
 	commandList.push_back(new BindCommand());
 	commandList.push_back(new SeedCommand());
-	commandList.push_back(new EjectCommand());
 	commandList.push_back(new TopCommand());
 	commandList.push_back(new NbtCommand());
 	commandList.push_back(new SayCommand());
