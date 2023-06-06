@@ -9,7 +9,8 @@ PlayerTeleportCommand::~PlayerTeleportCommand() {
 
 bool PlayerTeleportCommand::execute(std::vector<std::string>* args) {
 	assertTrue(Game.getLocalPlayer() != nullptr);
-	assertTrue(args->size() > 1);  // .playertp <player>
+	clientMessageF("%sCurrently crashing", RED);
+	/* assertTrue(args->size() > 1);  // .playertp <player>
 	std::string nameOfPlayer = args->at(1);
 	assertTrue(!nameOfPlayer.empty());
 	std::string nameOfPlayerLower = std::string(nameOfPlayer);
@@ -17,6 +18,12 @@ bool PlayerTeleportCommand::execute(std::vector<std::string>* args) {
 	nameOfPlayerLower = Utils::sanitize(nameOfPlayerLower);
 
 	EntityList* entList = Game.getEntityList();
+
+	if (entList == nullptr) {
+		clientMessageF("%sInvalid entity list", RED);
+		return true;
+	}
+
 	size_t listSize = entList->getListSize();
 	Vec3 pos;
 
@@ -28,15 +35,18 @@ bool PlayerTeleportCommand::execute(std::vector<std::string>* args) {
 	for (size_t i = 0; i < listSize; i++) {
 		Entity* currentEntity = entList->get(i);
 
-		std::string name(currentEntity->getNameTag()->getText());
-
-		std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-
-		if (currentEntity == 0)
+		if (currentEntity == nullptr)
 			break;
 
 		if (currentEntity == Game.getLocalPlayer())  // Skip Local player
 			continue;
+
+		if (currentEntity->getNameTag() == nullptr)
+			continue;
+
+		std::string name(currentEntity->getNameTag()->getText());
+
+		std::transform(name.begin(), name.end(), name.begin(), ::tolower);
 
 		if (name.find(nameOfPlayerLower) == std::string::npos)
 			continue;
@@ -50,6 +60,6 @@ bool PlayerTeleportCommand::execute(std::vector<std::string>* args) {
 		return true;
 	}
 	Game.getLocalPlayer()->setPos(pos);
-	clientMessageF("[%sHorion%s] %sTeleported to %s", GOLD, WHITE, GREEN, playerName.c_str());
+	clientMessageF("[%sHorion%s] %sTeleported to %s", GOLD, WHITE, GREEN, playerName.c_str());*/
 	return true;
 }
