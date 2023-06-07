@@ -71,6 +71,7 @@ public:
 
 class Player;
 class Dimension;
+class MobEffect;
 struct MobEffectInstance;
 
 #pragma pack(push, 4)
@@ -590,6 +591,39 @@ public:
 	void lerpTo(Vec3 const &pos, Vec2 const &rot, int steps);
 };
 #pragma pack(pop)
+
+class MobEffect {
+public:
+	int id; // 0x8
+
+private:
+	char pad_0xC[0x14]; // 0xC
+
+public:
+	TextHolder* internalName; // 0x20
+
+private:
+	char pad_0x28[0x28]; // 0x28
+
+public:
+	TextHolder name; // 0x50
+
+private:
+	char pad_0x70[0x30]; // 0x70
+
+public:
+	TextHolder* minecraftName; // 0xA0
+
+private:
+	char pad_0xA8[0x88];  // 0xA8
+
+public:
+	virtual void applyEffects(Entity *, int, int);
+	virtual void removeEffects(Entity *);
+	virtual void applyInstantaneousEffect(Entity *, Entity *, Entity *, int, float);
+	virtual void parse(void *, __int64 const &, __int64 const &, int, std::string &);
+	virtual int getAttributeModifierValue(int, __int64 const &);
+};
 
 class ServerPlayer;
 
