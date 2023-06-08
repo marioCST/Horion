@@ -334,7 +334,7 @@ public:
 	}
 
 	GuiData* getGuiData() {
-		return (GuiData*)*reinterpret_cast<__int64*>(reinterpret_cast<GuiData*>(reinterpret_cast<__int64>(this) + 0x500));
+		return (GuiData*)*reinterpret_cast<__int64*>(reinterpret_cast<GuiData*>(reinterpret_cast<__int64>(this) + 0x510));
 	};
 
 	BlockTessellator* getBlockTesselator() {

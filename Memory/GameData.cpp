@@ -21,7 +21,7 @@ void GameData::retrieveClientInstance() {
 		clientInstanceOffset = GetOffsetFromSig("48 8B 15 ? ? ? ? 48 8B 12 48 89 16 40 84 FF 74 0C 48 8D 0D ? ? ? ? E8 ? ? ? ? 48 8B C6 48 8B 4C ? ? 48 33 CC E8 ? ? ? ? 48 8B 5C ? ? 48 8B 74 ? ? 48 83 C4 ? 5F C3 E8 ? ? ? ? 90 CC CC CC CC CC CC CC CC CC 48 89 6C ? ?", 3);
 		logF("Client: %llX", clientInstanceOffset);
 	}
-	//Game.clientInstance = reinterpret_cast<ClientInstance*>(Utils::readPointer<uintptr_t*>(clientInstanceOffset, {0x0, 0x0, 0x48})); // Last offset is unknown
+	Game.clientInstance = reinterpret_cast<ClientInstance*>(Utils::readPointer<uintptr_t*>(clientInstanceOffset, {0x0, 0x0, 0x48, 0x0}));
 #ifdef _DEBUG
 	if (Game.clientInstance == 0)
 		throw std::exception("Client Instance is 0");
