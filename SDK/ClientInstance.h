@@ -279,13 +279,13 @@ public:
 	};
 
 	Vec2* getMousePos() {
-		return reinterpret_cast<Vec2*>((uintptr_t)(this) + 0x458);
+		return reinterpret_cast<Vec2*>((uintptr_t)(this) + 0x468);
 	}
 
 	Vec2 getFov() {
 		Vec2 fov;
-		fov.x = *reinterpret_cast<float*>((uintptr_t)(this) + 0x690);
-		fov.y = *reinterpret_cast<float*>((uintptr_t)(this) + 0x6A4);
+		fov.x = *reinterpret_cast<float*>((uintptr_t)(this) + 0x624);
+		fov.y = *reinterpret_cast<float*>((uintptr_t)(this) + 0x638);
 		return fov;
 	}
 
