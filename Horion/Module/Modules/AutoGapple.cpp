@@ -44,13 +44,13 @@ const char* doesThatFuckerHaveTheEffect(Entity* entity, int effectId) {
 	if (effect == nullptr)
 		return "Effect is null";
 
-	//Game.getGuiData()->displayClientMessageF("MobEffect size: %X", sizeof(*effect));
+	//Game.getGuiData()->displayClientMessageF("MobEffect: %X", sizeof(*effect));
 
 	//return "TODO";
 	static auto Actor_hasEffect = FindSignature("48 83 EC ? E8 ? ? ? ? 48 85 C0 ? ? C0 48 83 C4 ? C3 CC");
 
 	if (Actor_hasEffect) {
-		bool b = reinterpret_cast<bool(__fastcall*)(Entity*, MobEffect*)>(Actor_hasEffect)(entity, effect);
+		bool b = reinterpret_cast<bool(__fastcall*)(Entity*, MobEffect const&)>(Actor_hasEffect)(entity, *effect);
 
 		return b ? "Yes" : "No";
 	}

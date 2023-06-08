@@ -595,9 +595,10 @@ public:
 class MobEffect {
 public:
 	int id; // 0x8
+	bool isHarmful; // 0xC
 
 private:
-	char pad_0xC[0x14]; // 0xC
+	char pad_0xD[0x13]; // 0xD
 
 public:
 	TextHolder* internalName; // 0x20
@@ -615,7 +616,11 @@ public:
 	TextHolder* minecraftName; // 0xA0
 
 private:
-	char pad_0xA8[0x88];  // 0xA8
+	char pad_0xA8[0xD0];  // 0xA8
+
+private:
+	virtual void destructor1();
+	virtual void destructor2();
 
 public:
 	virtual void applyEffects(Entity *, int, int);
