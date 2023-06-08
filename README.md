@@ -1,6 +1,4 @@
-**IMPORTANT: This client is ONLY for Minecraft: BEDROCK (specifically Windows 10/11) Edition version 1.19.30 x64, and the client is the downloadable DLL, NOT the MCPACK!!**
-
-**DON'T ask me if something doesn't work on Minecraft: Java Edition, non-Windows 10/11 platforms or any version which isn't 1.19.30 x64. That will NEVER work.**
+# THIS IS A DRAFT BRANCH FOR 1.20!!! I WON'T BE FULLY UPDATING DUE TO MISSING KNOWLEDGE AND STUFF
 
 <div align="center">
   <br />
