@@ -81,13 +81,13 @@ void Logger::WriteLogFileF(volatile char* fmt, ...) {
 		std::stringstream ssTime;
 		Utils::ApplySystemTime(&ssTime);
 
-		char logMessage[500];
+		char logMessage[1000];
 		char timeStamp[20];
 		sprintf_s(timeStamp, 20, "%s", ssTime.str().c_str());
 
 		va_list arg;
 		va_start(arg, fmt);
-		int numCharacters = vsprintf_s(logMessage, 300, const_cast<const char*>(fmt), arg);
+		int numCharacters = vsprintf_s(logMessage, 600, const_cast<const char*>(fmt), arg);
 		va_end(arg);
 		fprintf(pFile, "%s%s", timeStamp, logMessage);
 		fprintf(pFile, "\n");
