@@ -3,20 +3,18 @@
 #include "../Memory/GameData.h"
 #include "../Utils/Utils.h"
 InventoryTransactionManager *Entity::getTransactionManager() {
-	//return &this->transac;
-	static unsigned int offset = 0; // 1210
+	/*static unsigned int offset = 0;
 	if (offset == 0) {
-		// EnchantCommand::execute
-		offset = *reinterpret_cast<int *>(FindSignature("48 89 5C 24 18 55 56 57 41 56 41 57 48 83 EC 30 45 0F B6 F8 4C") + 3);
-	}
-	return reinterpret_cast<InventoryTransactionManager *>(reinterpret_cast<__int64>(this) + offset);
+		offset = *reinterpret_cast<int *>(FindSignature("49 8D 8E ? ? ? ? E8 ? ? ? ? 90 48 8D 8D ? ? ? ? E8 ? ? ? ? 49 8B 06 48 8B 95") + 3);
+	}*/
+	return reinterpret_cast<InventoryTransactionManager *>(reinterpret_cast<__int64>(this) + 0xEC8);
 }
 PlayerInventoryProxy *Player::getSupplies() {
-	static unsigned int offset = 0; // B70
+	/*static unsigned int offset = 0;
 	if (offset == 0) {
-		offset = *reinterpret_cast<int *>(FindSignature("48 8B 51 ?? 4C 8B 82 ?? ?? ?? ?? 48 8B B2 ?? ?? ?? ?? 41 80 B8") + 7);  // GameMode::startDestroyBlock -> GameMode::_canDestroy -> getSupplies
-	}
-	return *reinterpret_cast<PlayerInventoryProxy **>(reinterpret_cast<__int64>(this) + offset);
+		offset = *reinterpret_cast<int *>(FindSignature("4C 8B 82 ? ? ? ? 41 80 B8 ? ? ? ? ? 75 1E 49 8B 88 ? ? ? ? 41 8B 50") + 3);  // GameMode::startDestroyBlock -> GameMode::_canDestroy -> getSupplies
+	}*/
+	return *reinterpret_cast<PlayerInventoryProxy **>(reinterpret_cast<__int64>(this) + 0x848);
 }
 void LocalPlayer::unlockAchievements() {  // MinecraftEventing::fireEventAwardAchievement
 	using fireEventAward = void(__fastcall *)(void *, int);
