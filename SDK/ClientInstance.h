@@ -147,23 +147,23 @@ public:
 class MinecraftGame {
 	char pad_0000[0x118];  //0x0000
 public:
-	FontRepository* fontRepository;  //0x00110
+	FontRepository* fontRepository;  //0x00118
 private:
 	char pad_0100[0x8];  //0x00120
 public:
-	Font* mcFont;  //0x00120
+	Font* mcFont;  //0x00128
 private:
 	char pad_0128[0x28];  //0x00130
 public:
-	FontRepository* fontRepository1;  //0x0140
+	FontRepository* fontRepository1;  //0x0148
 private:
-	char pad_0148[0x1D0];  //0x0148
+	char pad_0150[0x148];  //0x0150
 public:
-	bool canUseKeys;  //0x0318
+	TextHolder* xuid; // 0x298
 private:
-	char pad_0301[799];  //0x0319
+	char pad_2A0[0x0]; // 0x2A0
 public:
-	TextHolder xuid;  //0x0638
+	bool canUseKeys;  //0xX TODO
 
 	// 0x2F0
 
@@ -249,30 +249,30 @@ class CameraManager;
 
 class ClientInstance {
 private:
-	char pad_0x0[0xB8];  // 0x0
+	char pad_0x0[0xC8];  // 0x0
 public:
-	MinecraftGame* minecraftGame;  // 0xB8
-	Minecraft* minecraft;          // 0xC0
-private:
-	char pad_0xC8[0x8];  // 0xC8
-public:
-	LevelRenderer* levelRenderer;  // 0xD0
+	MinecraftGame* minecraftGame;  // 0xC8
+	Minecraft* minecraft;          // 0xD0
 private:
 	char pad_0xD8[0x8];  // 0xD8
 public:
-	LoopbackPacketSender* loopbackPacketSender;  // 0xE0
+	LevelRenderer* levelRenderer;  // 0xE0
 private:
-	char pad_0xE8[0x18];  // 0xE8
+	char pad_0xE8[0x8];  // 0xE8
 public:
-	PtrToGameSettings1* ptr;  // 0x100
+	LoopbackPacketSender* loopbackPacketSender;  // 0xF0
 private:
-	char pad_0x108[0x8];  // 0x108
+	char pad_0xF8[0x18];  // 0xF8
 public:
-	HitDetectSystem* hitDetectSystem;  // 0x110
+	PtrToGameSettings1* ptr;  // 0x110
 private:
-	char pad_0x118[0x3D8];  // 0x118
+	char pad_0x118[0x8];  // 0x118
 public:
-	class ItemInHandRenderer* itemInHandRenderer;  // 0x4F0
+	HitDetectSystem* hitDetectSystem;  // 0x120
+private:
+	char pad_0x128[0x3D8];  // 0x128
+public:
+	class ItemInHandRenderer* itemInHandRenderer;  // 0x500
 
 	glmatrixf* getRefDef() {
 		return reinterpret_cast<glmatrixf*>((uintptr_t)(this) + 0x2F0);
@@ -290,9 +290,10 @@ public:
 	}
 
 	Font* getFont() {
-		using getFont_t = Font*(__fastcall*)(ClientInstance*);
+		/*using getFont_t = Font*(__fastcall*)(ClientInstance*);
 		static getFont_t getFontFunc = reinterpret_cast<getFont_t>(FindSignature("40 53 48 83 EC 30 48 8B DA 48 8B 89 ? ? ? ? 48 8B 01 48 8D 54 24 ? FF 90 ? ? ? ? 90 48 8B C8 E8 ? ? ? ? 48 8B D0 48 8B CB E8 ? ? ? ? 90 48 8D 4C 24 ? E8 ? ? ? ? 48 8B C3 48 83 C4 30 5B C3 CC CC CC CC CC CC CC CC CC CC 48 89 5C 24 ?"));
-		return getFontFunc(this);
+		return getFontFunc(this);*/
+		return reinterpret_cast<Font*>((uintptr_t)(this) + 0xED8);
 	}
 
 	Font* getRuneFont() {
@@ -321,7 +322,7 @@ public:
 
 	MoveInputHandler* getMoveTurnInput() {
 		using GetMoveInputHandlerFunc = MoveInputHandler*(__fastcall*)(ClientInstance*);
-		static GetMoveInputHandlerFunc getMoveInputHandlerFunc = reinterpret_cast<GetMoveInputHandlerFunc>(FindSignature("48 83 EC 28 8D 42 FE"));
+		static GetMoveInputHandlerFunc getMoveInputHandlerFunc = reinterpret_cast<GetMoveInputHandlerFunc>(FindSignature("40 53 48 83 EC ? 48 8B 01 8B DA 48 8B 80 ? ? ? ? FF 15 ? ? ? ? 48 85 C0"));
 		return getMoveInputHandlerFunc(this);
 	}
 
@@ -338,11 +339,11 @@ public:
 	};
 
 	BlockTessellator* getBlockTesselator() {
-		return (BlockTessellator*)*reinterpret_cast<__int64*>(reinterpret_cast<BlockTessellator*>(reinterpret_cast<__int64>(this) + 0x4C8));
+		return (BlockTessellator*)*reinterpret_cast<__int64*>(reinterpret_cast<BlockTessellator*>(reinterpret_cast<__int64>(this) + 0x4D8));
 	};
 
 	class LocalPlayer* getCILocalPlayer() {
-		return Utils::CallVFunc<24, LocalPlayer*>(this);
+		return Utils::CallVFunc<27, LocalPlayer*>(this);
 	}
 
 	inline GameSettingsInput* getGameSettingsInput() { return this->ptr->ptr->ptr->settingsInput; };
