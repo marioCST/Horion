@@ -161,7 +161,7 @@ private:
 public:
 	TextHolder* xuid; // 0x298
 private:
-	char pad_2A0[0x0]; // 0x2A0
+	char pad_2A0[0x1]; // 0x2A0
 public:
 	bool canUseKeys;  //0xX TODO
 
