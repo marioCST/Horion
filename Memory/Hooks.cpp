@@ -31,7 +31,7 @@ void Hooks::Init() {
 		void* _renderCtx = reinterpret_cast<void*>(FindSignature("48 8B ? 48 89 ? ? 55 56 57 41 ? 41 ? 41 ? 41 ? 48 8D ? ? ? ? ? 48 81 EC ? ? ? ? 0F 29 ? ? 0F 29 ? ? 48 8B ? ? ? ? ? 48 33 ? 48 89 ? ? ? ? ? 4C 8B ? 48 89 ? ? ? 4C 8B"));
 		g_Hooks.RenderTextHook = std::make_unique<FuncHook>(_renderCtx, Hooks::RenderText);
 
-		void* render = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 57 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 84 24 ? ? ? ? 48 8B DA 48 8B F9 B9"));
+		void* render = reinterpret_cast<void*>(FindSignature("48 89 5C ? ? 48 89 74 ? ? 57 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 84 ? ? ? ? ? 48 8B FA 48 8B D9 B9"));
 		g_Hooks.UIScene_renderHook = std::make_unique<FuncHook>(render, Hooks::UIScene_render);
 
 		void* key = reinterpret_cast<void*>(FindSignature("48 83 EC ? ? ? C1 4C 8D 05"));
@@ -58,7 +58,7 @@ void Hooks::Init() {
 		void* getRenderLayer = reinterpret_cast<void*>(FindSignature("8B 81 E4 ? ? ? C3 CC CC CC CC CC CC CC CC CC F3"));
 		g_Hooks.BlockLegacy_getRenderLayerHook = std::make_unique<FuncHook>(getRenderLayer, Hooks::BlockLegacy_getRenderLayer);
 
-		void* getLightEmission = reinterpret_cast<void*>(FindSignature("0F B6 81 ? ? ? ? 88 02 48 8B C2 C3 CC CC CC 0F 10"));
+		void* getLightEmission = reinterpret_cast<void*>(FindSignature("0F B6 81 ? ? ? ? 88 02 48 8B C2 C3 CC CC CC 0F B6 81"));
 		g_Hooks.BlockLegacy_getLightEmissionHook = std::make_unique<FuncHook>(getLightEmission, Hooks::BlockLegacy_getLightEmission);
 
 		// Dead
@@ -206,6 +206,7 @@ void Hooks::Init() {
 		} else logF("MoveTurnInput is null");
 
 		// LocalPlayer::vtable
+		// Dead
 		{
 			uintptr_t** localPlayerVtable = GetVtableFromSig("48 8D 05 ? ? ? ? 48 89 01 FF 15 ? ? ? ? 48 8B 08", 3);
 			if (localPlayerVtable == 0x0)
@@ -458,7 +459,7 @@ __int64 Hooks::RenderText(__int64 a1, MinecraftUIRenderContext* renderCtx) {
 			// Main Menu
 			std::string screenName(g_Hooks.currentScreenName);
 			if (strcmp(screenName.c_str(), "start_screen") == 0) {
-				int imgX = 866 / 2.6f, imgY = 373 / 2.6f;
+				/*int imgX = 866 / 2.6f, imgY = 373 / 2.6f;
 
 				Vec2 imgPos = Vec2(wid.x / 2.f - imgX / 2.f, wid.y / 9.5f - imgY / 4.25f);
 				Vec2 imgSize = Vec2(imgX, imgY);
@@ -467,17 +468,17 @@ __int64 Hooks::RenderText(__int64 a1, MinecraftUIRenderContext* renderCtx) {
 				DrawUtils::fillRectangle(rectPos, ClientColors::menuBackgroundColor, 1.f);
 				DrawUtils::drawRectangle(rectPos, color, 1.f, 2.f);
 
-				DrawUtils::drawImage("textures/horion/banner", imgPos, imgSize, Vec2(0, 0));
+				DrawUtils::drawImage("textures/horion/banner", imgPos, imgSize, Vec2(0, 0));*/
 
 				// Draw BIG epic horion watermark
-				/*{
+				{
 					std::string text = "H O R I O N";
 					Vec2 textPos = Vec2(wid.x / 2.f - DrawUtils::getTextWidth(&text, 8.f) / 2.f, wid.y / 9.5f);
 					Vec4 rectPos = Vec4(textPos.x - 55.f, textPos.y - 15.f, textPos.x + DrawUtils::getTextWidth(&text, 8.f) + 55.f, textPos.y + 75.f);
 					DrawUtils::fillRectangle(rectPos, ClientColors::menuBackgroundColor, 1.f);
 					DrawUtils::drawRectangle(rectPos, color, 1.f, 2.f);
 					DrawUtils::drawText(textPos, &text, MC_Color(255, 255, 255, 1), 8.f);
-				}*/
+				}
 			} else {
 				shouldRenderTabGui = hudModule->tabgui && hudModule->isEnabled();
 				shouldRenderArrayList = hudModule->arraylist && hudModule->isEnabled();
