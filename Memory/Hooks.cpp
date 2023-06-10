@@ -251,27 +251,27 @@ void Hooks::Init() {
 				g_Hooks.GameMode_attackHook = std::make_unique<FuncHook>(gameModeVtable[14], Hooks::GameMode_attack);
 			}
 		}
-		
-		// BlockLegacy 48 8D 05 ? ? ? ? 48 89 01 48 89 59 ? 48 89 59 ?
-
-		// MoveInputHandler 48 8D 05 ? ? ? ? 48 89 51 ? 48 89 51 ? 48 C7 41
 
 		// PackAccessStrategy vtables for isTrusted
-		/*{
-			
-			uintptr_t** directoryPackVtable = GetVtableFromSig("48 8D 05 ? ? ? ? 49 89 06 49 8D 76 ? 45 33 E4", 3);
+		{
+			uintptr_t sigOffset = FindSignature("48 8D 05 ? ? ? ? 49 89 06 49 8D 76 ? 45 33 E4");
+			int offset = *reinterpret_cast<int*>(sigOffset + 3);
+			uintptr_t** directoryPackVtable = reinterpret_cast<uintptr_t**>(sigOffset + offset +  7);
+			//uintptr_t** directoryPackVtable = GetVtableFromSig("48 8D 05 ? ? ? ? 49 89 06 49 8D 76 ? 45 33 E4", 3);
+			if (directoryPackVtable == 0x0)
+				logF("directoryPackVtable signature not working!!!");
+			else g_Hooks.DirectoryPackAccessStrategy__isTrustedHook = std::make_unique<FuncHook>(directoryPackVtable[6], Hooks::DirectoryPackAccessStrategy__isTrusted);
 
-			{
-				g_Hooks.DirectoryPackAccessStrategy__isTrustedHook = std::make_unique<FuncHook>(directoryPackVtable[6], Hooks::DirectoryPackAccessStrategy__isTrusted);
-			}
-
-			uintptr_t** directoryPackVtable2 = GetVtableFromSig("48 8D 05 ? ? ? ? 48 89 01 4C 8D A9 ? ? ? ? 49 8B 45", 3);
+			uintptr_t sigOffset2 = FindSignature("48 8D 05 ? ? ? ? 48 89 03 48 83 3E ? ? ? ? ? ? ? 45 33 E4");
+			int offset2 = *reinterpret_cast<int*>(sigOffset2 + 3);
+			uintptr_t** directoryPackVtable2 = reinterpret_cast<uintptr_t**>(sigOffset2 + offset2 +  7);
+			//uintptr_t** directoryPackVtable2 = GetVtableFromSig("48 8D 05 ? ? ? ? 48 89 03 48 83 3E ? ? ? ? ? ? ? 45 33 E4", 3);
+			if (directoryPackVtable2 == 0x0)
+				logF("directoryPackVtable2 signature not working!!!");
+			else g_Hooks.ZipPackAccessStrategy__isTrustedHook = std::make_unique<FuncHook>(directoryPackVtable2[6], Hooks::ReturnTrue);
 			
-			{
-				g_Hooks.ZipPackAccessStrategy__isTrustedHook = std::make_unique<FuncHook>(directoryPackVtable2[6], Hooks::ReturnTrue);
-			}
 			g_Hooks.SkinRepository___checkSignatureFileInPack = std::make_unique<FuncHook>(FindSignature("48 89 5C 24 ? 57 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 24 ? 48 8B 79"), Hooks::ReturnTrue);
-		}*/
+		}
 		logF("Vtables initialized");
 	}
 
