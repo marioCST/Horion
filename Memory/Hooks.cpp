@@ -1041,8 +1041,8 @@ float Hooks::GetGamma(uintptr_t* a1) {
 		uintptr_t* info = *(uintptr_t**)((uintptr_t)list[i] + 8);
 		if (info == nullptr) continue;
 
-		TextHolder* translateName = (TextHolder*)((uintptr_t)info + 0x1D8);
-		TextHolder* settingname = (TextHolder*)((uintptr_t)info + 0x188);
+		TextHolder* translateName = (TextHolder*)((uintptr_t)info + 0x108);
+		TextHolder* settingname = (TextHolder*)((uintptr_t)info + 0x158);
 
 		if (!strcmp(translateName->getText(), "options.smoothlighting")) {
 			if (hadIt) continue;
