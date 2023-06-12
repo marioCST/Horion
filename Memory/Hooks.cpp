@@ -206,7 +206,6 @@ void Hooks::Init() {
 		} else logF("MoveTurnInput is null");
 
 		// LocalPlayer::vtable
-		// Dead
 		{
 			uintptr_t** localPlayerVtable = GetVtableFromSig("48 8D 05 ? ? ? ? 48 89 01 B8 ? ? ? ? 8D 50 FA 44 8D 48 ? 44 8D 40 ? 66 89 44 ? ? E8 ? ? ? ? 48 8B 8B", 3);
 			if (localPlayerVtable == 0x0)
