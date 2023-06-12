@@ -24,7 +24,7 @@ public:
 public:
 	virtual __int64 getPickRange(__int64 const &, bool);
 	virtual __int64 useItem(ItemStack &);
-	virtual __int64 useItemOn(__int64 &, Vec3i const &, unsigned char, Vec3 const &, __int64 const *);
+	virtual void useItemOn(ItemStack &, Vec3i const &, char, Vec3 const &, Block const *);
 	virtual __int64 interact(Entity &, Vec3 const &);
 
 public:
