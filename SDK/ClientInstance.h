@@ -50,7 +50,7 @@ public:
 		auto c = *textP;
 
 		do {
-			hash = c ^ 0x100000001B3i64 * hash;
+			hash = hash * 0x100000001B3i64 ^ c;
 			c = *++textP;
 		} while (*textP);
 	}
@@ -88,7 +88,7 @@ private:
 	std::shared_ptr<void> materialPtr;
 
 public:
-	MaterialPtr(const std::string& materialName);
+	MaterialPtr(std::string materialName, bool switchable = false);
 };
 }  // namespace mce
 
@@ -216,7 +216,7 @@ public:
 		Vec2 windowSize;  //0x0028
 	};
 
-	void displayClientMessageVA(const char* fmt, va_list lis, bool sendToInjector = true);
+	void displayClientMessageVA(const char* fmt, va_list lis);
 
 	void displayClientMessageF(const char* fmt, ...);
 	void displayClientMessageNoSendF(const char* fmt, ...);
@@ -275,7 +275,7 @@ public:
 	class ItemInHandRenderer* itemInHandRenderer;  // 0x500
 
 	glmatrixf* getRefDef() {
-		return reinterpret_cast<glmatrixf*>((uintptr_t)(this) + 0x2F0);
+		return reinterpret_cast<glmatrixf*>((uintptr_t)(this) + 0x300);
 	};
 
 	Vec2* getMousePos() {

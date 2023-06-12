@@ -20,9 +20,7 @@ bool initializedLogger = false;
 bool loggerActive = true;
 CRITICAL_SECTION loggerLock;
 std::mutex vecMutex;
-std::mutex injMutex;
 std::vector<TextForPrint> stringPrintVector = std::vector<TextForPrint>();
-std::vector<std::shared_ptr<TextForPrintBig>> stringSendToInjector;
 
 bool Logger::isActive() {
 	return loggerActive && initializedLogger;
@@ -101,13 +99,6 @@ void Logger::WriteLogFileF(volatile char* fmt, ...) {
 			auto lock = Logger::GetTextToPrintLock();
 			stringPrintVector.push_back(textForPrint);
 		}
-		if (numCharacters < 2900) {
-			auto textForPrint = std::make_shared<TextForPrintBig>();
-			strcpy_s(textForPrint->text, 2900, logMessage);
-			strcpy_s(textForPrint->time, 20, timeStamp);
-			auto lock = Logger::GetTextToInjectorLock();
-			stringSendToInjector.push_back(textForPrint);
-		}
 	}
 	LeaveCriticalSection(&loggerLock);
 }
@@ -158,13 +149,6 @@ void Logger::WriteBigLogFileF(size_t maxSize, const char* fmt, ...) {
 			auto lock = Logger::GetTextToPrintLock();
 			stringPrintVector.push_back(textForPrint);
 		}
-		if (numCharacters < 2900) {
-			auto textForPrint = std::make_shared<TextForPrintBig>();
-			strcpy_s(textForPrint->text, 2900, logMessage);
-			strcpy_s(textForPrint->time, 20, timeStamp);
-			auto lock = Logger::GetTextToInjectorLock();
-			stringSendToInjector.push_back(textForPrint);
-		}
 		delete[] logMessage;
 	}
 	LeaveCriticalSection(&loggerLock);
@@ -174,16 +158,8 @@ std::vector<TextForPrint>* Logger::GetTextToPrint() {
 	return &stringPrintVector;
 }
 
-std::vector<std::shared_ptr<TextForPrintBig>>* Logger::GetTextToSend() {
-	return &stringSendToInjector;
-}
-
 std::lock_guard<std::mutex> Logger::GetTextToPrintLock() {
 	return std::lock_guard<std::mutex>(vecMutex);
-}
-
-std::lock_guard<std::mutex> Logger::GetTextToInjectorLock() {
-	return std::lock_guard<std::mutex>(injMutex);
 }
 
 void Logger::Disable() {
@@ -196,27 +172,4 @@ void Logger::Disable() {
 
 	DeleteCriticalSection(&loggerLock);
 #endif
-}
-void Logger::SendToConsoleF(const char* msg) {
-	if (!loggerActive)
-		return;
-
-	if (!initializedLogger)
-		return;
-
-	std::stringstream ssTime;
-	Utils::ApplySystemTime(&ssTime);
-
-	char timeStamp[20];
-	sprintf_s(timeStamp, 20, "%s", ssTime.str().c_str());
-	auto numCharacters = strnlen_s(msg, 300);
-
-	if (numCharacters < 300) {
-		auto textForPrint = std::make_shared<TextForPrintBig>();
-		strcpy_s(textForPrint->text, 2900, msg);
-		strcpy_s(textForPrint->time, 20, timeStamp);
-		auto lock = Logger::GetTextToInjectorLock();
-		stringSendToInjector.push_back(textForPrint);
-	}
-
 }
