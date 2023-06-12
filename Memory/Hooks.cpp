@@ -211,7 +211,7 @@ void Hooks::Init() {
 			if (localPlayerVtable == 0x0)
 				logF("LocalPlayer signature not working!!!");
 			else {
-				g_Hooks.Actor_startSwimmingHook = std::make_unique<FuncHook>(localPlayerVtable[194], Hooks::Actor_startSwimming);
+				g_Hooks.Actor_startSwimmingHook = std::make_unique<FuncHook>(localPlayerVtable[195], Hooks::Actor_startSwimming);
 
 				g_Hooks.Actor_ascendLadderHook = std::make_unique<FuncHook>(localPlayerVtable[331], Hooks::Actor_ascendLadder);
 				
