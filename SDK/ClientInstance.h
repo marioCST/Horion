@@ -145,27 +145,10 @@ public:
 };
 
 class MinecraftGame {
-	char pad_0000[0x118];  //0x0000
 public:
-	FontRepository* fontRepository;  //0x00118
-private:
-	char pad_0100[0x8];  //0x00120
-public:
-	Font* mcFont;  //0x00128
-private:
-	char pad_0128[0x28];  //0x00130
-public:
-	FontRepository* fontRepository1;  //0x0148
-private:
-	char pad_0150[0x148];  //0x0150
-public:
-	TextHolder* xuid; // 0x298
-private:
-	char pad_2A0[0x1]; // 0x2A0
-public:
-	bool canUseKeys;  //0xX TODO
-
-	// 0x2F0
+	BUILD_ACCESS(this, FontRepository*, fontRepository, 0xEC8);
+	BUILD_ACCESS(this, Font*, mcFont, 0xED8);
+	BUILD_ACCESS(this, bool, canUseKeys, 0x130);
 
 	Font* getTheGoodFontThankYou() {
 		return fontRepository->fontList->fontEntries[7].font;
