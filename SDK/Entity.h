@@ -746,7 +746,7 @@ public:
 	GameMode *getGameMode() {
 		static unsigned int offset = 0;
 		if (offset == NULL)
-			offset = *reinterpret_cast<int *>(FindSignature("48 8B BE ? ? ? ? 48 8B 8E ? ? ? ? 48 89 6C") + 3);
+			offset = *reinterpret_cast<int *>(FindSignature("48 8B 86 ? ? ? ? 48 89 44 24 ? 88 54 24") + 3);
 		return *reinterpret_cast<GameMode **>((uintptr_t)(this) + offset);
 	}
 	void applyTurnDelta(Vec2 *viewAngleDelta);
