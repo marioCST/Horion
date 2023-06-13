@@ -6,10 +6,9 @@
 struct MC_Color;
 
 class FilePath {
-private:
-	char pad_0x0[0x8];    //0x0000
-	TextHolder filePath;  //0x0008
 public:
+	BUILD_ACCESS(this, TextHolder, filePath, 0x8);
+
 	FilePath(std::string filePath) {
 		memset(this, 0, sizeof(FilePath));
 		this->filePath.setText(filePath);

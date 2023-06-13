@@ -17,8 +17,7 @@ enum class VertexFormat {
 
 class Tessellator {
 private:
-	char pad_0000[0x128];
-	Vec3 transformOffset;  // 0x128
+	BUILD_ACCESS(this, Vec3, transformOffset, 0x128);
 
 public:
 	void addPostTransformOffset(int x, int y, int z) {

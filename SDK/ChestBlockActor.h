@@ -7,16 +7,10 @@
 
 class ChestBlockActor {
 public:
-	uintptr_t** vTable;  //0x0000
-private:
-	char pad_0x0008[0x8];  //0x0008
-public:
-	uintptr_t* block;  //0x0010
-private:
-	char pad_0x0018[0x14];  //0x0018
-public:
-	Vec3i posI;  //0x002C
-	AABB aabb;
+	BUILD_ACCESS(this, uintptr_t**, vTable, 0x0);
+	BUILD_ACCESS(this, uintptr_t*, block, 0x10);
+	BUILD_ACCESS(this, Vec3i, posI, 0x2C);
+	BUILD_ACCESS(this, AABB, aabb, 0x38);
 
 	bool isPaired() {
 		return *reinterpret_cast<__int64*>(reinterpret_cast<__int64>(this) + 0x220) != 0;  //ptr to paired chest block actor

@@ -2,37 +2,18 @@
 class HashedString;
 
 class Dimension {
-private:
-	char pad_0x0[0x5A];  //0x0
 public:
-	__int16 maxHeight;  //0x5A
-private:
-	char pad_0x5E[0x5A];  //0x5E
-public:
-	class BrightnessRamp *brightnessRamp;  //0xB8
-private:
-	char pad_0xC0[0x20];  //0xC0
-public:
-	int dimensionId;  //0xE0
-private:
-	char pad_0xE4[0x1];  //0xE4
-public:
-	bool hasCeiling;  //0xE5
-private:
-	char pad_0xE6[0x2];  //0xE6
-public:
-	int timeThingy;  //0xE8
-private:
-	char pad_0xEC[0x34];  //0xEC
-public:
-	class Weather *weather;  //0x120
+	BUILD_ACCESS(this, __int16, maxHeight, 0x5A);
+	BUILD_ACCESS(this, class BrightnessRamp *, brightnessRamp, 0xB8);
+	BUILD_ACCESS(this, int, dimensionId, 0xE0);
+	BUILD_ACCESS(this, bool, hasCeiling, 0xE5);
+	BUILD_ACCESS(this, int, timeThingy, 0xE8);
+	BUILD_ACCESS(this, class Weather *, weather, 0x120);
 };
 
 class Weather {
-private:
-	char pad_0x8[0x44];  //0x8
 public:
-	float fogLevel;  //0x4C
+	BUILD_ACCESS(this, float, fogLevel, 0x4C);
 
 	virtual ~Weather();
 	virtual void onSourceCreated(BlockSource &);

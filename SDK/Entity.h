@@ -14,21 +14,17 @@
 class GameMode;
 
 class Level {
-private:
-	char firstpad[0x688];  // 0x8
 public:
-	int levelTicks;  // 0x690
+	BUILD_ACCESS(this, int, levelTicks, 0x690);
+	BUILD_ACCESS(this, int, rayHitType, 0xAB0);
+	BUILD_ACCESS(this, int, blockSide, 0xAB4);
+	BUILD_ACCESS(this, Vec3i, block, 0xAB8);
+	BUILD_ACCESS(this, Vec3, rayHitVec, 0xAC4);
+
 private:
-	char secondpad[0x41C];  // 0x694
-public:
-	int rayHitType;  // 0xAB0
-	int blockSide;   // 0xAB4
-	Vec3i block;     // 0xAB8
-	Vec3 rayHitVec;  // 0xAC4
-private:
-	Entity *entityPtr;            // 0xAD0
-	Entity *entityPtr2;           // 0xAD8
-	uint64_t GamingEntityFinder;  // 0xAE0
+	BUILD_ACCESS(this, Entity*, entityPtr, 0xAD0);
+	BUILD_ACCESS(this, Entity*, entityPtr2, 0xAD8);
+	BUILD_ACCESS(this, uint64_t, GamingEntityFinder; 0xAE0);
 
 	virtual void DONTREMOVEPLS();
 
@@ -76,114 +72,42 @@ struct MobEffectInstance;
 
 #pragma pack(push, 4)
 class Entity {
-	uint64_t ptrToEntityList;  // 0x8
-private:
-	char pad_0x10[0x128];  // 0x10
 public:
-	union {
-		struct {
-			float pitch;  // 0x0138
-			float yaw;    // 0x013C
-		};
-		Vec2 viewAngles;
-	};
-	union {
-		struct {
-			float pitch2;  // 0x0138
-			float yaw2;    // 0x013C
-		};
-		Vec2 viewAngles2;
-	};
-
-private:
-	char pad_0148[16];  // 0x0148
-public:
-	Vec3 eyePos0;  // 0x0158
-private:
-	char pad_0164[112];  // 0x0164
-public:
-	float fallDistance;  // 0x01D4
-	bool onGround;       // 0x01D8
-private:
-	char pad_01D9[95];  // 0x01D9
-public:
-	float stepHeight;  // 0x0238
-private:
-	char pad_023C[16];  // 0x023C
-public:
-	Vec3 slowdownFactor;  // 0x024C
-private:
-	char pad_0258[5];  // 0x0258
-public:
-	bool didEnterWaterBool;  // 0x025D
-private:
-	char pad_025E[1];  // 0x025E
-public:
-	bool hasEnteredWaterBool;  // 0x025F
-private:
-	char pad_0260[72];  // 0x0260
-public:
-	int32_t ticksAlive;  // 0x02A8
-private:
-	char pad_02AC[172];  // 0x02AC
-public:
-	class BlockSource *region;  // 0x0358
-private:
-	char pad_0360[8];  // 0x0360
-public:
-	Level *level;  // 0x0368
-private:
-	char pad_0370[328];  // 0x0370
-public:
-	AABB aabb;        // 0x04B8
-	float width;      // 0x04D0
-	float height;     // 0x04D4
-	Vec3 currentPos;  // 0x04D8
-	Vec3 oldPos;      // 0x04E4
-	Vec3 velocity;    // 0x04F0
-	Vec3 velocity2;   // 0x04FC
-private:
-	char pad_0508[80];  // 0x0508
-public:
-	int64_t entityRuntimeId;  // 0x0558
-private:
-	char pad_0560[0x1C8];  // 0x0560
-public:
-	float bodyYaw;                    // 0x0728
-	float oldBodyYaw;                 // 0xtoolazytoupdatethesecommentsxd
-	float yawUnused1;                 // 0x0748
-	float yawUnused2;                 // 0x074C
-	int32_t damageTime;               // 0x0750
-	int32_t damageAnimationDuration;  // 0x0754
-private:
-	char pad_0758[136];  // 0x0758
-public:
-	int32_t timeSinceDeath;  // 0x07E0
-private:
-	char pad_07E4[244];  // 0x07E4
-public:
-	class TextHolder playerName;  // 0x08D8
-private:
-	char pad_08F8[140];  // 0x08F8
-public:
-	bool canFly;  // 0x0984
-private:
-	char pad_0985[1667];  // 0x0985
-public:
-	int32_t ticksUsingItem;  // 0x1008
-private:
-	char pad_100C[20];  // 0x100C
-public:
-	int16_t itemData;  // 0x1020
-	int16_t itemId;    // 0x1022
-private:
-	char pad_1024[508];  // 0x1024
-public:
-	class InventoryTransactionManager transac;  // 0x1220
-private:
-	char pad_1280[2828];  // 0x1280
-public:
-	int gamemode;  // 0x1D7C
+	BUILD_ACCESS(this, uint64_t, ptrToEntityList, 0x8);
+	BUILD_ACCESS(this, Vec2, viewAngles, 0x138);
+	BUILD_ACCESS(this, Vec2, viewAngles2, 0x138); // Wait what the fuck
+	BUILD_ACCESS(this, Vec3, eyePos0, 0x158);
+	BUILD_ACCESS(this, float, fallDistance, 0x1D4);
+	BUILD_ACCESS(this, bool, onGround, 0x1D8);
+	BUILD_ACCESS(this, float, stepHeight, 0x238);
+	BUILD_ACCESS(this, Vec3, slowdownFactor, 0x24C);
+	BUILD_ACCESS(this, bool, didEnterWaterBool, 0x25D);
+	BUILD_ACCESS(this, bool, hasEnteredWaterBool, 0x25F);
+	BUILD_ACCESS(this, int32_t, ticksAlive, 0x2A8);
+	BUILD_ACCESS(this, class BlockSource *, region, 0x358);
+	BUILD_ACCESS(this, Level *, level, 0x368);
+	BUILD_ACCESS(this, AABB, aabb, 0x4B8);
+	BUILD_ACCESS(this, float, width, 0x4D0);
+	BUILD_ACCESS(this, float, height, 0x4D4);
+	BUILD_ACCESS(this, Vec3, currentPos, 0x4D8);
+	BUILD_ACCESS(this, Vec3, oldPos, 0x4E4);
+	BUILD_ACCESS(this, Vec3, velocity, 0x4F0);
+	BUILD_ACCESS(this, Vec3, velocity2, 0x4FC);
+	BUILD_ACCESS(this, int64_t, entityRuntimeId, 0x558);
+	BUILD_ACCESS(this, float, bodyYaw, 0x728);
+	BUILD_ACCESS(this, float, oldBodyYaw, 0x72C);
+	BUILD_ACCESS(this, float, yawUnused1, 0x730);
+	BUILD_ACCESS(this, float, yawUnused2, 0x734);
+	BUILD_ACCESS(this, int32_t, damagetime, 0x738);
+	BUILD_ACCESS(this, int32_t, damageAnimationDuration, 0x73C);
+	BUILD_ACCESS(this, int32_t, timeSinceDeath, 0x7C8);
+	BUILD_ACCESS(this, class TextHolder, playerName, 0x8C0);
+	BUILD_ACCESS(this, bool, canFly, 0x96C);
+	BUILD_ACCESS(this, int32_t, ticksUsingItem, 0x9F0);
+	BUILD_ACCESS(this, int16_t, itemData, 0x1008);
+	BUILD_ACCESS(this, int16_t, itemId, 0x100A);
+	BUILD_ACCESS(this, class InventoryTransactionManager, transac, 0x1208);
+	BUILD_ACCESS(this, int, gamemode, 0x1D64);
 
 	virtual bool hasComponent();																// 0
 	virtual __int64 getLastHurtByMob(void);														// 1

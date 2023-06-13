@@ -3,9 +3,9 @@
 class RakNetInstance {
 	char pad_0000[856];    //0x0000
 public:
-	TextHolder numericalIp;  //0x0360
-	TextHolder serverIp;        //0x0380
-	uint32_t serverPort;   //0x03A0
+	BUILD_ACCESS(this, TextHolder, numericalIp, 0x360);
+	BUILD_ACCESS(this, TextHolder, serverIp, 0x380);
+	BUILD_ACCESS(this, uint32_t, serverPort, 0x3A0);
 
 	private:
 	virtual ~RakNetInstance();
