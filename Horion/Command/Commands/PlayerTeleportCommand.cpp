@@ -39,9 +39,6 @@ bool PlayerTeleportCommand::execute(std::vector<std::string>* args) {
 		if (currentEntity == nullptr)
 			break;
 
-		std::string name(currentEntity->getNameTag()->getText());
-		std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-
 		if (currentEntity == Game.getLocalPlayer())  // Skip local player
 			continue;
 
