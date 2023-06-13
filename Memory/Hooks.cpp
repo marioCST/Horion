@@ -108,9 +108,8 @@ void Hooks::Init() {
 		void* localPlayerUpdateFromCam = reinterpret_cast<void*>(FindSignature("48 8B C4 48 89 70 ? 57 48 81 EC ? ? ? ? ? ? 70 E8 ? ? 78 D8"));
 		g_Hooks.LocalPlayer__updateFromCameraHook = std::make_unique<FuncHook>(localPlayerUpdateFromCam, Hooks::LocalPlayer__updateFromCamera);
 
-		// Dead
-		//void* renderNameTags = reinterpret_cast<void*>(FindSignature("48 8B C4 48 89 58 ? 55 56 57 41 54 41 55 41 56 41 57 48 8D A8 ? ? ? ? 48 81 EC ? ? ? ? ? ? 70 B8 ? ? 78 A8 44 ? ? 40 ? 44 ? ? 48 ? 44 ? ? 90 ? ? ? ? 44 ? ? 98 ? ? ? ? 44 ? ? A0 ? ? ? ? 44 ? ? A8 ? ? ? ? 44 ? ? B0 ? ? ? ? 44 ? ? B8 ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 85 ? ? ? ? 49 8B D8"));
-		//g_Hooks.LevelRendererPlayer__renderNameTagsHook = std::make_unique<FuncHook>(renderNameTags, Hooks::LevelRendererPlayer__renderNameTags);
+		void* renderNameTags = reinterpret_cast<void*>(FindSignature("48 8B C4 48 89 58 ? 55 56 57 41 54 41 55 41 56 41 57 48 8D 68 ? 48 81 EC ? ? ? ? ? ? 70 B8 ? ? 78 A8 44 ? ? 40 ? 44 ? ? 48 ? 44 ? ? 90 ? ? ? ? 44 ? ? 98 ? ? ? ? 44 ? ? A0 ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 45 ? 49 8B F1"));
+		g_Hooks.LevelRendererPlayer__renderNameTagsHook = std::make_unique<FuncHook>(renderNameTags, Hooks::LevelRendererPlayer__renderNameTags);
 		
 		void* destroySpeed = reinterpret_cast<void*>(FindSignature("48 89 5C ? ? 57 48 83 EC ? 48 8B FA ? ? 74 24 ? 48 8B 91"));
 		g_Hooks.getDestroySpeedHook = std::make_unique<FuncHook>(destroySpeed, Hooks::getDestroySpeed);
@@ -208,13 +207,13 @@ void Hooks::Init() {
 
 				g_Hooks.Actor_ascendLadderHook = std::make_unique<FuncHook>(localPlayerVtable[331], Hooks::Actor_ascendLadder);
 				
-				//g_Hooks.Actor__setRotHook = std::make_unique<FuncHook>(localPlayerVtable[27], Hooks::Actor__setRot);
+				//g_Hooks.Actor__setRotHook = std::make_unique<FuncHook>(localPlayerVtable[27], Hooks::Actor__setRot); // Removed from vtable
 
 				g_Hooks.Actor_swingHook = std::make_unique<FuncHook>(localPlayerVtable[213], Hooks::Actor_swing);
 
 				g_Hooks.JumpPowerHook = std::make_unique<FuncHook>(localPlayerVtable[337], Hooks::JumpPower); //jump from ground with movement proxy
 
-				//g_Hooks.setPosHook = std::make_unique<FuncHook>(localPlayerVtable[19], Hooks::setPos);
+				//g_Hooks.setPosHook = std::make_unique<FuncHook>(localPlayerVtable[19], Hooks::setPos); // Removed from vtable
 
 				g_Hooks.Actor_baseTickHook = std::make_unique<FuncHook>(localPlayerVtable[49], Hooks::Actor_baseTick);
 
