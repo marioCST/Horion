@@ -92,31 +92,19 @@ public:
 };
 }  // namespace mce
 
-class LevelRenderer {
-private:
-	char pad_0x0000[0x58];  //0x0000
+class LevelRendererPlayer {
 public:
-	mce::TextureGroup* textureGroup;  // 0x0058
-private:
-	char pad_0x0060[0xE0];  //0x0060
-public:
-	mce::TexturePtr atlasTexture;  // 0x140
-private:
-	char pad_0x0188[0x150];  //0x0188
-public:
-	BlockTessellator* blockTessellator;  // 0x02D8
-private:
-	char pad_0x02F0[0x568];  //0x02E0
-	Vec3 origin;           //0x0890
-public:
-	Vec3& getOrigin() {
-		return *(Vec3*)((char*)this + (0x7B8));
-	}
+	BUILD_ACCESS(this, Vec3, cameraPos, 0x514);
+};
 
-	__int64 getLevelRendererPlayer() {
-		return reinterpret_cast<__int64>(this) + 0x310;
+class LevelRenderer {
+public:
+	BUILD_ACCESS(this, LevelRendererPlayer*, levelRendererPlayer, 0x2F8);
+	Vec3& getOrigin() {
+		return levelRendererPlayer->cameraPos;
 	}
 };
+
 class HitDetectSystem;
 
 struct FontRepository_FontList_FontEntry {
