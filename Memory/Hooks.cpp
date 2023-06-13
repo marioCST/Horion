@@ -75,9 +75,8 @@ void Hooks::Init() {
 		//void* renderLevel = reinterpret_cast<void*>(FindSignature("48 89 5C 24 10 48 89 74 24 20 57 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 49 8B F8"));
 		//g_Hooks.LevelRenderer_renderLevelHook = std::make_unique<FuncHook>(renderLevel, Hooks::LevelRenderer_renderLevel);
 
-		// Dead
-		//void* playerCallBackHook = reinterpret_cast<void*>(FindSignature("F3 0F ?? ?? ?? ?? 00 00 ?? 0F ?? 00 F3 0F ?? ?? F3 0F ?? ?? 04"));
-		//g_Hooks.playerCallBack_Hook = std::make_unique<FuncHook>(playerCallBackHook, Hooks::playerCallBack);
+		void* playerCallBackHook = reinterpret_cast<void*>(FindSignature("48 83 EC ? 48 8B 81 ? ? ? ? 48 85 C0 74 50 F3"));
+		g_Hooks.playerCallBack_Hook = std::make_unique<FuncHook>(playerCallBackHook, Hooks::playerCallBack);
 
 		void* clickHook = reinterpret_cast<void*>(FindSignature("48 8B C4 48 89 58 ? 48 89 68 ? 48 89 70 ? 57 41 54 41 55 41 56 41 57 48 83 EC ? 44 0F B7 BC 24 ? ? ? ? 48 8B D9"));
 		g_Hooks.ClickFuncHook = std::make_unique<FuncHook>(clickHook, Hooks::ClickFunc);
@@ -116,32 +115,23 @@ void Hooks::Init() {
 		void* destroySpeed = reinterpret_cast<void*>(FindSignature("48 89 5C ? ? 57 48 83 EC ? 48 8B FA ? ? 74 24 ? 48 8B 91"));
 		g_Hooks.getDestroySpeedHook = std::make_unique<FuncHook>(destroySpeed, Hooks::getDestroySpeed);
 
-		// Dead
-		//void* Actor_canSee = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 56 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 84 24 ? ? ? ? 48 8B 02"));
-		//g_Hooks.Actor_canSeeHook = std::make_unique<FuncHook>(Actor_canSee, Hooks::Actor_canSee);
+		void* Actor_canSee = reinterpret_cast<void*>(FindSignature("48 89 5C ? ? 56 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 84 ? ? ? ? ? 48 8B F1 48 8B DA"));
+		g_Hooks.Actor_canSeeHook = std::make_unique<FuncHook>(Actor_canSee, Hooks::Actor_canSee);
 
-		// Dead
-		//void* Actor_shouldRender = reinterpret_cast<void*>(FindSignature("48 83 EC ? 48 8B 01 FF 90 ? ? ? ? 84 C0 ? ? C0 48 83 C4 ? C3 CC CC CC CC CC CC CC CC CC 48 89 5C ? ? 57"));
-		//g_Hooks.Actor_shouldRenderHook = std::make_unique<FuncHook>(Actor_shouldRender, Hooks::Actor_shouldRender);
+		void* Actor_shouldRender = reinterpret_cast<void*>(FindSignature("48 83 EC ? 48 8B 01 48 8B 80 ? ? ? ? FF 15 ? ? ? ? 84 C0 ? ? C0 48 83 C4 ? C3 CC CC 48 89 5C ? ? 57 48 83 EC ? 48 8B 01"));
+		g_Hooks.Actor_shouldRenderHook = std::make_unique<FuncHook>(Actor_shouldRender, Hooks::Actor_shouldRender);
 
-		// Dead
-		//void* Actor_handleFallDistanceOnServer = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 48 89 74 24 ? 57 48 83 EC 50 48 8B 99 ? ? ? ? 48 8B F1 48 8B B9"));
+		//void* Actor_handleFallDistanceOnServer = reinterpret_cast<void*>(FindSignature("48 8B C4 53 56 57 48 81 EC ? ? ? ? ? ? 70 D8 ? ? 78 C8 48 8B 05 ? ? ? ? 48 33 C4 48 89 44"));
 		//g_Hooks.Actor_handleFallDistanceOnServerHook = std::make_unique<FuncHook>(Actor_handleFallDistanceOnServer, Hooks::Actor_handleFallDistanceOnServer);
 
 		//void* Actor_causeFallDamage = reinterpret_cast<void*>(FindSignature("40 56 48 83 EC ? 48 8B F1 ? ? 74 24"));
 		//g_Hooks.Actor_causeFallDamageHook = std::make_unique<FuncHook>(Actor_causeFallDamage, Hooks::Actor_causeFallDamage);
 
-		// Dead
-		//void* Actor_checkFallDamage = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 57 48 83 EC 60 0F 29 74 24 ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 24 ? 48 8B 01"));
+		//void* Actor_checkFallDamage = reinterpret_cast<void*>(FindSignature("48 89 5C ? ? 57 48 83 EC ? ? ? 74 24 ? ? ? F1 41"));
 		//g_Hooks.Actor_checkFallDamageHook = std::make_unique<FuncHook>(Actor_checkFallDamage, Hooks::Actor_checkFallDamage);
 
-		// Dead
-		//void* actorisInWall = reinterpret_cast<void*>(FindSignature("40 53 48 83 EC ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 24 ? 48 8B 01 48 8D 54 24 ? 0F 57 DB 41 B8 ? ? ? ? 48 8B D9 FF 90 ? ? ? ? 48 8B 8B"));
-		//g_Hooks.ActorisInWallHook = std::make_unique<FuncHook>(actorisInWall, Hooks::Actor__isInWall);
-
-		// What do you think?
-		//void* testFunc = reinterpret_cast<void*>(FindSignature("40 53 48 83 ec ? 48 8b 05 ? ? ? ? 48 33 c4 48 89 44 24 ? 48 8b 01 48 8d 54 24 ? 0f 57 db 41 b8 ? ? ? ? 48 8b d9 ff 90 ? ? ? ? 48 8b 8b"));
-		//g_Hooks.testFunctionHook = std::make_unique<FuncHook>(testFunc, Hooks::testFunction);
+		void* actorisInWall = reinterpret_cast<void*>(FindSignature("40 53 48 83 EC ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 ? ? 48 8B 01 48 8D 54 ? ? ? ? DB 41 B8 ? ? ? ? 48 8B D9 48 8B 80 ? ? ? ? FF 15 ? ? ? ? 48 8B CB"));
+		g_Hooks.ActorisInWallHook = std::make_unique<FuncHook>(actorisInWall, Hooks::Actor__isInWall);
 
 		void* Actor__setRotAddr = reinterpret_cast<void*>(FindSignature("48 83 EC ? 48 8B 41 ? 48 89 54 ? ? 48 85 C0"));
 		g_Hooks.Actor__setRotHook = std::make_unique<FuncHook>(Actor__setRotAddr, Hooks::Actor__setRot);
