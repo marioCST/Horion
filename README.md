@@ -1,4 +1,4 @@
-# THIS IS A DRAFT BRANCH FOR 1.20!!! I WON'T BE FULLY UPDATING DUE TO MISSING KNOWLEDGE AND STUFF
+# Rendering coming soon™
 
 <div align="center">
   <br />
