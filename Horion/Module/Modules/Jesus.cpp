@@ -14,18 +14,17 @@ void Jesus::onTick(GameMode* gm) {
 	if (gm->player->isSneaking()) return;
 
 	if (gm->player->hasEnteredWater()) {
-		gm->player->velocity.y = 0.06f;
+		gm->player->velocity.setY(0.06f);
 		gm->player->onGround = true;
 		wasInWater = true;
 	} else if (gm->player->isInWater() || gm->player->isInLava()) {
-		gm->player->velocity.y = 0.1f;
+		gm->player->velocity.setY(0.1f);
 		gm->player->onGround = true;
 		wasInWater = true;
 	} else {
 		if (wasInWater) {
 			wasInWater = false;
-			gm->player->velocity.x *= 1.2f;
-			gm->player->velocity.x *= 1.2f;
+			gm->player->velocity.setX(gm->player->velocity.x * 1.2f * 1.2f);
 		}
 	}
 }

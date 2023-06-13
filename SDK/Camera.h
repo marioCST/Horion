@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Utils/HMath.h"
+#include "../Utils/Utils.h"
 #include <glm/ext/matrix_float4x4.hpp>
 
 class Camera {

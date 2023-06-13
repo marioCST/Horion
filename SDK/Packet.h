@@ -80,7 +80,7 @@ public:
 
 class AnimatePacket : public Packet {
 public:
-	BUILD_ACCESS(this, __int64, entiyId, 0x28);
+	BUILD_ACCESS(this, __int64, entityId, 0x28);
 	BUILD_ACCESS(this, int, action, 0x30);
 	BUILD_ACCESS(this, float, rowingTime, 0x34);
 

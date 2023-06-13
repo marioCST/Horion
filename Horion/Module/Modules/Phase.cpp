@@ -11,10 +11,13 @@ const char* Phase::getModuleName() {
 }
 
 void Phase::onTick(GameMode* gm) {
-	gm->player->aabb.upper.y = gm->player->aabb.lower.y;
+	gm->player->aabb.upper.setY(gm->player->aabb.lower.y);
 }
 
 void Phase::onDisable() {
-	if (Game.getLocalPlayer() != nullptr)
-		Game.getLocalPlayer()->aabb.upper.y += 1.8f;
+	if (Game.getLocalPlayer() != nullptr) {
+		AABB aabb = Game.getLocalPlayer()->aabb;
+		aabb.upper.y += 1.8f;
+		Game.getLocalPlayer()->setaabb(aabb);
+	}
 }

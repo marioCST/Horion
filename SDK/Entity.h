@@ -24,7 +24,7 @@ public:
 private:
 	BUILD_ACCESS(this, Entity*, entityPtr, 0xAD0);
 	BUILD_ACCESS(this, Entity*, entityPtr2, 0xAD8);
-	BUILD_ACCESS(this, uint64_t, GamingEntityFinder; 0xAE0);
+	BUILD_ACCESS(this, uint64_t, GamingEntityFinder, 0xAE0);
 
 	virtual void DONTREMOVEPLS();
 
@@ -74,8 +74,12 @@ struct MobEffectInstance;
 class Entity {
 public:
 	BUILD_ACCESS(this, uint64_t, ptrToEntityList, 0x8);
+	BUILD_ACCESS(this, float, yaw, 0x138);
+	BUILD_ACCESS(this, float, pitch, 0x13C);
 	BUILD_ACCESS(this, Vec2, viewAngles, 0x138);
-	BUILD_ACCESS(this, Vec2, viewAngles2, 0x138); // Wait what the fuck
+	BUILD_ACCESS(this, float, yaw2, 0x140);
+	BUILD_ACCESS(this, float, pitch2, 0x144);
+	BUILD_ACCESS(this, Vec2, viewAngles2, 0x140);
 	BUILD_ACCESS(this, Vec3, eyePos0, 0x158);
 	BUILD_ACCESS(this, float, fallDistance, 0x1D4);
 	BUILD_ACCESS(this, bool, onGround, 0x1D8);
@@ -84,7 +88,8 @@ public:
 	BUILD_ACCESS(this, bool, didEnterWaterBool, 0x25D);
 	BUILD_ACCESS(this, bool, hasEnteredWaterBool, 0x25F);
 	BUILD_ACCESS(this, int32_t, ticksAlive, 0x2A8);
-	BUILD_ACCESS(this, class BlockSource *, region, 0x358);
+	BUILD_ACCESS(this, BlockSource *, region, 0x358);
+	BUILD_ACCESS(this, __int64 *, unknown, 0x360);
 	BUILD_ACCESS(this, Level *, level, 0x368);
 	BUILD_ACCESS(this, AABB, aabb, 0x4B8);
 	BUILD_ACCESS(this, float, width, 0x4D0);
@@ -98,15 +103,15 @@ public:
 	BUILD_ACCESS(this, float, oldBodyYaw, 0x72C);
 	BUILD_ACCESS(this, float, yawUnused1, 0x730);
 	BUILD_ACCESS(this, float, yawUnused2, 0x734);
-	BUILD_ACCESS(this, int32_t, damagetime, 0x738);
+	BUILD_ACCESS(this, int32_t, damageTime, 0x738);
 	BUILD_ACCESS(this, int32_t, damageAnimationDuration, 0x73C);
 	BUILD_ACCESS(this, int32_t, timeSinceDeath, 0x7C8);
-	BUILD_ACCESS(this, class TextHolder, playerName, 0x8C0);
+	BUILD_ACCESS(this, TextHolder, playerName, 0x8C0);
 	BUILD_ACCESS(this, bool, canFly, 0x96C);
 	BUILD_ACCESS(this, int32_t, ticksUsingItem, 0x9F0);
 	BUILD_ACCESS(this, int16_t, itemData, 0x1008);
 	BUILD_ACCESS(this, int16_t, itemId, 0x100A);
-	BUILD_ACCESS(this, class InventoryTransactionManager, transac, 0x1208);
+	BUILD_ACCESS(this, InventoryTransactionManager, transac, 0x1208);
 	BUILD_ACCESS(this, int, gamemode, 0x1D64);
 
 	virtual bool hasComponent();																// 0

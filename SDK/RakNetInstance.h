@@ -1,7 +1,6 @@
 #pragma once
 
 class RakNetInstance {
-	char pad_0000[856];    //0x0000
 public:
 	BUILD_ACCESS(this, TextHolder, numericalIp, 0x360);
 	BUILD_ACCESS(this, TextHolder, serverIp, 0x380);

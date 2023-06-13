@@ -261,6 +261,18 @@ struct Vec3 {
 
 		return angles;
 	}
+
+	void setX(float x) {
+		this->x = x;
+	}
+
+	void setY(float y) {
+		this->y = y;
+	}
+
+	void setZ(float z) {
+		this->z = z;
+	}
 };
 
 struct Vec3i {
@@ -340,6 +352,18 @@ struct Vec3i {
 		vec.y = (float)y;
 		vec.z = (float)z;
 		return vec;
+	}
+
+	void setX(int x) {
+		this->x = x;
+	}
+
+	void setY(int y) {
+		this->y = y;
+	}
+
+	void setZ(int z) {
+		this->z = z;
 	}
 };
 struct Vec4 {

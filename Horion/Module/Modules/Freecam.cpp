@@ -74,13 +74,15 @@ void Freecam::onPreRender(MinecraftUIRenderContext* rcx) {
 
 	Vec3 moveVec;
 	moveVec.x = cos(calcYaw) * speed;
-	if (GameData::isKeyDown(*input->spaceBarKey)) camera->cameraPos.y += speed;
-	else if (GameData::isKeyDown(*input->sneakKey)) camera->cameraPos.y -= speed;
+	if (GameData::isKeyDown(*input->spaceBarKey))
+		camera->setcameraPos(camera->cameraPos.add(0, speed, 0));
+	else if (GameData::isKeyDown(*input->sneakKey))
+		camera->setcameraPos(camera->cameraPos.sub(0, speed, 0));
 	moveVec.y = 0.f;
 	moveVec.z = sin(calcYaw) * speed;
 
 	if (keyPressed && camera) {
-		camera->cameraPos = camera->cameraPos.add(moveVec);
+		camera->setcameraPos(camera->cameraPos.add(moveVec));
 		keyPressed = false;
 	}
 }

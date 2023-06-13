@@ -45,7 +45,7 @@ void Bhop::onMove(MoveInputHandler* input) {
 		if (pressed) {
 			player->setSprinting(true);
 			if (player->onGround) {
-				if (useVelocity && !input->isJumping) player->velocity.y = 0.4000000059604645;
+				if (useVelocity && !input->isJumping) player->velocity.setY(0.4000000059604645f);
 				speedFriction = RandomFloat(0.4190652072429657, 0.48381298780441284);
 			} else {
 				moveVec.x = moveVec2d.x * speedFriction;

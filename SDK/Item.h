@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "../Utils/HMath.h"
+#include "../Utils/Utils.h"
 #include "TextHolder.h"
 
 class CompoundTag;

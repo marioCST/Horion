@@ -163,6 +163,6 @@ void Spider::onMove(MoveInputHandler* input) {
 	}
 	if (upperObstructed || lowerObstructed) {
 		if (player->velocity.y < targetSpeed)
-			player->velocity.y = targetSpeed;
+			player->velocity.setY(targetSpeed);
 	}
 }

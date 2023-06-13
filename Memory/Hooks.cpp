@@ -295,7 +295,7 @@ bool Hooks::playerCallBack(Player* lp, __int64 a2, __int64 a3) {
 	if (moduleMgr != nullptr && lp != nullptr && Game.getLocalPlayer() != nullptr && lp == Game.getLocalPlayer())
 		moduleMgr->onPlayerTick(lp);
 
-	if (!Game.getLocalPlayer() || !Game.getLocalPlayer()->level || !*(&Game.getLocalPlayer()->region + 1) || !Game.isInGame())
+	if (!Game.getLocalPlayer() || !Game.getLocalPlayer()->level || !Game.getLocalPlayer()->unknown || !Game.isInGame())
 		g_Hooks.entityList.clear();
 
 	if (Game.getLocalPlayer() != nullptr && lp == Game.getLocalPlayer()) {
@@ -1089,7 +1089,7 @@ void Hooks::JumpPower(Entity* a1, float a2) {
 	static auto oFunc = g_Hooks.JumpPowerHook->GetFastcall<void, Entity*, float>();
 	static auto highJumpMod = moduleMgr->getModule<HighJump>();
 	if (highJumpMod->isEnabled() && Game.getLocalPlayer() == a1) {
-		a1->velocity.y = highJumpMod->jumpPower;
+		a1->velocity.setY(highJumpMod->jumpPower);
 		return;
 	}
 	oFunc(a1, a2);
@@ -1100,7 +1100,7 @@ void Hooks::Actor_ascendLadder(Entity* _this) {
 
 	static auto fastLadderModule = moduleMgr->getModule<FastLadder>();
 	if (fastLadderModule->isEnabled() && Game.getLocalPlayer() == _this) {
-		_this->velocity.y = fastLadderModule->speed;
+		_this->velocity.setY(fastLadderModule->speed);
 		return;
 	}
 	return oFunc(_this);

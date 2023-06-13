@@ -1,5 +1,6 @@
 #pragma once
 class HashedString;
+class Weather;
 
 class Dimension {
 public:
@@ -8,7 +9,7 @@ public:
 	BUILD_ACCESS(this, int, dimensionId, 0xE0);
 	BUILD_ACCESS(this, bool, hasCeiling, 0xE5);
 	BUILD_ACCESS(this, int, timeThingy, 0xE8);
-	BUILD_ACCESS(this, class Weather *, weather, 0x120);
+	BUILD_ACCESS(this, Weather *, weather, 0x120);
 };
 
 class Weather {
