@@ -1,3 +1,5 @@
+# BIG thanks to Intop for helping me updating this!
+
 # Rendering coming soon™
 
 <div align="center">
