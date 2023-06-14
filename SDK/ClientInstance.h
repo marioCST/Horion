@@ -121,30 +121,29 @@ private:
 	BUILD_ACCESS(this, void*, ptrToSelf, 0x10);
 	BUILD_ACCESS(this, void*, ptrToSelfSharedPtr, 0x18);
 public:
-	BUILD_ACCESS(this, FontRepository_FontList*, fontList, 0x28);
-										  //FontRepository_FontList* fontList1;  //0x0040
+	BUILD_ACCESS(this, FontRepository_FontList*, fontList, 0x20);
 };
 
 class MinecraftGame {
 public:
-	BUILD_ACCESS(this, FontRepository*, fontRepository, 0xEC8);
+	BUILD_ACCESS(this, FontRepository**, fontRepository, 0xEC8);
 	BUILD_ACCESS(this, Font*, mcFont, 0xED8);
 	BUILD_ACCESS(this, bool, canUseKeys, 0x130);
 
 	Font* getTheGoodFontThankYou() {
-		return fontRepository->fontList->fontEntries[7].font;
+		return (*fontRepository)->fontList->fontEntries[7].font;
 	};
 
 	Font* getTheRandomFontPlease() {
-		return fontRepository->fontList->fontEntries[4].font;
+		return (*fontRepository)->fontList->fontEntries[4].font;
 	};
 
 	Font* getOldFont() {
-		return fontRepository->fontList->fontEntries[7].font;
+		return (*fontRepository)->fontList->fontEntries[7].font;
 	};
 
 	Font* getTheBetterFontYes() {
-		return fontRepository->fontList->fontEntries[3].font;
+		return (*fontRepository)->fontList->fontEntries[3].font;
 	}
 
 	Font* getMCFont() {
