@@ -295,11 +295,11 @@ public:
 	}
 
 	void grabMouse() {
-		return Utils::CallVFunc<284, void>(this);
+		return Utils::CallVFunc<304, void>(this);
 	}
 
 	void releaseMouse() {
-		return Utils::CallVFunc<285, void>(this);
+		return Utils::CallVFunc<305, void>(this);
 	}
 
 	GuiData* getGuiData() {
