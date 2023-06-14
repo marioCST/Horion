@@ -102,8 +102,8 @@ void Hooks::Init() {
 		g_Hooks.InventoryTransactionManager__addActionHook = std::make_unique<FuncHook>(addAction, Hooks::InventoryTransactionManager__addAction);
 #endif
 
-		void* localPlayerUpdateFromCam = reinterpret_cast<void*>(FindSignature("48 8B C4 48 89 70 ? 57 48 81 EC ? ? ? ? ? ? 70 E8 ? ? 78 D8"));
-		g_Hooks.LocalPlayer__updateFromCameraHook = std::make_unique<FuncHook>(localPlayerUpdateFromCam, Hooks::LocalPlayer__updateFromCamera);
+		//void* localPlayerUpdateFromCam = reinterpret_cast<void*>(FindSignature("48 8B C4 48 89 70 ? 57 48 81 EC ? ? ? ? ? ? 70 E8 ? ? 78 D8"));
+		//g_Hooks.LocalPlayer__updateFromCameraHook = std::make_unique<FuncHook>(localPlayerUpdateFromCam, Hooks::LocalPlayer__updateFromCamera);
 
 		void* renderNameTags = reinterpret_cast<void*>(FindSignature("48 8B C4 48 89 58 ? 55 56 57 41 54 41 55 41 56 41 57 48 8D 68 ? 48 81 EC ? ? ? ? ? ? 70 B8 ? ? 78 A8 44 ? ? 40 ? 44 ? ? 48 ? 44 ? ? 90 ? ? ? ? 44 ? ? 98 ? ? ? ? 44 ? ? A0 ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 45 ? 49 8B F1"));
 		g_Hooks.LevelRendererPlayer__renderNameTagsHook = std::make_unique<FuncHook>(renderNameTags, Hooks::LevelRendererPlayer__renderNameTags);
@@ -933,12 +933,12 @@ __int8* Hooks::BlockLegacy_getLightEmission(BlockLegacy* a1, __int8* a2) {
 __int64 Hooks::LevelRenderer_renderLevel(__int64 _this, __int64 a2, __int64 a3) {
 	static auto oFunc = g_Hooks.LevelRenderer_renderLevelHook->GetFastcall<__int64, __int64, __int64, __int64>();
 
-	using reloadShit_t = void(__fastcall*)(__int64);
+	using reloadShit_t = void(__fastcall*)(__int64, unsigned __int64*, char);
 	static reloadShit_t reloadChunk = nullptr;
 
 	if (!reloadChunk) {
 		// RenderChunkCoordinator::rebuildAllRenderChunkGeometry
-		reloadChunk = reinterpret_cast<reloadShit_t>(FindSignature("48 89 5C 24 10 48 89 6C 24 18 48 89 74 24 20 57 48 83 EC ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 44 24 ?? 48 8B F9 48 8D A9"));
+		reloadChunk = reinterpret_cast<reloadShit_t>(FindSignature("48 89 5C 24 ? 48 89 6C 24 ? 56 57 41 56 48 83 EC ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 24 ? 45 0F B6 F0"));
 	}
 
 	static auto xrayMod = moduleMgr->getModule<Xray>();
@@ -952,7 +952,7 @@ __int64 Hooks::LevelRenderer_renderLevel(__int64 _this, __int64 a2, __int64 a3) 
 
 		v5 = *(unsigned long long**)(_this + 32);
 		for (i = (unsigned long long*)*v5; i != v5; i = (unsigned long long*)*i)
-			reloadChunk(i[3]);
+			reloadChunk(i[3], v5, 1);
 	}
 
 	auto ret = oFunc(_this, a2, a3);
