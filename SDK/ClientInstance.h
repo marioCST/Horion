@@ -127,7 +127,7 @@ private:
 	void* ptrToSelf;                    // 0x0010
 	void* ptrToSelfSharedPtr;           // 0x0018
 public:
-	FontRepository_FontList** fontList;  //0x0020
+	FontRepository_FontList* fontList;  //0x0020
 };
 
 class MinecraftGame {
