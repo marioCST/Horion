@@ -40,13 +40,26 @@ class ItemStack;
 class Level;
 
 class Item {
+	char pad_0008[0x70];  //0x8
 public:
-	BUILD_ACCESS(this, int16_t, maxStackSize, 0x78);
-	BUILD_ACCESS(this, int16_t, itemId, 0x7A);
-	BUILD_ACCESS(this, TextHolder, tileName, 0x80);
-	BUILD_ACCESS(this, TextHolder, name, 0xA8);
-	BUILD_ACCESS(this, TextHolder, isFrom, 0xD0);
-	BUILD_ACCESS(this, int16_t, duration, 0x140);
+	int16_t maxStackSize;  //0x78
+	int16_t itemId;        //0x7A
+private:
+	char pad_0094[4];  //0x7C
+public:
+	TextHolder tileName;  //0x80
+private:
+	char pad_00B8[8];  //0xA0
+public:
+	TextHolder name;  //0xA8
+private:
+	char pad_00E0[8];  //0xC8
+public:
+	TextHolder isFrom;  //0xD0
+private:
+	char pad_0108[80];  //0xF0
+public:
+	int16_t duration;  //0x140
 
 private:
 	virtual void destructor();                     // 0
@@ -247,7 +260,7 @@ private:
 public:
 	char count;  //0x22
 private:
-	char pad_0x1B[0x7D];  //0x23
+	char pad_0x1B[0x6D];  //0x23
 public:
 	ItemStack() {
 		memset(this, 0x0, sizeof(ItemStack));

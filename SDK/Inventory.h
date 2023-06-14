@@ -87,9 +87,14 @@ public:
 };
 
 class PlayerInventoryProxy {
+private:
+	char pad_0x0000[0x10];  //0x0000
 public:
-	BUILD_ACCESS(this, int, selectedHotbarSlot, 0x10);
-	BUILD_ACCESS(this, Inventory*, inventory, 0xB0);
+	int selectedHotbarSlot;  //0x0010
+private:
+	char pad_0x0014[0x9C];  //0x0014
+public:
+	Inventory* inventory;  //0x00B0
 
 	class Container* getContainer() {
 		return reinterpret_cast<Container*>((uintptr_t)(this) + 0xD0);

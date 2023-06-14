@@ -7,9 +7,11 @@
 #include "TextHolder.h"
 
 class Minecraft {
+private:
+	char pad_0x0000[0xD8];  //0x0000
 public:
-	BUILD_ACCESS(this, float*, timer, 0xD8);
-	BUILD_ACCESS(this, float*, otherTimer, 0xE0);
+	float* timer;       //0x00D8
+	float* otherTimer;  //0x00E0
 
 	void setTimerSpeed(float tps) {
 		*this->timer = tps;
@@ -23,7 +25,9 @@ class Block;
 class BlockTessellator;
 class ResourceLocation {
 private:
-	BUILD_ACCESS(this, __int64, hashCode, 0x28);
+	char pad[0x28];
+	__int64 hashCode;  // 0x28
+	char pad2[8];
 };
 
 class HashedString {
@@ -70,8 +74,9 @@ public:
 };
 class TexturePtr {
 private:
-	BUILD_ACCESS(this, __int64*, clientTexture, 0x0);
-	BUILD_ACCESS(this, ResourceLocation, resourceLocation, 0x10);
+	__int64* clientTexture;
+	char pad[0x8];
+	ResourceLocation resourceLocation;  // 0x10
 
 public:
 	__int64* getClientTexture() {
@@ -117,11 +122,12 @@ public:
 
 struct FontRepository {
 private:
-	BUILD_ACCESS(this, uintptr_t*, font_repository_vtable, 0x0);
-	BUILD_ACCESS(this, void*, ptrToSelf, 0x10);
-	BUILD_ACCESS(this, void*, ptrToSelfSharedPtr, 0x18);
+	uintptr_t* font_repository_vtable;  // 0x0000
+	__int64 pad;                        // 0x0008
+	void* ptrToSelf;                    // 0x0010
+	void* ptrToSelfSharedPtr;           // 0x0018
 public:
-	BUILD_ACCESS(this, FontRepository_FontList*, fontList, 0x20);
+	FontRepository_FontList** fontList;  //0x0020
 };
 
 class MinecraftGame {
@@ -187,32 +193,55 @@ public:
 };
 
 struct PtrToGameSettings3 {
+private:
+	char pad_0x0000[0x18];  //0x0000
 public:
-	BUILD_ACCESS(this, GameSettingsInput*, settingsInput, 0x18);
+	GameSettingsInput* settingsInput;
 };
 
 struct PtrToGameSettings2 {
+private:
+	char pad_0x0000[0x148];  //0x0000
 public:
-	BUILD_ACCESS(this, PtrToGameSettings3*, ptr, 0x148);
+	PtrToGameSettings3* ptr;
 };
 
 struct PtrToGameSettings1 {
+private:
+	char pad_0x0000[0x18];  //0x0000
 public:
-	BUILD_ACCESS(this, PtrToGameSettings2*, ptr, 0x18);
+	PtrToGameSettings2* ptr;
 };
 
 class MoveInputHandler;
 class CameraManager;
 
 class ClientInstance {
+private:
+	char pad_0x0[0xC8];  // 0x0
 public:
-	BUILD_ACCESS(this, MinecraftGame*, minecraftGame, 0xC8);
-	BUILD_ACCESS(this, Minecraft*, minecraft, 0xD0);
-	BUILD_ACCESS(this, LevelRenderer*, levelRenderer, 0xE0);
-	BUILD_ACCESS(this, LoopbackPacketSender*, loopbackPacketSender, 0xF0);
-	BUILD_ACCESS(this, PtrToGameSettings1*, ptr, 0x110);
-	BUILD_ACCESS(this, HitDetectSystem*, hitDetectSystem, 0x120);
-	BUILD_ACCESS(this, class ItemInHandRenderer*, itemInHandRenderer, 0x500);
+	MinecraftGame* minecraftGame;  // 0xC8
+	Minecraft* minecraft;          // 0xD0
+private:
+	char pad_0xD8[0x8];  // 0xD8
+public:
+	LevelRenderer* levelRenderer;  // 0xE0
+private:
+	char pad_0xE8[0x8];  // 0xE8
+public:
+	LoopbackPacketSender* loopbackPacketSender;  // 0xF0
+private:
+	char pad_0xF8[0x18];  // 0xF8
+public:
+	PtrToGameSettings1* ptr;  // 0x110
+private:
+	char pad_0x118[0x8];  // 0x118
+public:
+	HitDetectSystem* hitDetectSystem;  // 0x120
+private:
+	char pad_0x128[0x3D8];  // 0x128
+public:
+	class ItemInHandRenderer* itemInHandRenderer;  // 0x500
 
 	glmatrixf* getRefDef() {
 		return reinterpret_cast<glmatrixf*>((uintptr_t)(this) + 0x300);

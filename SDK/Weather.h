@@ -1,10 +1,16 @@
 #pragma once
 
-#include "../Utils/Utils.h"
-
 class Weather {
+private:
+	char pad_0000[56];  //0x0000
 public:
-	BUILD_ACCESS(this, bool, isRaining, 0x38);
-	BUILD_ACCESS(this, bool, isLightning, 0x44);
-	BUILD_ACCESS(this, float, lightningLevel, 0x48);
+	bool isRaining;  //0x0038
+private:
+	char pad_0039[11];  //0x0039
+public:
+	bool isLightning;  //0x0044
+private:
+	char pad_0045[3];  //0x0045
+public:
+	float lightningLevel;  //0x0048
 };

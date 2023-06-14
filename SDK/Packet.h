@@ -23,13 +23,15 @@ public:
 
 class LevelSoundEventPacket : public Packet {
 public:
-	BUILD_ACCESS(this, int, sound, 0x28);
-	BUILD_ACCESS(this, Vec3, pos, 0x2C);
-	BUILD_ACCESS(this, int, extraData, 0x38);
-	BUILD_ACCESS(this, TextHolder, entityType, 0x40);
-	BUILD_ACCESS(this, bool, isBabyMod, 0x60);
-	BUILD_ACCESS(this, bool, disableRelativeVolume, 0x61);
-
+	int sound;           //0x28
+	Vec3 pos;          //0x2C
+	int extraData = -1;  //0x38
+private:
+	int unknown = 0;  //0x3C
+public:
+	TextHolder entityType;               //0x40
+	bool isBabyMod = false;              //0x60
+	bool disableRelativeVolume = false;  //0x61
 	LevelSoundEventPacket();
 };
 
@@ -56,12 +58,12 @@ public:
 
 class PlayerActionPacket : public Packet {
 public:
-	BUILD_ACCESS(this, Vec3i, blockPosition, 0x28);
-	BUILD_ACCESS(this, int, face, 0x34);
-	BUILD_ACCESS(this, int, action, 0x38);
-	BUILD_ACCESS(this, __int64, entityRuntimeId, 0x40);
-
 	PlayerActionPacket();
+	
+	Vec3i blockPosition;    // 0x28
+	int face;                 // 0x34
+	int action;               // 0x38
+	__int64 entityRuntimeId;  // 0x40
 };
 
 class C_SubChunkRequestPacket : public Packet {
@@ -71,32 +73,35 @@ public:
 
 class C_EmotePacket : public Packet {
 public:
-	BUILD_ACCESS(this, int64_t, entityRuntimeId, 0x28);
-	BUILD_ACCESS(this, TextHolder, emotId, 0x30);
-	BUILD_ACCESS(this, char, flags, 0x50);
-
 	C_EmotePacket();
+
+private:
+	char padding[0x28];
+
+public:
+	int64_t entityRuntimeId;
+	TextHolder emotId;
+	char flags;
 };
 
 class AnimatePacket : public Packet {
 public:
-	BUILD_ACCESS(this, __int64, entityId, 0x28);
-	BUILD_ACCESS(this, int, action, 0x30);
-	BUILD_ACCESS(this, float, rowingTime, 0x34);
-
 	AnimatePacket();
 	AnimatePacket(int action, __int64 entityRuntimeID, float rowingTime);
+
+	__int64 entityId;
+	int action;
+	float rowingTime;
 };
 
 class C_NPCRequestPacket : public Packet {
 public:
-	BUILD_ACCESS(this, long, entityRuntimeId, 0x28);
-
 	C_NPCRequestPacket();
 	
-	/*__int64 Unknown0;
-	std::string Unknown1;
-	__int64 Unknown2;*/
+	long entityRuntimeId;  //Test
+	__int64 Unknown0;      //Test
+	std::string Unknown1;  //Test
+	__int64 Unknown2;      //Test
 };
 
 class PlayerSkinPacket : public Packet {
@@ -111,10 +116,11 @@ public:
 
 class NetworkLatencyPacket : public Packet {
 public:
-	BUILD_ACCESS(this, unsigned long, timeStamp, 0x28);
-	BUILD_ACCESS(this, bool, sendBack, 0x30);
-
 	NetworkLatencyPacket();
+	
+	unsigned long timeStamp;  //Test
+	bool sendBack;            //Test
+	int pad[0x100];           //0x0
 };
 
 class CommandRequestPacket : public Packet {

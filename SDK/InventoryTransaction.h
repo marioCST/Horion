@@ -49,15 +49,25 @@ public:
 	}
 
 public:
-	BUILD_ACCESS(this, int, type, 0x0);
-	BUILD_ACCESS(this, int, sourceType, 0x4);
-	BUILD_ACCESS(this, int, slot, 0xC);
-	BUILD_ACCESS(this, ItemDescriptor, sourceItemDescriptor, 0x10);
-	BUILD_ACCESS(this, int, s_count, 0x58);
-	BUILD_ACCESS(this, ItemDescriptor, targetItemDescriptor, 0x90);
-	BUILD_ACCESS(this, int, t_count, 0xD8);
-	BUILD_ACCESS(this, ItemStack, sourceItem, 0x110);
-	BUILD_ACCESS(this, ItemStack, targetItem, 0x1A0);
+	int type;        //0x0  // named sourceType in nukkit
+	int sourceType;  //0x4 // sometimes windowId
+private:
+	int unknown;  //0x8
+public:
+	int slot;                             //0xC
+	ItemDescriptor sourceItemDescriptor;  //0x10
+	int s_count;                          //0x58
+private:
+	char pad_0x0058[0x34];  //0x005C
+public:
+	ItemDescriptor targetItemDescriptor;  //0x90
+	int t_count;                          //0xD8
+
+private:
+	char pad_0x00DC[0x34];  //0x00DC
+public:
+	ItemStack sourceItem;  //0x110
+	ItemStack targetItem;  //0x1A0
 };
 
 class InventoryTransaction {
