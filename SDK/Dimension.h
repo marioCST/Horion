@@ -1,6 +1,5 @@
 #pragma once
 class HashedString;
-class Weather;
 
 class Dimension {
 private:

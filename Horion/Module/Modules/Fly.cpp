@@ -98,13 +98,13 @@ void Fly::onTick(GameMode *gm) {
 			a = C_MovePlayerPacket(Game.getLocalPlayer(), pos);
 			Game.getClientInstance()->loopbackPacketSender->sendToServer(&a);
 
-			gm->player->velocity.setY(0.465f);
+			gm->player->velocity.y = 0.465f;
 			Vec3 moveVec;
 			moveVec.x = cos(calcYaw) * cos(calcPitch) * horizontalSpeed;
 			moveVec.z = sin(calcYaw) * cos(calcPitch) * horizontalSpeed;
 
-			gm->player->velocity.setX(moveVec.x);
-			gm->player->velocity.setZ(moveVec.z);
+			gm->player->velocity.x = moveVec.x;
+			gm->player->velocity.z = moveVec.z;
 
 			float teleportX = cos(calcYaw) * cos(calcPitch) * 0.00000005f;
 			float teleportZ = sin(calcYaw) * cos(calcPitch) * 0.00000005f;
@@ -112,17 +112,17 @@ void Fly::onTick(GameMode *gm) {
 			pos = *gm->player->getPos();
 			Game.getLocalPlayer()->setPos(Vec3(pos.x + teleportX, pos.y - 0.15f, pos.z + teleportZ));
 
-			gm->player->setvelocity(gm->player->velocity.sub(0, 0.15f, 0));
+			gm->player->velocity.y -= 0.15f;
 			gameTick = 0;
 		}
 
-		gm->player->setvelocity(Vec3(0, 0, 0));
+		gm->player->velocity = Vec3(0, 0, 0);
 
 		break;
 	}
 	case 5:
 	case 6:
-		gm->player->setvelocity(Vec3(0, 0, 0));
+		gm->player->velocity = Vec3(0, 0, 0);
 	}
 }
 
@@ -170,12 +170,12 @@ void Fly::onMove(MoveInputHandler *input) {
 		bool pressed = moveVec2d.magnitude() > 0.01f;
 
 		if (input->isJumping) {
-			localPlayer->setvelocity(localPlayer->velocity.add(0, verticalSpeed, 0));
+			localPlayer->velocity.y += verticalSpeed;
 			localPlayer->fallDistance = 0.f;
 		}
 
 		if (input->isSneakDown) {
-			localPlayer->setvelocity(localPlayer->velocity.sub(0, verticalSpeed, 0));
+			localPlayer->velocity.y -= verticalSpeed;
 			localPlayer->fallDistance = 0.f;
 		}
 
@@ -217,7 +217,7 @@ void Fly::onMove(MoveInputHandler *input) {
 		// Idea from Weather Client (dead by now), TurakanFly from BadMan worked similar with less height loss
 
 		if (localPlayer->onGround == false) {
-			localPlayer->velocity.setY(0);
+			localPlayer->velocity.y = 0;
 		}
 
 		GameSettingsInput *input = Game.getClientInstance()->getGameSettingsInput();
@@ -253,8 +253,8 @@ void Fly::onMove(MoveInputHandler *input) {
 			yaw -= 90.f;
 			keyPressed = true;
 		} else {
-			localPlayer->velocity.setX(0);
-			localPlayer->velocity.setZ(0);
+			localPlayer->velocity.x = 0.f;
+			localPlayer->velocity.z = 0.f;
 			keyPressed = false;
 		}
 
