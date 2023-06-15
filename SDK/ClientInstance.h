@@ -92,8 +92,22 @@ public:
 };
 }  // namespace mce
 
+class MaterialPtr {
+	char padding[0x138];
+};
+
 class LevelRendererPlayer {
 public:
+	BUILD_ACCESS(this, __int64*, shadowBack, 0x238);
+	BUILD_ACCESS(this, __int64*, shadowFront, 0x248);
+	BUILD_ACCESS(this, __int64*, shadowOverlay, 0x258);
+	BUILD_ACCESS(this, __int64*, stars, 0x268);
+	BUILD_ACCESS(this, __int64*, skyplane, 0x278);
+	BUILD_ACCESS(this, __int64*, sunMoon, 0x288);
+	BUILD_ACCESS(this, __int64*, endSky, 0x298);
+	BUILD_ACCESS(this, __int64*, clouds, 0x2A8);
+	BUILD_ACCESS(this, __int64*, wireframe, 0x2B8);
+	BUILD_ACCESS(this, __int64*, cubemap, 0x2C8);
 	BUILD_ACCESS(this, Vec3, cameraPos, 0x514);
 };
 
@@ -215,6 +229,22 @@ public:
 
 class MoveInputHandler;
 class CameraManager;
+
+class ItemInHandRenderer {
+public:
+	BUILD_ACCESS(this, MaterialPtr*, opaqueBlock, 0x1A8);
+	BUILD_ACCESS(this, MaterialPtr*, opaqueBlockColor, 0x1B8);
+	BUILD_ACCESS(this, MaterialPtr*, entityAlphatest, 0x1C8);
+	BUILD_ACCESS(this, MaterialPtr*, itemInHand, 0x1D8);
+	BUILD_ACCESS(this, MaterialPtr*, entityAlphablend, 0x1E8);
+	BUILD_ACCESS(this, MaterialPtr*, entityAlphablendNoColor, 0x1F8);
+	BUILD_ACCESS(this, MaterialPtr*, itemInHandEntityAlphatestColor, 0x208);
+	BUILD_ACCESS(this, MaterialPtr*, itemInHandMulticolorTint, 0x218);
+	BUILD_ACCESS(this, MaterialPtr*, entityGlint, 0x228);
+	BUILD_ACCESS(this, MaterialPtr*, entityAlphatestGlint, 0x238);
+	BUILD_ACCESS(this, MaterialPtr*, itemInHandGlint, 0x248);
+	BUILD_ACCESS(this, MaterialPtr*, entityFlatColorLine, 0x258);
+};
 
 class ClientInstance {
 private:

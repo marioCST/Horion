@@ -2,13 +2,10 @@
 
 #include "Module/ModuleManager.h"
 #include <Windows.h>
+#include "../SDK/ClientInstance.h"
 #include "../Utils/Logger.h"
 #include "../Utils/ClientColors.h"
 #include <glm/ext/matrix_transform.hpp>
-
-class MaterialPtr {
-	char padding[0x138];
-};
 
 using tess_vertex_t = void(__fastcall*)(Tessellator* _this, float v1, float v2, float v3);
 using meshHelper_renderImm_t = void(__fastcall*)(__int64, Tessellator* tessellator, MaterialPtr*);
@@ -42,7 +39,7 @@ meshHelper_renderImm_t meshHelper_renderImm;
 
 bool hasInitializedSigs = false;
 void initializeSigs() {
-	
+
 	tess_vertex = reinterpret_cast<tess_vertex_t>(FindSignature("40 57 48 81 EC ? ? ? ? ? ? 7C 24"));
 	meshHelper_renderImm = reinterpret_cast<meshHelper_renderImm_t>(FindSignature("40 55 53 56 57 41 56 48 8D AC 24 ? ? ? ? 48 81 EC ? ? ? ? 49 8B F0"));
 	//mce__VertexFormat__disableHalfFloats = reinterpret_cast<mce__VertexFormat__disableHalfFloats_t>(FindSignature("40 53 48 83 EC ?? 48 8B D9 C7 81 ?? ?? ?? ?? 00 00 00 00 C6 81 ?? ?? ?? ?? 00"));
@@ -94,11 +91,16 @@ void DrawUtils::setCtx(MinecraftUIRenderContext* ctx, GuiData* gui) {
 		//uintptr_t sigOffset = FindSignature("4C 8D 05 ?? ?? ?? ?? 48 8B D3 48 8B CF 48 8B 5C 24 ?? 0F 28 7C 24 ?? 44 0F 28 44 24 ?? 48");
 		//int offset = *reinterpret_cast<int*>(sigOffset + 3);
 		//uiMaterial = reinterpret_cast<MaterialPtr*>(sigOffset + offset + 7);
-		uiMaterial = reinterpret_cast<MaterialPtr*>(new mce::MaterialPtr(HashedString("ui_fill_color")));
+		//uiMaterial = reinterpret_cast<MaterialPtr*>(new mce::MaterialPtr(HashedString("ui_fill_color")));
+
+		uintptr_t sigOffset = FindSignature("48 8B 05 ? ? ? ? 48 85 C0 74 31");
+		int offset = *reinterpret_cast<int*>(sigOffset + 3);
+		uiMaterial = reinterpret_cast<MaterialPtr*>(sigOffset + offset + 7);
 	}
 	if (entityFlatStaticMaterial == nullptr) {
 		//entityFlatStaticMaterial = reinterpret_cast<MaterialPtr*>(Game.getClientInstance()->itemInHandRenderer->entityLineMaterial.materialPtr);
-		entityFlatStaticMaterial = reinterpret_cast<MaterialPtr*>(new mce::MaterialPtr(HashedString("selection_overlay")));
+		//entityFlatStaticMaterial = reinterpret_cast<MaterialPtr*>(new mce::MaterialPtr(HashedString("selection_overlay")));
+		entityFlatStaticMaterial = Game.getClientInstance()->itemInHandRenderer->entityFlatColorLine;
 	}
 	if (blendMaterial == nullptr) {
 		blendMaterial = reinterpret_cast<MaterialPtr*>(new mce::MaterialPtr(HashedString("fullscreen_cube_overlay_blend")));
