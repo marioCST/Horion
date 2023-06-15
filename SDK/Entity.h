@@ -46,7 +46,7 @@ public:
 
 	void playSound(std::string sound, Vec3 const &position, float volume, float pitch) {
 		using playSound_t = void(__fastcall *)(Level *, TextHolder *, Vec3 const &, float, float);
-		static playSound_t func = reinterpret_cast<playSound_t>(Utils::getBase() + 0x23DDCF0);  // 48 89 5C 24 ? 48 89 6C 24 ? 48 89 74 24 ? 57 48 83 EC ? 48 8B 81 ? ? ? ? 33 FF 48 2B 81 ? ? ? ? 49 8B F0 48 C1 F8 ? 48 8B EA
+		static playSound_t func = reinterpret_cast<playSound_t>(Utils::getBase() + 0x2DD9860);  // 48 89 5C ? ? 48 89 6C ? ? 48 89 74 ? ? 57 48 83 EC ? 48 8B 41 ? 33 FF
 		if (func != nullptr) func(this, &TextHolder(sound), position, volume, pitch);
 	}
 
