@@ -21,8 +21,8 @@ void AutoTotem::onTick(GameMode* gm) {
 			if (totem->item != NULL && (*totem->item)->itemId == 568) {
 				ItemDescriptor* desc = nullptr;
 				desc = new ItemDescriptor((*totem->item)->itemId, 0);
-				InventoryAction first(i, desc, nullptr, totem, nullptr, 1);
-				InventoryAction second(37, nullptr, desc, nullptr, totem, 1);
+				InventoryAction first(i, totem, nullptr, InventorySource(ContainerInventory, inventory, NoFlag));
+				InventoryAction second(37, nullptr, totem, InventorySource(ContainerInventory, inventory, NoFlag));
 				Game.getLocalPlayer()->setOffhandSlot(totem);
 				manager->addInventoryAction(first);
 				manager->addInventoryAction(second);

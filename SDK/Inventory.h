@@ -79,26 +79,12 @@ public:
 	}
 };
 
-class Container {
-public:
-	class ItemStack* getItemStackFromSlot(int slot){
-		return Utils::CallVFunc<5, class ItemStack*, int>(this, slot);
-	}
-};
+class Container;
 
 class PlayerInventoryProxy {
-private:
-	char pad_0x0000[0x10];  //0x0000
 public:
-	int selectedHotbarSlot;  //0x0010
-private:
-	char pad_0x0014[0x9C];  //0x0014
-public:
-	Inventory* inventory;  //0x00B0
-
-	class Container* getContainer() {
-		return reinterpret_cast<Container*>((uintptr_t)(this) + 0xD0);
-	}
+	BUILD_ACCESS(this, int, selectedHotbarSlot, 0x10);
+	BUILD_ACCESS(this, Inventory*, inventory, 0xC0);
 };
 
 //Im not sure exactly where these unknown's go but the funcs we use work.
