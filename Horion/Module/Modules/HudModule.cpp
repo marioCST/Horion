@@ -139,14 +139,14 @@ void HudModule::onPostRender(MinecraftUIRenderContext* renderCtx) {
 	
 	{  // Keystrokes
 		if (!(Game.getLocalPlayer() == nullptr || !keystrokes || !GameData::canUseMoveKeys())) {
-			GameSettingsInput* input = Game.getClientInstance()->getGameSettingsInput();
+			/*GameSettingsInput* input = Game.getClientInstance()->getGameSettingsInput();
 			HudModule::drawKeystroke(*input->forwardKey, Vec2(32.f, windowSize.y - 84));
 			HudModule::drawKeystroke(*input->leftKey, Vec2(10.f, windowSize.y - 62));
 			HudModule::drawKeystroke(*input->backKey, Vec2(32.f, windowSize.y - 62));
 			HudModule::drawKeystroke(*input->rightKey, Vec2(54.f, windowSize.y - 62));
 			HudModule::drawKeystroke(*input->spaceBarKey, Vec2(10.f, windowSize.y - 40));
 			HudModule::drawMouseKeystroke(Vec2(10.f, windowSize.y - 25), "LMB");
-			HudModule::drawMouseKeystroke(Vec2(43.f, windowSize.y - 25), "RMB");
+			HudModule::drawMouseKeystroke(Vec2(43.f, windowSize.y - 25), "RMB");*/
 		}
 	}
 }
