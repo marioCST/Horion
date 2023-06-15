@@ -222,7 +222,7 @@ public:
 
 struct PtrToGameSettings1 {
 private:
-	char pad_0x0000[0x18];  //0x0000
+	char pad_0x0000[0x20];  //0x0000
 public:
 	PtrToGameSettings2* ptr;
 };
