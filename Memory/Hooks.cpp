@@ -188,7 +188,7 @@ void Hooks::Init() {
 		if (Game.getClientInstance()->getMoveTurnInput() != nullptr) {
 			uintptr_t** moveInputVtable = reinterpret_cast<uintptr_t**>(*(uintptr_t*)Game.getClientInstance()->getMoveTurnInput());
 			if (moveInputVtable == 0x0)
-				logF("MoveInputHandler signature not working!!!");
+				logF("MoveInputHandler is invalid");
 			else {
 				g_Hooks.MoveInputHandler_tickHook = std::make_unique<FuncHook>(moveInputVtable[1], Hooks::MoveInputHandler_tick);
 			}
@@ -421,6 +421,7 @@ __int64 Hooks::RenderText(__int64 a1, MinecraftUIRenderContext* renderCtx) {
 			return oText(a1, renderCtx);
 
 		static auto hudModule = moduleMgr->getModule<HudModule>();
+		static auto arrayListModule = moduleMgr->getModule<Arraylist>();
 		static auto clickGuiModule = moduleMgr->getModule<ClickGuiMod>();
 		static auto clientThemeModule = moduleMgr->getModule<ClientTheme>();
 
@@ -469,7 +470,7 @@ __int64 Hooks::RenderText(__int64 a1, MinecraftUIRenderContext* renderCtx) {
 				}
 			} else {
 				shouldRenderTabGui = hudModule->tabgui && hudModule->isEnabled();
-				shouldRenderArrayList = hudModule->arraylist && hudModule->isEnabled();
+				shouldRenderArrayList = arrayListModule->isEnabled() && hudModule->isEnabled();
 				shouldRenderWatermark = hudModule->watermark && hudModule->isEnabled();
 
 				if (clickGuiModule->isEnabled()) {
