@@ -88,11 +88,8 @@ bool EnchantCommand::execute(std::vector<std::string>* args) {
 
 	if (isAuto) {
 		{
-			firstAction = new InventoryAction(supplies->selectedHotbarSlot, desc, nullptr, item, nullptr, item->count);
-			if (strcmp(Game.getRakNetInstance()->serverIp.getText(), "mco.mineplex.com") == 0)
-				secondAction = new InventoryAction(0, nullptr, desc, nullptr, item, item->count, 32766, 100);
-			else 
-				secondAction = new InventoryAction(0, nullptr, desc, nullptr, item, item->count, 507, 99999);
+			firstAction = new InventoryAction(supplies->selectedHotbarSlot, item, nullptr, InventorySource(ContainerInventory, inventory, NoFlag));
+			secondAction = new InventoryAction(0, nullptr, item, InventorySource(NonImplementedFeatureTODO, Invalid, NoFlag));
 			manager->addInventoryAction(*firstAction);
 			manager->addInventoryAction(*secondAction);
 			delete firstAction;
@@ -163,11 +160,8 @@ bool EnchantCommand::execute(std::vector<std::string>* args) {
 	}
 
 	if (isAuto) {
-		if (strcmp(Game.getRakNetInstance()->serverIp.getText(), "mco.mineplex.com") == 0)
-			firstAction = new InventoryAction(0, desc, nullptr, item, nullptr, item->count, 32766, 100);
-		else
-			firstAction = new InventoryAction(0, desc, nullptr, item, nullptr, item->count, 507, 99999);
-		secondAction = new InventoryAction(supplies->selectedHotbarSlot, nullptr, desc, nullptr, item, item->count);
+		firstAction = new InventoryAction(0, item, nullptr, InventorySource(NonImplementedFeatureTODO, Invalid, NoFlag));
+		secondAction = new InventoryAction(supplies->selectedHotbarSlot, nullptr, item, InventorySource(ContainerInventory, inventory, NoFlag));
 		manager->addInventoryAction(*firstAction);
 		manager->addInventoryAction(*secondAction);
 		delete firstAction;
