@@ -319,9 +319,7 @@ public:
 	}
 
 	MoveInputHandler* getMoveTurnInput() {
-		using GetMoveInputHandlerFunc = MoveInputHandler*(__fastcall*)(ClientInstance*);
-		static GetMoveInputHandlerFunc getMoveInputHandlerFunc = reinterpret_cast<GetMoveInputHandlerFunc>(FindSignature("40 53 48 83 EC ? 48 8B 01 8B DA 48 8B 80 ? ? ? ? FF 15 ? ? ? ? 48 85 C0"));
-		return getMoveInputHandlerFunc(this);
+		return reinterpret_cast<MoveInputHandler*>(this + 0x120);
 	}
 
 	void grabMouse() {
