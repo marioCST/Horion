@@ -21,7 +21,7 @@ void Waypoints::onPreRender(MinecraftUIRenderContext* renderCtx) {
 		return;
 	int currentDimension = -1;
 
-	localPlayer->getDimensionId(&currentDimension);
+	//localPlayer->getDimensionId(&currentDimension);
 
 	for (auto it = waypoints->begin(); it != waypoints->end(); it++) {
 		Vec3 pos = it->second.pos;
