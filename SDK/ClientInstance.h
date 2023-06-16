@@ -95,21 +95,38 @@ public:
 }  // namespace mce
 
 class MaterialPtr {
+private:
 	char padding[0x138];
+
+	BUILD_ACCESS(this, TextHolder, materialName, 0x18);
+	BUILD_ACCESS(this, TextHolder*, materialNamePtr, 0x18);
+	BUILD_ACCESS(this, __int64, testValue, 0x20);
+
+public:
+	BUILD_ACCESS(this, MaterialPtr*, ptrToSelf, 0x0);
+	BUILD_ACCESS(this, __int64*, ptrToSelfClass, 0x8);
+
+	// I have no fucking idea why there's sometimes a ptr and sometimes not
+	TextHolder getMaterialName() {
+		if (testValue == 0)
+			return *this->materialNamePtr;
+		else
+			return this->materialName;
+	}
 };
 
 class LevelRendererPlayer {
 public:
-	BUILD_ACCESS(this, __int64*, shadowBack, 0x238);
-	BUILD_ACCESS(this, __int64*, shadowFront, 0x248);
-	BUILD_ACCESS(this, __int64*, shadowOverlay, 0x258);
-	BUILD_ACCESS(this, __int64*, stars, 0x268);
-	BUILD_ACCESS(this, __int64*, skyplane, 0x278);
-	BUILD_ACCESS(this, __int64*, sunMoon, 0x288);
-	BUILD_ACCESS(this, __int64*, endSky, 0x298);
-	BUILD_ACCESS(this, __int64*, clouds, 0x2A8);
-	BUILD_ACCESS(this, __int64*, wireframe, 0x2B8);
-	BUILD_ACCESS(this, __int64*, cubemap, 0x2C8);
+	BUILD_ACCESS(this, MaterialPtr*, shadowBack, 0x238);
+	BUILD_ACCESS(this, MaterialPtr*, shadowFront, 0x248);
+	BUILD_ACCESS(this, MaterialPtr*, shadowOverlay, 0x258);
+	BUILD_ACCESS(this, MaterialPtr*, stars, 0x268);
+	BUILD_ACCESS(this, MaterialPtr*, skyplane, 0x278);
+	BUILD_ACCESS(this, MaterialPtr*, sunMoon, 0x288);
+	BUILD_ACCESS(this, MaterialPtr*, endSky, 0x298);
+	BUILD_ACCESS(this, MaterialPtr*, clouds, 0x2A8);
+	BUILD_ACCESS(this, MaterialPtr*, wireframe, 0x2B8);
+	BUILD_ACCESS(this, MaterialPtr*, cubemap, 0x2C8);
 	BUILD_ACCESS(this, Vec3, cameraPos, 0x514);
 };
 
