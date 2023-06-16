@@ -89,6 +89,8 @@ private:
 
 public:
 	MaterialPtr(HashedString materialName, bool switchable = false);
+
+	static MaterialPtr* createMaterial(HashedString materialName);
 };
 }  // namespace mce
 

@@ -93,17 +93,16 @@ void DrawUtils::setCtx(MinecraftUIRenderContext* ctx, GuiData* gui) {
 		//uiMaterial = reinterpret_cast<MaterialPtr*>(sigOffset + offset + 7);
 		//uiMaterial = reinterpret_cast<MaterialPtr*>(new mce::MaterialPtr(HashedString("ui_fill_color")));
 
-		uintptr_t sigOffset = FindSignature("48 8B 05 ? ? ? ? 48 85 C0 74 31");
-		int offset = *reinterpret_cast<int*>(sigOffset + 3);
-		uiMaterial = reinterpret_cast<MaterialPtr*>(sigOffset + offset + 7);
+		uiMaterial = reinterpret_cast<MaterialPtr*>(mce::MaterialPtr::createMaterial(HashedString("ui_fill_color")));
 	}
 	if (entityFlatStaticMaterial == nullptr) {
 		//entityFlatStaticMaterial = reinterpret_cast<MaterialPtr*>(Game.getClientInstance()->itemInHandRenderer->entityLineMaterial.materialPtr);
 		//entityFlatStaticMaterial = reinterpret_cast<MaterialPtr*>(new mce::MaterialPtr(HashedString("selection_overlay")));
-		entityFlatStaticMaterial = Game.getClientInstance()->itemInHandRenderer->entityFlatColorLine;
+		entityFlatStaticMaterial = reinterpret_cast<MaterialPtr*>(mce::MaterialPtr::createMaterial(HashedString("selection_overlay")));
 	}
 	if (blendMaterial == nullptr) {
-		blendMaterial = reinterpret_cast<MaterialPtr*>(new mce::MaterialPtr(HashedString("fullscreen_cube_overlay_blend")));
+		//blendMaterial = reinterpret_cast<MaterialPtr*>(new mce::MaterialPtr(HashedString("fullscreen_cube_overlay_blend")));
+		blendMaterial = reinterpret_cast<MaterialPtr*>(mce::MaterialPtr::createMaterial(HashedString("fullscreen_cube_overlay_blend")));
 	}
 }
 
