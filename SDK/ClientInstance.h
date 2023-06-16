@@ -321,7 +321,7 @@ public:
 	}
 
 	MoveInputHandler* getMoveTurnInput() {
-		return reinterpret_cast<MoveInputHandler*>(this + 0x120);
+		return (MoveInputHandler*)*reinterpret_cast<__int64*>(reinterpret_cast<MoveInputHandler*>(reinterpret_cast<__int64>(this) + 0x120));
 	}
 
 	void grabMouse() {
