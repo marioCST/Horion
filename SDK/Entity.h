@@ -44,9 +44,9 @@ public:
 	}
 
 	// Credits to hacker hansen for this
-	std::vector<Entity *> getMiscEntityList() {
+	std::vector<Entity *> getMiscEntityList() { // 1.20 Vtable index: 304
 		using entityList_t = std::int64_t *(__fastcall *)(Level *, void *);
-		static entityList_t func = reinterpret_cast<entityList_t>(Utils::getBase() + 0x23E78C0);  // 48 89 5C 24 ? 56 57 41 56 48 83 EC ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 24 ? 48 8B F2 4C 8B F1 48 89 54 24 ? 33 C9
+		static entityList_t func = reinterpret_cast<entityList_t>(Utils::getBase() + 0x2E1CE60);  // 40 53 48 83 EC ? 48 81 C1 ? ? ? ? 48 8B DA E8 ? ? ? ? 48 8B C3 48 83 C4 ? 5B C3 CC CC 48 8B 81
 		if (func != nullptr) {
 			std::unique_ptr<char[]> alloc = std::make_unique<char[]>(0x18);
 			std::int64_t *listStart = func(this, alloc.get());

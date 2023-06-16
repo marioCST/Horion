@@ -152,22 +152,22 @@ void GameData::setRakNetInstance(RakNetInstance* raknet) {
 }
 
 void GameData::forEachEntity(std::function<void(Entity*, bool)> callback) {
-	if (this->localPlayer && this->localPlayer->level) {
+	if (this->localPlayer && this->localPlayer->getlevel()) {
 		for (const auto& ent : g_Hooks.entityList) if (ent.ent != nullptr && ent.ent->isPlayer()) callback(ent.ent, false); //Only get players from this list
-		for (const auto& ent : Game.getLocalPlayer()->level->getMiscEntityList())
+		for (const auto& ent : Game.getLocalPlayer()->getlevel()->getMiscEntityList())
 			if (ent != nullptr && ent->getEntityTypeId() >= 1 && ent->getEntityTypeId() <= 999999999 && !ent->isPlayer()) callback(ent, false); //get everythign else from this
 	}
 }
 
 void GameData::forEachPlayer(std::function<void(Entity*, bool)> callback) {
-	if (this->localPlayer && this->localPlayer->level) {
+	if (this->localPlayer && this->localPlayer->getlevel()) {
 		for (const auto& ent : g_Hooks.entityList) if (ent.ent != nullptr && ent.ent->isPlayer()) callback(ent.ent, false); //get all players
 	}
 }
 
 void GameData::forEachMob(std::function<void(Entity*, bool)> callback) {
-	if (this->localPlayer && this->localPlayer->level) {
-		for (const auto& ent : Game.getLocalPlayer()->level->getMiscEntityList())
+	if (this->localPlayer && this->localPlayer->getlevel()) {
+		for (const auto& ent : Game.getLocalPlayer()->getlevel()->getMiscEntityList())
 			if (ent != nullptr && ent->getEntityTypeId() >= 1 && ent->getEntityTypeId() <= 999999999 && !ent->isPlayer()) callback(ent, false); //get all entities that are not players
 	}
 }
