@@ -344,7 +344,7 @@ void Hooks::Actor_baseTick(Entity* ent) {
 	if (!player || !player->getlevel()) return oFunc(ent);
 
 	static int tickCountThen = 0;
-	int tickCountNow = *(int*)((__int64)player->getlevel() + 0x690);
+	int tickCountNow = *(int*)((__int64)player->getlevel() + 0x8A0);
 
 	if (tickCountNow != tickCountThen) {
 		g_Hooks.entityList.clear();
