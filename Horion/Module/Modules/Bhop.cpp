@@ -17,7 +17,7 @@ void Bhop::onMove(MoveInputHandler* input) {
 	auto player = Game.getLocalPlayer();
 	if (player == nullptr) return;
 
-	if (player->isInLava() == 1 || player->isInWater() == 1) 
+	if (player->isInWater() == 1) 
 		return;
 	
 	if (player->isSneaking()) 

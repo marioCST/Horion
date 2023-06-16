@@ -13,11 +13,11 @@ const char* Jesus::getModuleName() {
 void Jesus::onTick(GameMode* gm) {
 	if (gm->player->isSneaking()) return;
 
-	if (gm->player->hasEnteredWater()) {
+	if (gm->player->isInWater()) {
 		gm->player->velocity.y = 0.06f;
 		gm->player->onGround = true;
 		wasInWater = true;
-	} else if (gm->player->isInWater() || gm->player->isInLava()) {
+	} else if (gm->player->isInWater()) {
 		gm->player->velocity.y = 0.1f;
 		gm->player->onGround = true;
 		wasInWater = true;

@@ -77,7 +77,7 @@ bool Target::isValidTarget(Entity* ent) {
 	if (antibot->isInvisibleCheckEnabled() && ent->isInvisible())
 		return false;
 
-	if (antibot->isOtherCheckEnabled() && (ent->isSilent() || ent->isImmobile() || ent->getNameTag()->getTextLength() < 1 || std::string(ent->getNameTag()->getText()).find(std::string("\n")) != std::string::npos))
+	if (antibot->isOtherCheckEnabled() && (ent->isSilent() || ent->getNameTag()->getTextLength() < 1 || std::string(ent->getNameTag()->getText()).find(std::string("\n")) != std::string::npos))
 		return false;
 
 	if (!hitboxMod->isEnabled() && antibot->isHitboxCheckEnabled())

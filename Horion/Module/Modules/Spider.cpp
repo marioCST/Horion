@@ -17,7 +17,7 @@ void Spider::onMove(MoveInputHandler* input) {
 	if (player == nullptr)
 		return;
 
-	if (player->isInLava() || player->isInWater())
+	if (player->isInWater())
 		return;
 
 	if (player->isSneaking())
