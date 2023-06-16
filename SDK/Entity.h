@@ -15,33 +15,26 @@ class GameMode;
 
 class Level {
 private:
-	char firstpad[0x688];  // 0x8
+	char pad_0x0[0xBF0];  // 0x0
 public:
-	int levelTicks;  // 0x690
-private:
-	char secondpad[0x41C];  // 0x694
-public:
-	int rayHitType;  // 0xAB0
-	int blockSide;   // 0xAB4
-	Vec3i block;     // 0xAB8
-	Vec3 rayHitVec;  // 0xAC4
-private:
-	Entity *entityPtr;            // 0xAD0
-	Entity *entityPtr2;           // 0xAD8
-	uint64_t GamingEntityFinder;  // 0xAE0
-
-	virtual void DONTREMOVEPLS();
+	int rayHitType;  // 0xBF0
+	int blockSide;   // 0xBF4
+	Vec3i block;     // 0xBF8
+	Vec3 rayHitVec;  // 0xC04
+	Entity *entityPtr;
+	Entity *entityPtr2;
+	uint64_t GamingEntityFinder;
 
 public:
 	bool hasEntity();     // to not go trough the entity list twice
 	Entity *getEntity();  // returns the entity that the player is looking at
 	int getLevelTicks() {
 		// return levelTicks;
-		return *reinterpret_cast<int *>(reinterpret_cast<__int64>(this) + 0x690);
+		return *reinterpret_cast<int *>(reinterpret_cast<__int64>(this) + 0x8A0);
 	}
 
 	class LoopbackPacketSender *getLoopbackPacketSender() {
-		return *reinterpret_cast<class LoopbackPacketSender **>(reinterpret_cast<__int64>(this) + 0xA90);
+		return *reinterpret_cast<class LoopbackPacketSender **>(reinterpret_cast<__int64>(this) + 0xBD0);
 	}
 
 	void playSound(std::string sound, Vec3 const &position, float volume, float pitch) {
@@ -608,7 +601,7 @@ public:
 	}
 
 	class Level *getlevel() {
-		return *reinterpret_cast<class Level **>(reinterpret_cast<__int64>(this) + 0x368);
+		return *reinterpret_cast<class Level **>(reinterpret_cast<__int64>(this) + 0x260);
 	}
 
 	void lerpTo(Vec3 const &pos, Vec2 const &a2, int a3);
