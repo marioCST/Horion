@@ -116,7 +116,9 @@ public:
 private:
 	char pad_0260[72];  // 0x0260
 public:
-	int32_t ticksAlive;  // 0x02A8
+	//int32_t ticksAlive;  // 0x02A8
+	char pad_2A8[0x4];
+
 private:
 	char pad_02AC[172];  // 0x02AC
 public:
@@ -124,7 +126,9 @@ public:
 private:
 	char pad_0360[8];  // 0x0360
 public:
-	Level *level;  // 0x0368
+	//Level *level;  // 0x0368
+	char pad_368[8];
+
 private:
 	char pad_0370[328];  // 0x0370
 public:
@@ -177,6 +181,11 @@ private:
 	char pad_1280[2828];  // 0x1280
 public:
 	int gamemode;  // 0x1D7C
+
+	BUILD_ACCESS(this, Level *, level, 0x260);
+	BUILD_ACCESS(this, int32_t, ticksAlive, 0x200);
+	BUILD_ACCESS(this, Vec3, eyePosPrev, 0x814);
+	BUILD_ACCESS(this, Vec3, eyePos, 0x820);
 
 	virtual int getStatusFlag(__int64);
 	virtual void setStatusFlag(__int64, bool);
