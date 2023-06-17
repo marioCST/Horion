@@ -22,7 +22,7 @@ public:
 	//BUILD_ACCESS(this, __int64, seasons, 0x1B0);
 
 private:
-	virtual ~Dimension(); // 0
+	virtual void destructor(); // 0
 	virtual void unknown1(); // 1
 
 public:
