@@ -11,10 +11,10 @@ BaseActorRenderContext::BaseActorRenderContext(ScreenContext *ScreenCtx, ClientI
 	BaseActorRenderContext_constructor(this, ScreenCtx, client, game);
 }
 void ItemRenderer::renderGuiItemNew(BaseActorRenderContext *BaseActorRenderCtx, ItemStack *item, int mode, float x, float y, float opacity, float scale, bool isEnchanted) {
-	using renderGuiItemNew_t = void(__fastcall *)(ItemRenderer *, BaseActorRenderContext *, ItemStack *, int, float, float, bool, float, float, float);
+	using renderGuiItemNew_t = void(__fastcall*)(ItemRenderer*, BaseActorRenderContext*, ItemStack*, int, float, float, bool, float, float, float);
 	static renderGuiItemNew_t renderGuiItemNew = reinterpret_cast<renderGuiItemNew_t>(FindSignature("48 8B C4 53 55 56 57 41 54 41 55 41 56 41 57 48 81 EC ? ? ? ? 0F 29 70 ? 0F 29 78 ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 84 24 ? ? ? ? 45 8B E1"));
 	//item->setShowPickUp(false);
-	renderGuiItemNew(this, BaseActorRenderCtx, item, mode, x, y, isEnchanted, 1, opacity, scale);
+	renderGuiItemNew(this, BaseActorRenderCtx, item, mode, x, y, isEnchanted, opacity, 0, scale);
 }
 
 void ItemRenderer::renderGuiItemInChunk(BaseActorRenderContext *BaseActorRenderCtx, ItemStack *item, float x, float y, float opacity, float scale, bool isEnchanted, int mode) {
@@ -95,13 +95,13 @@ Item ***ItemRegistry::getItemFromId(void *ptr, int itemId) {
 
 Item ***ItemRegistry::lookUpByName(void *a1, void *a2, TextHolder &text) {
 	using ItemRegistry__lookupByName_t = Item ***(__fastcall *)(void *, void *, TextHolder &);
-	static ItemRegistry__lookupByName_t ItemRegistry__lookupByNameF = reinterpret_cast<ItemRegistry__lookupByName_t>(FindSignature("48 89 5C 24 ?? 55 56 57 41 54 41 55 41 56 41 57 48 8D 6C 24 ?? 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 45 ? 4C 8B EA 48 8B F9 48 89 4D A7 49 83 78"));
+	static ItemRegistry__lookupByName_t ItemRegistry__lookupByNameF = reinterpret_cast<ItemRegistry__lookupByName_t>(FindSignature("40 55 53 56 57 41 54 41 55 41 56 41 57 48 8D 6C 24 ? 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 45 ? 4D 8B E8 48 8B F2"));
 	return ItemRegistry__lookupByNameF(a1, a2, text);
 }
 
 void ItemDescriptor::fromStack(ItemStack *item) {  // all credit to horion continued and floppy dolphin for this
 	using ItemDescriptor_ctorT = void (*)(ItemDescriptor *, ItemStack *);
-	static ItemDescriptor_ctorT ItemDescriptor_ctor = (ItemDescriptor_ctorT)FindSignature("48 89 5C 24 ? 48 89 6C 24 ? 56 57 41 56 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 84 24 ? ? ? ? 48 8B EA 48 8B F9 48 89 4C 24 ? 0F B6 5A ? 48 8D 54 24 ? 48 8B CD E8 ? ? ? ? 90 48 8B D0 48 8B CF E8 ? ? ? ? 66 89 5F ? 48 8D 4C 24 ? E8 ? ? ? ? 48 8B 5C 24 ? 48 85 DB 74 ? BE ? ? ? ? 8B C6 F0 0F C1 43 ? 83 F8 ? 75 ? 48 8B 03 48 8B CB FF 10 F0 0F C1 73 ? 83 FE ? 75 ? 48 8B 03 48 8B CB FF 50 ? 48 8B 4C 24 ? 48 85 C9 74 ? F0 FF 49 ? 8B 41 ? 90 85 C0 7F ? 48 83 39 ? 75 ? 48 8B 4C 24 ? 48 85 C9 74 ? BA ? ? ? ? E8 ? ? ? ? 45 33 F6");
+	static ItemDescriptor_ctorT ItemDescriptor_ctor = (ItemDescriptor_ctorT)FindSignature("48 89 5C 24 ? 55 56 57 41 56 41 57 48 83 EC ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 24 ? 48 8B F2 48 8B F9 48 89 4C 24 ? 0F B6 5A");
 	ItemDescriptor_ctor(this, item);
 }
 
@@ -113,6 +113,6 @@ ItemDescriptor::ItemDescriptor(int id, int16_t itemData) {
 
 Item *Item::setAllowOffhand(bool allow) {
 	using setAllowOffhand_t = Item*(__fastcall *)(Item*, bool);
-	setAllowOffhand_t setAllowOffhand = reinterpret_cast<setAllowOffhand_t>(FindSignature("80 89 22 01 00 00 ? 48 8B ? C3 CC CC CC CC CC 40"));
+	setAllowOffhand_t setAllowOffhand = reinterpret_cast<setAllowOffhand_t>(FindSignature("80 89 ? ? ? ? ? 48 8B C1 C3 CC CC CC CC CC 40 53"));
 	return setAllowOffhand(this, allow);
 }

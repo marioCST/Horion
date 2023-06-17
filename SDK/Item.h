@@ -274,7 +274,7 @@ private:
 public:
 	char count;  //0x22
 private:
-	char pad_0x1B[0x6D];  //0x23
+	char pad_0x1B[0x7D];  // needed for the size
 public:
 	ItemStack() {
 		memset(this, 0x0, sizeof(ItemStack));
