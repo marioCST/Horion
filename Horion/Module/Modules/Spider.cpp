@@ -32,7 +32,7 @@ void Spider::onMove(MoveInputHandler* input) {
 		return;
 	moveVec2d = moveVec2d.normalized();
 
-	float calcYaw = (player->yaw + 90) * (PI / 180);
+	float calcYaw = (player->getRot().y + 90) * (PI / 180);
 	Vec3 moveVec;
 	float c = cos(calcYaw);
 	float s = sin(calcYaw);
@@ -50,7 +50,7 @@ void Spider::onMove(MoveInputHandler* input) {
 	}
 
 	auto pPos = *player->getPos();
-	pPos.y = player->aabb.lower.y;
+	pPos.y = player->aabb->lower.y;
 	auto pPosI = Vec3i(pPos.floor());
 
 	auto isObstructed = [&](int yOff, AABB* obstructingBlock = nullptr, bool ignoreYcoll = false) {
@@ -67,7 +67,7 @@ void Spider::onMove(MoveInputHandler* input) {
 			AABB collisionVec;
 			if (!blockLegacy->getCollisionShape(&collisionVec, block, player->region, &side, player))
 				continue;
-			bool intersects = ignoreYcoll ? collisionVec.intersectsXZ(player->aabb.expandedXZ(0.1f)) : collisionVec.intersects(player->aabb.expandedXZ(0.1f));
+			bool intersects = ignoreYcoll ? collisionVec.intersectsXZ(player->aabb->expandedXZ(0.1f)) : collisionVec.intersects(player->aabb->expandedXZ(0.1f));
 			
 			if (intersects) {
 				if (obstructingBlock != nullptr)

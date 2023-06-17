@@ -19,7 +19,7 @@ void InventoryMove::onTick(GameMode* gm) {
 		return;
 
 	float speed = 0.325f;
-	float yaw = gm->player->yaw;
+	float yaw = gm->player->getRot().y;
 
 	if (GameData::isKeyDown(*input->spaceBarKey) && gm->player->onGround) {
 		gm->player->jumpFromGround();

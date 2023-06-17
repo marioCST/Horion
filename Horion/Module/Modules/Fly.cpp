@@ -38,7 +38,7 @@ void Fly::onTick(GameMode *gm) {
 		gm->player->canFly = true;
 		break;
 	case 1: {
-		float calcYaw = (gm->player->yaw + 90) * (PI / 180);
+		float calcYaw = (gm->player->getRot().y + 90) * (PI / 180);
 
 		gameTick++;
 
@@ -58,7 +58,7 @@ void Fly::onTick(GameMode *gm) {
 
 		if (gameTick >= 5) {
 			gameTick = 0;
-			float yaw = gm->player->yaw * (PI / 180);
+			float yaw = gm->player->getRot().y * (PI / 180);
 			float length = 4.f;
 
 			float x = -sin(yaw) * length;
@@ -74,8 +74,8 @@ void Fly::onTick(GameMode *gm) {
 		break;
 
 	case 3: {
-		float calcYaw = (gm->player->yaw + 90) * (PI / 180);
-		float calcPitch = (gm->player->pitch) * -(PI / 180);
+		float calcYaw = (gm->player->getRot().y + 90) * (PI / 180);
+		float calcPitch = (gm->player->getRot().x) * -(PI / 180);
 
 		Vec3 moveVec;
 		moveVec.x = cos(calcYaw) * cos(calcPitch) * horizontalSpeed;
@@ -88,8 +88,8 @@ void Fly::onTick(GameMode *gm) {
 	}
 	case 4: {
 		if (gameTick >= 5) {
-			float calcYaw = (gm->player->yaw + 90) * (PI / 180);
-			float calcPitch = (gm->player->pitch) * -(PI / 180);
+			float calcYaw = (gm->player->getRot().y + 90) * (PI / 180);
+			float calcPitch = (gm->player->getRot().x) * -(PI / 180);
 
 			Vec3 pos = *Game.getLocalPlayer()->getPos();
 			C_MovePlayerPacket a(Game.getLocalPlayer(), pos);

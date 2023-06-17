@@ -122,7 +122,9 @@ public:
 private:
 	char pad_02AC[172];  // 0x02AC
 public:
-	class BlockSource *region;  // 0x0358
+	//class BlockSource *region;  // 0x0358
+	char pad_0x358[8];
+
 private:
 	char pad_0360[8];  // 0x0360
 public:
@@ -132,7 +134,8 @@ public:
 private:
 	char pad_0370[328];  // 0x0370
 public:
-	AABB aabb;        // 0x04B8
+	//AABB aabb;        // 0x04B8
+	char pad_4B8[8];
 	float width;      // 0x04D0
 	float height;     // 0x04D4
 	Vec3 currentPos;  // 0x04D8
@@ -182,10 +185,14 @@ private:
 public:
 	int gamemode;  // 0x1D7C
 
-	BUILD_ACCESS(this, Level *, level, 0x260);
+	BUILD_ACCESS(this, __int64*, entityContext, 0x8);
+	BUILD_ACCESS(this, uint32_t, entityIdentifier, 0x10);
 	BUILD_ACCESS(this, int32_t, ticksAlive, 0x200);
+	BUILD_ACCESS(this, Level *, level, 0x260);
+	BUILD_ACCESS(this, AABB *, aabb, 0x2A8);
 	BUILD_ACCESS(this, Vec3, eyePosPrev, 0x814);
 	BUILD_ACCESS(this, Vec3, eyePos, 0x820);
+	BUILD_ACCESS(this, BlockSource *, region, 0xB98);
 
 	virtual int getStatusFlag(__int64);
 	virtual void setStatusFlag(__int64, bool);
@@ -647,7 +654,7 @@ public:
 	InventoryTransactionManager *getTransactionManager();
 
 	AABB *getAABB() {
-		return &this->aabb;
+		return this->aabb;
 	}
 
 	__int64 *getUniqueId() {
@@ -712,9 +719,70 @@ public:
 	}
 
 	void setRot(Vec2 const& rot) {
-		using setRot = void(__thiscall *)(Entity *, Vec2 *);
+		/*using setRot = void(__thiscall *)(Entity *, Vec2 *);
 		static setRot setRotFunc = reinterpret_cast<setRot>(FindSignature("48 83 EC ? 48 8B 41 ? 48 89 54 ? ? 48 85 C0"));
-		setRotFunc(this, &Vec2(rot));
+		setRotFunc(this, &Vec2(rot));*/
+
+		float *ptr = reinterpret_cast<float *>(this + 0x2B0);
+
+		*ptr = rot.x;
+		*(ptr + 0x4) = rot.y;
+	}
+
+	void setRotPrev(Vec2 const &rot) {
+		float *ptr = reinterpret_cast<float *>(this + 0x2B0);
+
+		*(ptr + 0x8) = rot.x;
+		*(ptr + 0xC) = rot.y;
+	}
+
+	Vec2 getRot() {
+		using getRot = Vec2(__thiscall *)(Entity *);
+		static getRot getRotFunc = reinterpret_cast<getRot>(FindSignature("48 83 EC 28 48 8B 81 B0 02 00 00 48 85 C0 74 05"));
+		return getRotFunc(this);
+	}
+
+	Vec2 getRotPrev() {
+		float *ptr = reinterpret_cast<float *>(this + 0x2B0);
+
+		Vec2 vec;
+
+		vec.x = *(ptr + 0x8);
+		vec.y = *(ptr + 0xC);
+
+		return vec;
+	}
+
+	Vec2 getAABBDim() {
+		using getAABBDim = Vec2(__thiscall *)(Entity *);
+		static getAABBDim getAABBDimFunc = reinterpret_cast<getAABBDim>(FindSignature("48 83 EC 28 48 8B 81 ? ? ? ? 48 85 C0 74 09 48 83 C0 18"));
+		return getAABBDimFunc(this);
+	}
+
+	bool isOnGround() {
+		using ActorCollision_isOnGround = bool(__thiscall *)(__int64*);
+		static ActorCollision_isOnGround ActorCollision_isOnGroundFunc = reinterpret_cast<ActorCollision_isOnGround>(FindSignature("40 53 48 83 EC ? 48 8B 01 48 8B D9 BA E1 2D 1F 21"));
+		return ActorCollision_isOnGroundFunc(this->entityContext);
+	}
+
+	int64_t getRuntimeId() {
+		uint32_t id = this->entityIdentifier;
+
+		using getRuntimeId = bool(__thiscall *)(__int64 *, uint32_t*);
+		static getRuntimeId getRuntimeIdFunc = reinterpret_cast<getRuntimeId>(FindSignature("40 53 48 83 EC ? 48 8B DA BA 14 14 A1 3C"));
+		return getRuntimeIdFunc(this->entityContext, &id);
+	}
+
+	float getYHeadYaw() {
+		using getYHeadYaw = float(__thiscall *)(Entity*);
+		static getYHeadYaw getYHeadYawFunc = reinterpret_cast<getYHeadYaw>(FindSignature("48 83 EC 28 8B 41 10 48 8D 54 24 ? 48 8B 49 08 89 44 24 30 48 8B 09 E8 ? ? ? ? 48 85 C0 74 09 F3 0F 10 00 48 83 C4 28 C3 0F 57 C0"));
+		return getYHeadYawFunc(this);
+	}
+
+	float getYHeadRotationsNewOld() {
+		using getYHeadRotationsNewOld = float(__thiscall *)(Entity *);
+		static getYHeadRotationsNewOld getYHeadRotationsNewOldFunc = reinterpret_cast<getYHeadRotationsNewOld>(FindSignature("40 53 48 83 EC 20 48 8B 41 08 4C 8B C1"));
+		return getYHeadRotationsNewOldFunc(this);
 	}
 };
 #pragma pack(pop)

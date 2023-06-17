@@ -20,7 +20,7 @@ void Criticals::onTick(GameMode* gm) {
 		movePlayerPacket.onGround = false;
 		movePlayerPacket = C_MovePlayerPacket(player, pos);
 		PlayerAuthInputPacket authInputPacket;
-		authInputPacket = PlayerAuthInputPacket(pos, player->pitch, player->yaw, player->yawUnused1);
+		authInputPacket = PlayerAuthInputPacket(pos, player->getRot().x, player->getRot().y, player->getYHeadYaw());
 		Game.getClientInstance()->loopbackPacketSender->sendToServer(&movePlayerPacket);
 		Game.getClientInstance()->loopbackPacketSender->sendToServer(&authInputPacket);
 	}
@@ -29,7 +29,7 @@ void Criticals::onTick(GameMode* gm) {
 void Criticals::onSendPacket(Packet* packet) {
 	LocalPlayer* player = Game.getLocalPlayer();
 	if (player != nullptr) {
-		Vec3 pos = player->eyePos0;
+		Vec3 pos = player->eyePos;
 		pos.y += 2.f;
 		if (packet->isInstanceOf<C_MovePlayerPacket>() && player != nullptr) {
 			C_MovePlayerPacket* movePacket = reinterpret_cast<C_MovePlayerPacket*>(packet);

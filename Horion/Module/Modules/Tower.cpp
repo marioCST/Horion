@@ -76,8 +76,8 @@ void Tower::onPostRender(MinecraftUIRenderContext* renderCtx) {
 	if (!selectedItem->isValid() || !(*selectedItem->item)->isBlock())  // Block in hand?
 		return;
 
-	Vec3 blockBelow = Game.getLocalPlayer()->eyePos0;  // Block below the player
-	blockBelow.y -= Game.getLocalPlayer()->height;
+	Vec3 blockBelow = Game.getLocalPlayer()->eyePos;  // Block below the player
+	blockBelow.y -= Game.getLocalPlayer()->getAABBDim().x;
 	blockBelow.y -= 0.5f;
 
 	// Adjustment by velocity

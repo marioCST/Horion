@@ -25,11 +25,13 @@ void Derp::onTick(GameMode* gm) {
 		Game.getClientInstance()->loopbackPacketSender->sendToServer(&p);
 	} else {
 		if (epicStroke) {
-			gm->player->pitch = (float)(rand() % 360);
-			gm->player->bodyYaw = (float)(rand() % 360);
+			/*gm->player->pitch = (float)(rand() % 360);
+			gm->player->bodyYaw = (float)(rand() % 360);*/
+			gm->player->setRot(Vec2((float)(rand() % 360), (float)(rand() % 360)));
 		} else {
-			gm->player->pitch = (float)(counter % 360);
-			gm->player->bodyYaw = (float)(counter % 360);
+			/*gm->player->pitch = (float)(counter % 360);
+			gm->player->bodyYaw = (float)(counter % 360);*/
+			gm->player->setRot(Vec2((float)(counter % 360), (float)(counter % 360)));
 		}
 	}
 

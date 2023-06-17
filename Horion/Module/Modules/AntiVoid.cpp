@@ -13,13 +13,13 @@ const char* AntiVoid::getModuleName() {
 
 void AntiVoid::onTick(GameMode* gm) {
 	LocalPlayer* player = Game.getLocalPlayer();
-	Vec3 blockBelow = player->eyePos0;
-	blockBelow.y -= player->height;
+	Vec3 blockBelow = player->eyePos;
+	blockBelow.y -= player->getAABBDim().x;
 	blockBelow.y -= 0.5f;
 
 	if (((player->region->getBlock(blockBelow)->blockLegacy))->blockId != 0 && ((player->region->getBlock(blockBelow)->blockLegacy))->material->isSolid) {
 		savepos = blockBelow;
-		savepos.y += player->height;
+		savepos.y += player->getAABBDim().x;
 		savepos.y += 0.5f;
 	}
 

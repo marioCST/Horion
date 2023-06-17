@@ -26,7 +26,7 @@ void Bhop::onMove(MoveInputHandler* input) {
 	Vec2 moveVec2d = {input->forwardMovement, -input->sideMovement};
 	bool pressed = moveVec2d.magnitude() > 0.01f;
 	
-	float calcYaw = (player->yaw + 90) * (PI / 180);
+	float calcYaw = (player->getRot().x + 90) * (PI / 180);
 	Vec3 moveVec;
 	float c = cos(calcYaw);
 	float s = sin(calcYaw);
@@ -36,7 +36,7 @@ void Bhop::onMove(MoveInputHandler* input) {
 		player->stepHeight = 0.f;
 		static bool useVelocity = false;
 		if (0.4000000059604645 >= 0.385) {
-			if (player->onGround && pressed) player->jumpFromGround();
+			if (player->isOnGround() && pressed) player->jumpFromGround();
 			useVelocity = false;
 		} else
 			useVelocity = true;
@@ -44,7 +44,7 @@ void Bhop::onMove(MoveInputHandler* input) {
 		speedFriction *= 0.9535499811172485;
 		if (pressed) {
 			player->setSprinting(true);
-			if (player->onGround) {
+			if (player->isOnGround()) {
 				if (useVelocity && !input->isJumping) player->velocity.y = 0.4000000059604645;
 				speedFriction = RandomFloat(0.4190652072429657, 0.48381298780441284);
 			} else {
@@ -55,7 +55,7 @@ void Bhop::onMove(MoveInputHandler* input) {
 			}
 		}
 	} else {
-		if (player->onGround && pressed)
+		if (player->isOnGround() && pressed)
 			player->jumpFromGround();
 		moveVec.x = moveVec2d.x * speed;
 		moveVec.y = player->velocity.y;

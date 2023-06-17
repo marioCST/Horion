@@ -199,8 +199,8 @@ void Scaffold::handleScaffoldUp(Player* player, float speed, const Vec3& velocit
 }
 
 Vec3 Scaffold::getBlockBelow(Player* player, float yOffset) {
-	Vec3 blockBelow = player->eyePos0;
-	blockBelow.y -= player->height + yOffset;
+	Vec3 blockBelow = player->eyePos;
+	blockBelow.y -= player->getAABBDim().x + yOffset;
 	return blockBelow;
 }
 
@@ -282,8 +282,8 @@ void Scaffold::onSendPacket(Packet* packet) {
 	if (player == nullptr) return;
 	if (hive || rotations) {
 		float speed = player->velocity.magnitudexz();
-		Vec3 blockBelow = player->eyePos0;  // Block 1 block below the player
-		blockBelow.y -= player->height;
+		Vec3 blockBelow = player->eyePos;  // Block 1 block below the player
+		blockBelow.y -= player->getAABBDim().x;
 		blockBelow.y -= 0.5f;
 
 		if (packet->isInstanceOf<C_MovePlayerPacket>()) {
@@ -302,8 +302,8 @@ void Scaffold::onPlayerTick(Player* player) {
 	if (player == nullptr) return;
 	if (hive || rotations) {
 		float speed = player->velocity.magnitudexz();
-		Vec3 blockBelow = player->eyePos0;  // Block 1 block below the player
-		blockBelow.y -= player->height;
+		Vec3 blockBelow = player->eyePos;  // Block 1 block below the player
+		blockBelow.y -= player->getAABBDim().x;
 		blockBelow.y -= 0.5f;
 
 		if (speed > 0.05f) {

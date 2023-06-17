@@ -97,7 +97,7 @@ void Radar::onPreRender(MinecraftUIRenderContext* renderCtx) {
 	auto pPos = Game.getClientInstance()->levelRenderer->getOrigin();
 	playerPos = pPos;
 
-	angle = (180.0f - player->yaw) + 180.0f;
+	angle = (180.0f - player->getRot().y) + 180.0f;
 	if (angle < 0) angle += 360;
 	angle *= RAD_DEG;
 

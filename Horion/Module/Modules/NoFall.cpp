@@ -55,7 +55,7 @@ void NoFall::onTick(GameMode* gm) {
 			case 0: {
 				PlayerActionPacket actionPacket;
 				actionPacket.action = 7;  // Respawn
-				actionPacket.entityRuntimeId = localPlayer->entityRuntimeId;
+				actionPacket.entityRuntimeId = localPlayer->getRuntimeId();
 				Game.getClientInstance()->loopbackPacketSender->sendToServer(&actionPacket);
 				break;
 			}
@@ -67,12 +67,12 @@ void NoFall::onTick(GameMode* gm) {
 			case 3: {
 				PlayerActionPacket actionPacket;
 				actionPacket.action = 15;  // Open Elytra
-				actionPacket.entityRuntimeId = localPlayer->entityRuntimeId;
+				actionPacket.entityRuntimeId = localPlayer->getRuntimeId();
 				Game.getClientInstance()->loopbackPacketSender->sendToServer(&actionPacket);
 			}
 			case 4: {
-				Vec3 blockBelow = localPlayer->eyePos0;
-				blockBelow.y -= localPlayer->height;
+				Vec3 blockBelow = localPlayer->eyePos;
+				blockBelow.y -= localPlayer->getAABBDim().x;
 				blockBelow.y -= 0.17999f;
 				while (localPlayer->region->getBlock(blockBelow)->blockLegacy->blockId == 0 && !localPlayer->region->getBlock(blockBelow)->blockLegacy->material->isSolid) {
 					blockBelow.y -= 1.f;

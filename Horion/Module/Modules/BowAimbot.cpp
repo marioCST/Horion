@@ -53,9 +53,9 @@ void BowAimbot::onPostRender(MinecraftUIRenderContext* renderCtx) {
 
 	if (!targetList.empty()) {
 		std::sort(targetList.begin(), targetList.end(), CompareTargetEnArray());
-		Vec3 origin = Game.getLocalPlayer()->eyePos0;  // TODO: sort list
+		Vec3 origin = Game.getLocalPlayer()->eyePos;  // TODO: sort list
 		Entity* entity = targetList[0];
-		Vec3 pos = entity->aabb.centerPoint();
+		Vec3 pos = entity->aabb->centerPoint();
 		if (predict) {
 			Vec3 velocity = entity->getPos()->sub(*entity->getPosOld());
 			velocity.x *= origin.dist(pos) / 2.f;
@@ -84,7 +84,7 @@ void BowAimbot::onPostRender(MinecraftUIRenderContext* renderCtx) {
 			if (pitch < 89 && pitch > -89) {
 				Vec2 angles = Vec2(pitch, yaw);
 
-				Vec2 appl = angles.sub(localPlayer->viewAngles).normAngles();
+				Vec2 appl = angles.sub(localPlayer->getRot()).normAngles();
 				appl.x = -appl.x;
 				appl = appl.div(7);  // Smooth dat boi
 

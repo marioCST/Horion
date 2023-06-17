@@ -16,7 +16,7 @@ void JoeMovementController::step(LocalPlayer *player, MoveInputHandler *movement
 		currentPath->initPathSegments();
 	}
 
-	auto pPos = player->eyePos0;
+	auto pPos = player->eyePos;
 	pPos.y -= 1.62f;
 	Vec3i playerNode((int)floorf(pPos.x), (int)roundf(pPos.y), (int)floorf(pPos.z));
 
@@ -83,7 +83,7 @@ void JoeMovementController::step(LocalPlayer *player, MoveInputHandler *movement
 	} break;
 	case DROP: {
 		bool inWater = player->isInWater();
-		if(player->onGround || inWater){
+		if(player->isOnGround() || inWater){
 			dComp = 1;
 			if(fabsf(pPos.y - end.y) < (inWater ? 0.2f : 0.1f) && pPos.sub(end).magnitudexz() < 0.5f && player->velocity.y > -0.1f){// Check for end condition
 				stateInfo.nextSegment();
@@ -106,7 +106,7 @@ void JoeMovementController::step(LocalPlayer *player, MoveInputHandler *movement
 		goto WALK;
 	} break;
 	case PARKOUR_JUMP_SINGLE: {
-		if(player->onGround){
+		if(player->isOnGround()){
 			if(fabsf(pPos.y - end.y) < 0.1f && pPos.dist(end) < 0.5f){// Check for end condition
 				stateInfo.nextSegment();
 				break;
@@ -210,13 +210,13 @@ void JoeMovementController::step(LocalPlayer *player, MoveInputHandler *movement
 
 		auto pPosD = pPos; // p
 
-		if(!player->onGround && dComp < 2){
+		if (!player->isOnGround() && dComp < 2) {
 			dComp = 2;
 		}
 
 		pPosD = pPosD.add(player->velocity.mul(dComp, 0, dComp));  // d
 
-		if(player->onGround && end.y < start.y && fabsf(start.y - pPosD.y) < 0.1f && player->getTicksUsingItem() > 0 && end.sub(start).magnitudexz() > 1.5f){
+		if (player->isOnGround() && end.y < start.y && fabsf(start.y - pPosD.y) < 0.1f && player->getTicksUsingItem() > 0 && end.sub(start).magnitudexz() > 1.5f) {
 			// drop with a gap
 			// player is using item, walk back to start pos
 			walkTarget = start;
@@ -239,7 +239,7 @@ void JoeMovementController::step(LocalPlayer *player, MoveInputHandler *movement
 			diff2d = diff2d.div(fmaxf(1, diff2d.magnitude()));
 		}
 
-		float yaw = player->yaw;
+		float yaw = player->getRot().y;
 		auto forward = Vec2::fromAngle(yaw * RAD_DEG);
 		auto right = forward.cross();
 
