@@ -292,6 +292,8 @@ public:
 
 #pragma pack(push, 8)
 
+class LocalPlayer;
+
 __declspec(align(8)) class C_MovePlayerPacket : public Packet {
 public:
 	C_MovePlayerPacket();

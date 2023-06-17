@@ -26,8 +26,7 @@ void Compass::onPreRender(MinecraftUIRenderContext* renderCtx) {
 
 	if (showWaypoints) {
 		auto waypoints = wpMod->getWaypoints();
-		int curDim = 0;
-		//player->getDimensionId(&curDim);
+		int curDim = player->getDimension()->getDimensionId();
 		auto playerInterpPos = player->getPosOld()->lerp(player->getPos(), DrawUtils::getLerpTime());
 		for (auto it = waypoints->begin(); it != waypoints->end(); it++) {
 			if (it->second.dimension != curDim)

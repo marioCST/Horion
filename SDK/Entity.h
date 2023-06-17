@@ -688,7 +688,7 @@ public:
 	}
 
 	Dimension *getDimension() {
-		return *reinterpret_cast<class Dimension **>(reinterpret_cast<__int64>(this) + 0x360);
+		return reinterpret_cast<class Dimension *>(reinterpret_cast<__int64>(this) + 0x250);
 	}
 
 	void SetFieldOfView(float num) {
