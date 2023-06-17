@@ -68,9 +68,9 @@ public:
 	InventorySource inventorySource;
 	int slot;                             // 0xC
 	ItemDescriptor sourceItemDescriptor;  // 0x10
-	ItemDescriptor targetItemDescriptor;  // 0x90
-	ItemStack sourceItem;                 // 0x110
-	ItemStack targetItem;                 // 0x1A0
+	ItemDescriptor targetItemDescriptor;  // 0x70
+	ItemStack sourceItem;                 // 0xD0
+	ItemStack targetItem;                 // 0x170
 };
 
 class InventoryTransaction {};
