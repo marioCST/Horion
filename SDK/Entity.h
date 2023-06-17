@@ -452,7 +452,7 @@ public:
 	virtual void setSprinting(bool);
 	virtual int getHurtSound(void);
 	virtual int getDeathSound(void);
-	virtual int getSpeed(void);
+	virtual __int64 getSpeed(void);
 	virtual void setSpeed(float);
 	virtual void hurtEffects(__int64 const &, float, bool, bool);
 	virtual int getMeleeWeaponDamageBonus(Entity);

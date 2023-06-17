@@ -14,6 +14,7 @@ class Entity;
 class ItemStack;
 class ScreenContext;
 class ItemRenderer;
+class ItemInHandRenderer;
 class ClientInstance;
 class MinecraftGame;
 
@@ -21,14 +22,14 @@ class BaseActorRenderContext {
 private:
 	char pad_0x0[0x18];											// 0x00
 public:
-	ClientInstance *clientInstance;                             // 0x18
-	MinecraftGame *minecraftGame;                               // 0x20
-	ScreenContext *screenContext;                               // 0x28
+	ClientInstance* clientInstance;                             // 0x18
+	MinecraftGame* minecraftGame;                               // 0x20
+	ScreenContext* screenContext;                               // 0x28
 private:
 	char pad_0x30[0x18];										// 0x30
 public:
-	ItemInHandRenderer *itemInHandRenderer;                     // 0x48
-	ItemRenderer *itemRenderer;                                 // 0x50
+	ItemInHandRenderer* itemInHandRenderer;                     // 0x48
+	ItemRenderer* itemRenderer;                                 // 0x50
 private:
 	char pad_0x58[0x240];										// 0x58
 

@@ -42,8 +42,8 @@ bool WaypointCommand::execute(std::vector<std::string>* args) {
 		} else if (args->size() != 3) {
 			return false;
 		}
-		int dimension;
-		player->getDimensionId(&dimension);
+		int dimension = 0;
+		//player->getDimensionId(&dimension);
 		if (mod->add(name, pos, dimension)) {
 			clientMessageF("%sSuccessfully added waypoint \"%s\"", GREEN, name.c_str());
 			if (!mod->isEnabled())

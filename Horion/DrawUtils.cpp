@@ -572,7 +572,7 @@ void DrawUtils::drawItem(ItemStack* item, const Vec2& itemPos, float opacity, fl
 	__int64 scnCtx = reinterpret_cast<__int64*>(renderCtx)[2];
 	auto* screenCtx = reinterpret_cast<ScreenContext*>(scnCtx);
 	BaseActorRenderContext baseActorRenderCtx(screenCtx, Game.getClientInstance(), Game.getClientInstance()->minecraftGame);
-	ItemRenderer* renderer = baseActorRenderCtx.renderer;
+	ItemRenderer* renderer = baseActorRenderCtx.itemRenderer;
 	renderer->renderGuiItemNew(&baseActorRenderCtx, item, 0, itemPos.x, itemPos.y, opacity, scale, isEnchanted);
 }
 
