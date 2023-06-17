@@ -26,7 +26,7 @@ void Compass::onPreRender(MinecraftUIRenderContext* renderCtx) {
 
 	if (showWaypoints) {
 		auto waypoints = wpMod->getWaypoints();
-		int curDim = player->getDimension()->dimensionId;
+		int curDim = player->getDimension()->getDimensionId();
 		auto playerInterpPos = player->getPosOld()->lerp(player->getPos(), DrawUtils::getLerpTime());
 		for (auto it = waypoints->begin(); it != waypoints->end(); it++) {
 			if (it->second.dimension != curDim)
@@ -40,8 +40,8 @@ void Compass::onPreRender(MinecraftUIRenderContext* renderCtx) {
 
 	std::vector<Vec2> stacking{};
 
-	const int deg = (int)(player->yaw + 180);
-	const float degSubOffset = 0;  // -fmodf(player->yaw, 1)
+	const int deg = (int)(player->getRot().y + 180);
+	const float degSubOffset = 0;  // -fmodf(player->getRot().y, 1)
 	const float sCenter = Game.getGuiData()->widthGame / 2;
 
 	for (int off = -range; off <= range; off++) {
