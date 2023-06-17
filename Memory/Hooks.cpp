@@ -281,7 +281,7 @@ bool Hooks::playerCallBack(Player* lp, __int64 a2, __int64 a3) {
 	if (moduleMgr != nullptr && lp != nullptr && Game.getLocalPlayer() != nullptr && lp == Game.getLocalPlayer())
 		moduleMgr->onPlayerTick(lp);
 
-	if (!Game.getLocalPlayer() || !Game.getLocalPlayer()->level || !*(&Game.getLocalPlayer()->region + 1) || !Game.isInGame())
+	if (!Game.getLocalPlayer() || !Game.getLocalPlayer()->level || !Game.getLocalPlayer()->whatIsThis || !Game.isInGame())
 		g_Hooks.entityList.clear();
 
 	if (Game.getLocalPlayer() != nullptr && lp == Game.getLocalPlayer()) {

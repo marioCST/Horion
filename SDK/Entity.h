@@ -191,8 +191,9 @@ public:
 	BUILD_ACCESS(this, Level *, level, 0x260);
 	BUILD_ACCESS(this, AABB *, aabb, 0x2A8);
 	BUILD_ACCESS(this, Vec3, eyePosPrev, 0x814);
-	BUILD_ACCESS(this, Vec3, eyePos, 0x820);
+	BUILD_ACCESS(this, Vec3, eyePos, 0x824);
 	BUILD_ACCESS(this, BlockSource *, region, 0xB98);
+	BUILD_ACCESS(this, bool, whatIsThis, 0xBA0);
 
 	virtual int getStatusFlag(__int64);
 	virtual void setStatusFlag(__int64, bool);
