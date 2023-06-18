@@ -64,7 +64,7 @@ void InventoryMove::onTick(GameMode* gm) {
 	//float calcPitch = (gm->player->getMovementProxy()->getRot().y) * -(PI / 180);
 	Vec3 moveVec;
 	moveVec.x = cos(calcYaw) * speed;
-	moveVec.y = gm->player->getMovementProxy()->getVelocity().y;
+	moveVec.y = gm->player->velocity->velocity.y;
 	moveVec.z = sin(calcYaw) * speed;
 	if (keyPressed) {
 		gm->player->lerpMotion(moveVec);

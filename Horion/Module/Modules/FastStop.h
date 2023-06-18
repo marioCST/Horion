@@ -16,7 +16,8 @@ public:
 			LocalPlayer* player = Game.getLocalPlayer();
 
 			if (!input->isPressed()) {
-				player->getMovementProxy()->setVelocity(Vec3(0.f, player->getMovementProxy()->getVelocity().y, 0.f));
+				player->velocity->velocity.x = 0;
+				player->velocity->velocity.z = 0;
 			}
 		}
 	}

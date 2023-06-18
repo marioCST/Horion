@@ -648,7 +648,7 @@ void Hooks::Actor_lerpMotion(Entity* _this, Vec3 motVec) {
 			networkSender = reinterpret_cast<void*>(9 + FindSignature("48 8B CB FF ?? ?? ?? ?? 00 C6 47 ?? 01 48 8B 5C 24"));
 
 		if (networkSender == _ReturnAddress()) {
-			motVec = _this->getMovementProxy()->getVelocity().lerp(motVec, noKnockbackmod->xModifier, noKnockbackmod->yModifier, noKnockbackmod->xModifier);
+			motVec = _this->velocity->velocity.lerp(motVec, noKnockbackmod->xModifier, noKnockbackmod->yModifier, noKnockbackmod->xModifier);
 		}
 	}
 
@@ -1076,9 +1076,7 @@ void Hooks::JumpPower(Entity* a1, float a2) {
 	static auto oFunc = g_Hooks.JumpPowerHook->GetFastcall<void, Entity*, float>();
 	static auto highJumpMod = moduleMgr->getModule<HighJump>();
 	if (highJumpMod->isEnabled() && Game.getLocalPlayer() == a1) {
-		Vec3 vel = a1->getMovementProxy()->getVelocity();
-		vel.y = highJumpMod->jumpPower;
-		a1->getMovementProxy()->setVelocity(vel);
+		a1->velocity->velocity.y = highJumpMod->jumpPower;
 		return;
 	}
 	oFunc(a1, a2);
@@ -1089,9 +1087,7 @@ void Hooks::Actor_ascendLadder(Entity* _this) {
 
 	static auto fastLadderModule = moduleMgr->getModule<FastLadder>();
 	if (fastLadderModule->isEnabled() && Game.getLocalPlayer() == _this) {
-		Vec3 vel = _this->getMovementProxy()->getVelocity();
-		vel.y = fastLadderModule->speed;
-		_this->getMovementProxy()->setVelocity(vel);
+		_this->velocity->velocity.y = fastLadderModule->speed;
 		return;
 	}
 	return oFunc(_this);

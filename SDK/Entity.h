@@ -372,6 +372,13 @@ private:
 	virtual void TryroFunc_FlagVil243();  // 243
 };
 
+class VelocityHolder {
+private:
+	char pad[0x18]; // 0x18
+public:
+	Vec3 velocity;
+};
+
 #pragma pack(push, 4)
 class Entity {
 	uint64_t ptrToEntityList;  // 0x8
@@ -505,6 +512,7 @@ public:
 	BUILD_ACCESS(this, int16_t, damageTime, 0x188);
 	BUILD_ACCESS(this, int32_t, ticksAlive, 0x200);
 	BUILD_ACCESS(this, Level *, level, 0x260);
+	BUILD_ACCESS(this, VelocityHolder *, velocity, 0x2A0);
 	BUILD_ACCESS(this, AABB *, aabb, 0x2A8);
 	BUILD_ACCESS(this, int64_t, timeSinceDeath, 0x62C);
 	BUILD_ACCESS(this, Vec3, eyePosPrev, 0x814);

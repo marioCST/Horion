@@ -126,13 +126,13 @@ void Spider::onMove(MoveInputHandler* input) {
 		if (targetDist <= 0)
 			return;
 
-		auto [curDist, curYVel, curT] = distanceError(player->getMovementProxy()->getVelocity().y, targetDist);
+		auto [curDist, curYVel, curT] = distanceError(player->velocity->velocity.y, targetDist);
 		
 		//clientMessageF("current trajectory error=%.3f t=%i vel=%.3f total=%.2f", curDist, curT, curYVel, targetDist);
 		if (curDist <= 0.01f) 
 			return;  // We will already get on top of the block
 
-		if (player->getMovementProxy()->getVelocity().y < speed) {
+		if (player->velocity->velocity.y < speed) {
 			// do another simulation to determine whether we would overshoot on the next iteration
 			auto secondTrajectory = distanceError(speed, targetDist);
 			//clientMessageF("secondTrajectory: error=%.3f t=%i vel=%.2f", std::get<0>(secondTrajectory), std::get<2>(secondTrajectory), std::get<1>(secondTrajectory));
@@ -140,7 +140,7 @@ void Spider::onMove(MoveInputHandler* input) {
 				
 				// use secant method to approximate perfect start speed
 				float error = curDist;
-				float startSpeed = player->getMovementProxy()->getVelocity().y;
+				float startSpeed = player->velocity->velocity.y;
 
 				float error2 = std::get<0>(secondTrajectory);
 				float startSpeed2 = speed;
@@ -162,10 +162,8 @@ void Spider::onMove(MoveInputHandler* input) {
 		}
 	}
 	if (upperObstructed || lowerObstructed) {
-		if (player->getMovementProxy()->getVelocity().y < targetSpeed) {
-			Vec3 vel = player->getMovementProxy()->getVelocity();
-			vel.y = targetSpeed;
-			player->getMovementProxy()->setVelocity(vel);
+		if (player->velocity->velocity.y < targetSpeed) {
+			player->velocity->velocity.y = targetSpeed;
 		}
 	}
 }

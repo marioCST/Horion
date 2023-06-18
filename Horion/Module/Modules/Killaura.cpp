@@ -96,7 +96,7 @@ void Killaura::onTick(GameMode* gm) {
 
 		if (autoweapon) findWeapon();
 
-		if (Game.getLocalPlayer()->getMovementProxy()->getVelocity().squaredxzlen() < 0.01) {
+		if (Game.getLocalPlayer()->velocity->velocity.squaredxzlen() < 0.01) {
 			C_MovePlayerPacket p(Game.getLocalPlayer(), *Game.getLocalPlayer()->getPos());
 			Game.getClientInstance()->loopbackPacketSender->sendToServer(&p);  // make sure to update rotation if player is standing still
 		}

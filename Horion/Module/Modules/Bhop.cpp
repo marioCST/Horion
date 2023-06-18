@@ -45,15 +45,12 @@ void Bhop::onMove(MoveInputHandler* input) {
 		if (pressed) {
 			player->setSprinting(true);
 			if (player->getMovementProxy()->isOnGround()) {
-				if (useVelocity && !input->isJumping) {
-					Vec3 vel = player->getMovementProxy()->getVelocity();
-					vel.y = 0.4000000059604645;
-					player->getMovementProxy()->setVelocity(vel);
-				}
+				if (useVelocity && !input->isJumping)
+					player->velocity->velocity.y = 0.4000000059604645;
 				speedFriction = RandomFloat(0.4190652072429657, 0.48381298780441284);
 			} else {
 				moveVec.x = moveVec2d.x * speedFriction;
-				moveVec.y = player->getMovementProxy()->getVelocity().y;
+				moveVec.y = player->velocity->velocity.y;
 				moveVec.z = moveVec2d.y * speedFriction;
 				player->lerpMotion(moveVec);
 			}
@@ -62,7 +59,7 @@ void Bhop::onMove(MoveInputHandler* input) {
 		if (player->getMovementProxy()->isOnGround() && pressed)
 			player->jumpFromGround();
 		moveVec.x = moveVec2d.x * speed;
-		moveVec.y = player->getMovementProxy()->getVelocity().y;
+		moveVec.y = player->velocity->velocity.y;
 		moveVec.z = moveVec2d.y * speed;
 		if (pressed) player->lerpMotion(moveVec);
 	}

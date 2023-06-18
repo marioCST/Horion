@@ -60,9 +60,7 @@ void NoFall::onTick(GameMode* gm) {
 				break;
 			}
 			case 2: {
-				Vec3 vel = gm->player->getMovementProxy()->getVelocity();
-				vel.y = 0.f;
-				gm->player->getMovementProxy()->setVelocity(vel);
+				gm->player->velocity->velocity.y = 0.f;
 				localPlayer->getMovementProxy()->setPos((*localPlayer->getPos()).add(0, (float)0.2, 0.f));
 				break;
 			}

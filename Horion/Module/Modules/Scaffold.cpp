@@ -15,7 +15,7 @@ Scaffold::Scaffold() : IModule(VK_NUMPAD1, Category::WORLD, "Automatically build
 }
 
 bool Scaffold::tryScaffold(Vec3 blockBelow) {
-	Vec3 vel = Game.getLocalPlayer()->getMovementProxy()->getVelocity();
+	Vec3 vel = Game.getLocalPlayer()->velocity->velocity;
 	vel = vel.normalize();  // Only use values from 0 - 1
 	blockBelow = blockBelow.floor();
 
@@ -64,7 +64,7 @@ bool Scaffold::tryScaffold(Vec3 blockBelow) {
 }
 
 bool Scaffold::tryClutchScaffold(Vec3 blockBelow) {
-	Vec3 vel = Game.getLocalPlayer()->getMovementProxy()->getVelocity();
+	Vec3 vel = Game.getLocalPlayer()->velocity->velocity;
 	vel = vel.normalize();  // Only use values from 0 - 1
 	blockBelow = blockBelow.floor();
 
@@ -160,8 +160,8 @@ void Scaffold::onPostRender(MinecraftUIRenderContext* ctx) {
 		return;
 	}
 
-	float speed = player->getMovementProxy()->getVelocity().magnitudexz();
-	Vec3 velocity = player->getMovementProxy()->getVelocity().normalize();
+	float speed = player->velocity->velocity.magnitudexz();
+	Vec3 velocity = player->velocity->velocity.normalize();
 
 	if (down) {
 		handleScaffoldDown(player, speed, velocity);
@@ -281,7 +281,7 @@ void Scaffold::onSendPacket(Packet* packet) {
 	auto player = Game.getLocalPlayer();
 	if (player == nullptr) return;
 	if (hive || rotations) {
-		float speed = player->getMovementProxy()->getVelocity().magnitudexz();
+		float speed = player->velocity->velocity.magnitudexz();
 		Vec3 blockBelow = player->eyePos;  // Block 1 block below the player
 		blockBelow.y -= player->getMovementProxy()->getAABBDim().y;
 		blockBelow.y -= 0.5f;
@@ -301,7 +301,7 @@ void Scaffold::onSendPacket(Packet* packet) {
 void Scaffold::onPlayerTick(Player* player) {
 	if (player == nullptr) return;
 	if (hive || rotations) {
-		float speed = player->getMovementProxy()->getVelocity().magnitudexz();
+		float speed = player->velocity->velocity.magnitudexz();
 		Vec3 blockBelow = player->eyePos;  // Block 1 block below the player
 		blockBelow.y -= player->getMovementProxy()->getAABBDim().y;
 		blockBelow.y -= 0.5f;

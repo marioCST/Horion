@@ -26,9 +26,7 @@ void Glide::onTick(GameMode* gm) {
 			glideModEffective -= 0.2f;
 	}
 
-	Vec3 vel = gm->player->getMovementProxy()->getVelocity();
-	vel.y = glideModEffective;
-	gm->player->getMovementProxy()->setVelocity(vel);
+	gm->player->velocity->velocity.y = glideModEffective;
 }
 
 const char* Glide::getRawModuleName() {
