@@ -35,7 +35,7 @@ void Teleport::onTick(GameMode* gm) {
 		if (bypass) {
 			Game.getLocalPlayer()->lerpTo(tpPos, Vec2(1, 1), (int)std::fmax((int)(gm->player->getPos()->dist(tpPos) * 0.1), 1));
 		} else {
-			gm->player->setPos(tpPos);
+			gm->player->getMovementProxy()->setPos(tpPos);
 		}
 		shouldTP = false;
 	}

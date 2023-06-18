@@ -34,7 +34,7 @@ public:
 	virtual void onEnable() {
 		auto player = Game.getLocalPlayer();
 		if (player == nullptr) return;
-		float yPos = player->eyePos0.y;  // Block 1 block below the player
+		float yPos = player->eyePos.y;  // Block 1 block below the player
 		yPos -= player->height;
 		yPos -= 0.5f;
 		YCoord = yPos;

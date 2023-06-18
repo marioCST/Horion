@@ -13,5 +13,5 @@ const char* Blink::getModuleName() {
 }
 
 void Blink::onTick(GameMode* gm) {
-	gm->player->fallDistance = 0.f;
+	gm->player->getMovementProxy()->setFallDistance(0.f);
 }

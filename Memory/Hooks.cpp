@@ -214,7 +214,7 @@ void Hooks::Init() {
 
 				g_Hooks.Actor_baseTickHook = std::make_unique<FuncHook>(localPlayerVtable[49], Hooks::Actor_baseTick);
 
-				g_Hooks.Mob__isImmobileHook = std::make_unique<FuncHook>(localPlayerVtable[89], Hooks::Mob__isImmobile);
+				g_Hooks.Mob__isImmobileHook = std::make_unique<FuncHook>(localPlayerVtable[91], Hooks::Mob__isImmobile);
 
 				g_Hooks.Actor_isInWaterHook = std::make_unique<FuncHook>(localPlayerVtable[70], Hooks::Actor_isInWater);
 
@@ -281,7 +281,7 @@ bool Hooks::playerCallBack(Player* lp, __int64 a2, __int64 a3) {
 	if (moduleMgr != nullptr && lp != nullptr && Game.getLocalPlayer() != nullptr && lp == Game.getLocalPlayer())
 		moduleMgr->onPlayerTick(lp);
 
-	if (!Game.getLocalPlayer() || !Game.getLocalPlayer()->level || !Game.getLocalPlayer()->whatIsThis || !Game.isInGame())
+	if (!Game.getLocalPlayer() || !Game.getLocalPlayer()->level || !Game.getLocalPlayer()->regionSharedPtr || !Game.isInGame())
 		g_Hooks.entityList.clear();
 
 	if (Game.getLocalPlayer() != nullptr && lp == Game.getLocalPlayer()) {
@@ -648,7 +648,7 @@ void Hooks::Actor_lerpMotion(Entity* _this, Vec3 motVec) {
 			networkSender = reinterpret_cast<void*>(9 + FindSignature("48 8B CB FF ?? ?? ?? ?? 00 C6 47 ?? 01 48 8B 5C 24"));
 
 		if (networkSender == _ReturnAddress()) {
-			motVec = _this->velocity.lerp(motVec, noKnockbackmod->xModifier, noKnockbackmod->yModifier, noKnockbackmod->xModifier);
+			motVec = _this->getMovementProxy()->getVelocity().lerp(motVec, noKnockbackmod->xModifier, noKnockbackmod->yModifier, noKnockbackmod->xModifier);
 		}
 	}
 
@@ -816,7 +816,7 @@ void Hooks::LoopbackPacketSender_sendToServer(LoopbackPacketSender* a, Packet* p
 	if (autoSneakMod->isEnabled() && Game.getLocalPlayer() != nullptr && autoSneakMod->doSilent && packet->isInstanceOf<PlayerActionPacket>()) {
 		auto* pp = reinterpret_cast<PlayerActionPacket*>(packet);
 
-		if (pp->action == 12 && pp->entityRuntimeId == Game.getLocalPlayer()->entityRuntimeId)
+		if (pp->action == 12 && pp->entityRuntimeId == Game.getLocalPlayer()->getMovementProxy()->getRuntimeID())
 			return;  // dont send uncrouch
 	}
 
@@ -1076,7 +1076,9 @@ void Hooks::JumpPower(Entity* a1, float a2) {
 	static auto oFunc = g_Hooks.JumpPowerHook->GetFastcall<void, Entity*, float>();
 	static auto highJumpMod = moduleMgr->getModule<HighJump>();
 	if (highJumpMod->isEnabled() && Game.getLocalPlayer() == a1) {
-		a1->velocity.y = highJumpMod->jumpPower;
+		Vec3 vel = a1->getMovementProxy()->getVelocity();
+		vel.y = highJumpMod->jumpPower;
+		a1->getMovementProxy()->setVelocity(vel);
 		return;
 	}
 	oFunc(a1, a2);
@@ -1087,7 +1089,9 @@ void Hooks::Actor_ascendLadder(Entity* _this) {
 
 	static auto fastLadderModule = moduleMgr->getModule<FastLadder>();
 	if (fastLadderModule->isEnabled() && Game.getLocalPlayer() == _this) {
-		_this->velocity.y = fastLadderModule->speed;
+		Vec3 vel = _this->getMovementProxy()->getVelocity();
+		vel.y = fastLadderModule->speed;
+		_this->getMovementProxy()->setVelocity(vel);
 		return;
 	}
 	return oFunc(_this);

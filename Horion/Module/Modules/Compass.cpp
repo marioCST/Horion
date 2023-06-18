@@ -40,8 +40,8 @@ void Compass::onPreRender(MinecraftUIRenderContext* renderCtx) {
 
 	std::vector<Vec2> stacking{};
 
-	const int deg = (int)(player->getRot().y + 180);
-	const float degSubOffset = 0;  // -fmodf(player->getRot().y, 1)
+	const int deg = (int)(player->getMovementProxy()->getRot().x + 180);
+	const float degSubOffset = 0;  // -fmodf(player->getMovementProxy()->getRot().x, 1)
 	const float sCenter = Game.getGuiData()->widthGame / 2;
 
 	for (int off = -range; off <= range; off++) {

@@ -84,7 +84,7 @@ void BowAimbot::onPostRender(MinecraftUIRenderContext* renderCtx) {
 			if (pitch < 89 && pitch > -89) {
 				Vec2 angles = Vec2(pitch, yaw);
 
-				Vec2 appl = angles.sub(localPlayer->getRot()).normAngles();
+				Vec2 appl = angles.sub(localPlayer->getMovementProxy()->getRot()).normAngles();
 				appl.x = -appl.x;
 				appl = appl.div(7);  // Smooth dat boi
 

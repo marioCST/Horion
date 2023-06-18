@@ -19,8 +19,8 @@ const char* Tracer::getModuleName() {
 void Tracer::onLevelRender() {
 	if (old) {
 		if (!Game.getLocalPlayer()) return;
-		float calcYaw = (Game.getLocalPlayer()->getRot().y + 90) * (PI / 180);
-		float calcPitch = (Game.getLocalPlayer()->getRot().x) * -(PI / 180);
+		float calcYaw = (Game.getLocalPlayer()->getMovementProxy()->getRot().x + 90) * (PI / 180);
+		float calcPitch = (Game.getLocalPlayer()->getMovementProxy()->getRot().y) * -(PI / 180);
 		Vec3 moveVec;
 		moveVec.x = cos(calcYaw) * cos(calcPitch) * 0.5f;
 		moveVec.y = sin(calcPitch) * 0.5f;

@@ -469,7 +469,7 @@ void DrawUtils::drawNameTags(Entity* ent, float textSize, bool drawHealth, bool 
 	float textWidth = getTextWidth(&text, textSize);
 	float textHeight = DrawUtils::getFont(Fonts::SMOOTH)->getLineHeight() * textSize;
 
-	if (refdef->OWorldToScreen(origin, ent->eyePos0.add(0, 0.5f, 0), textPos, fov, screenSize)) {
+	if (refdef->OWorldToScreen(origin, ent->eyePos.add(0, 0.5f, 0), textPos, fov, screenSize)) {
 		textPos.y -= textHeight;
 		textPos.x -= textWidth / 2.f;
 		rectPos.x = textPos.x - 1.f * textSize;
@@ -513,26 +513,26 @@ void DrawUtils::drawNameTags(Entity* ent, float textSize, bool drawHealth, bool 
 }
 
 void DrawUtils::drawEntityBox(Entity* ent, float lineWidth, bool fill) {
-	Vec3 end = ent->eyePos0;
+	Vec3 end = ent->eyePos;
 	AABB render;
 	if (ent->isPlayer()) {
-		render = AABB(end, ent->width, ent->height, ent->height);
+		render = AABB(end, ent->getMovementProxy()->getAABBDim().x, ent->getMovementProxy()->getAABBDim().y, ent->getMovementProxy()->getAABBDim().y);
 		render.upper.y += 0.2f;
 		render.lower.y += 0.2f;
 	} else
-		render = AABB(end, ent->width, ent->height, 0);
+		render = AABB(end, ent->getMovementProxy()->getAABBDim().x, ent->getMovementProxy()->getAABBDim().y, 0);
 	render.upper.y += 0.1f;
 
-	float LineWidth = (float)fmax(0.5f, 1 / (float)fmax(1, (float)Game.getLocalPlayer()->eyePos0.dist(end)));
+	float LineWidth = (float)fmax(0.5f, 1 / (float)fmax(1, (float)Game.getLocalPlayer()->eyePos.dist(end)));
 	DrawUtils::drawBox(render.lower, render.upper, lineWidth == 0 ? LineWidth : lineWidth, fill);
 }
 
 void DrawUtils::draw2D(Entity* ent, float lineWidth) {
 	if (Game.getLocalPlayer() == nullptr) return;
-	Vec3 end = ent->eyePos0;
+	Vec3 end = ent->eyePos;
 	AABB render;
 	if (ent->isPlayer()) {
-		render = AABB(end, ent->width, ent->height, ent->height);
+		render = AABB(end, ent->getMovementProxy()->getAABBDim().x, ent->getMovementProxy()->getAABBDim().y, ent->getMovementProxy()->getAABBDim().y);
 		render.upper.y += 0.2f;
 		render.lower.y += 0.2f;
 	} else
@@ -564,7 +564,7 @@ void DrawUtils::draw2D(Entity* ent, float lineWidth) {
 		if (point.x > resultRect.z) resultRect.z = point.x;
 		if (point.y > resultRect.w) resultRect.w = point.y;
 	}
-	float LineWidth = (float)fmax(0.5f, 1 / (float)fmax(1, (float)Game.getLocalPlayer()->eyePos0.dist(end)));
+	float LineWidth = (float)fmax(0.5f, 1 / (float)fmax(1, (float)Game.getLocalPlayer()->eyePos.dist(end)));
 	DrawUtils::drawRectangle(Vec2(resultRect.x, resultRect.y), Vec2(resultRect.z, resultRect.w), lineWidth == 0 ? LineWidth : lineWidth);
 }
 

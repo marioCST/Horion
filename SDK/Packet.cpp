@@ -136,11 +136,11 @@ C_MovePlayerPacket::C_MovePlayerPacket(LocalPlayer* player, Vec3 pos) {
 	}
 	memset(this, 0, sizeof(C_MovePlayerPacket));  // Avoid overwriting vtable
 	vTable = movePlayerPacketVtable;
-	entityRuntimeID = player->entityRuntimeId;
+	entityRuntimeID = player->getMovementProxy()->getRuntimeID();
 	Position = pos;
-	pitch = player->pitch;
-	yaw = player->yaw;
-	headYaw = player->yaw;
+	pitch = player->getMovementProxy()->getRot().y;
+	yaw = player->getMovementProxy()->getRot().x;
+	headYaw = player->getMovementProxy()->getRot().x;
 	onGround = true;
 	mode = 0;
 }

@@ -27,11 +27,11 @@ void Derp::onTick(GameMode* gm) {
 		if (epicStroke) {
 			/*gm->player->pitch = (float)(rand() % 360);
 			gm->player->bodyYaw = (float)(rand() % 360);*/
-			gm->player->setRot(Vec2((float)(rand() % 360), (float)(rand() % 360)));
+			gm->player->getMovementProxy()->setRot(Vec2((float)(rand() % 360), (float)(rand() % 360)));
 		} else {
 			/*gm->player->pitch = (float)(counter % 360);
 			gm->player->bodyYaw = (float)(counter % 360);*/
-			gm->player->setRot(Vec2((float)(counter % 360), (float)(counter % 360)));
+			gm->player->getMovementProxy()->setRot(Vec2((float)(counter % 360), (float)(counter % 360)));
 		}
 	}
 

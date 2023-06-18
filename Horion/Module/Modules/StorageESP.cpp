@@ -37,16 +37,16 @@ void StorageESP::onPreRender(MinecraftUIRenderContext* renderCtx) {
 		if (storageID == 205) flushColor = MC_Color(.49f, .17f, .95f, opacity);                 // Undyed Shulker Box
 		if (storageID == 218) flushColor = MC_Color(.08f, .91f, .99f, opacity);                 // Shulker Box
 		DrawUtils::setColor(flushColor.r, flushColor.g, flushColor.b, flushColor.a);
-		if (fill && (mode.selected == 0 || mode.selected == 3)) DrawUtils::draw2DBox(chest.lower, chest.upper, (float)fmax(0.5f, 1 / (float)fmax(1, Game.getLocalPlayer()->eyePos0.dist(chest.lower))), true);
+		if (fill && (mode.selected == 0 || mode.selected == 3)) DrawUtils::draw2DBox(chest.lower, chest.upper, (float)fmax(0.5f, 1 / (float)fmax(1, Game.getLocalPlayer()->eyePos.dist(chest.lower))), true);
 		switch (mode.selected) {
 		case 0:
-			DrawUtils::draw2DBox(chest.lower, chest.upper, (float)fmax(0.5f, 1 / (float)fmax(1, Game.getLocalPlayer()->eyePos0.dist(chest.lower))));
+			DrawUtils::draw2DBox(chest.lower, chest.upper, (float)fmax(0.5f, 1 / (float)fmax(1, Game.getLocalPlayer()->eyePos.dist(chest.lower))));
 			break;
 		case 2:
-			DrawUtils::drawBox(chest.lower, chest.upper, (float)fmax(0.5f, 1 / (float)fmax(1, Game.getLocalPlayer()->eyePos0.dist(chest.lower))), fill, 2);
+			DrawUtils::drawBox(chest.lower, chest.upper, (float)fmax(0.5f, 1 / (float)fmax(1, Game.getLocalPlayer()->eyePos.dist(chest.lower))), fill, 2);
 			break;
 		case 3:
-			DrawUtils::draw2DBox(chest.lower, chest.upper, (float)fmax(0.5f, 1 / (float)fmax(1, Game.getLocalPlayer()->eyePos0.dist(chest.lower))), false, true);
+			DrawUtils::draw2DBox(chest.lower, chest.upper, (float)fmax(0.5f, 1 / (float)fmax(1, Game.getLocalPlayer()->eyePos.dist(chest.lower))), false, true);
 			break;
 		}
 	}

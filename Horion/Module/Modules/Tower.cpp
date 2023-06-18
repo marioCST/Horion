@@ -54,9 +54,9 @@ bool Tower::tryTower(Vec3 blockBelow) {
 		}
 		if (foundCandidate && GameData::isKeyDown(*input->spaceBarKey)) {
 			Vec3 moveVec;
-			moveVec.x = Game.getLocalPlayer()->velocity.x;
+			moveVec.x = Game.getLocalPlayer()->getMovementProxy()->getVelocity().x;
 			moveVec.y = motion;
-			moveVec.z = Game.getLocalPlayer()->velocity.z;
+			moveVec.z = Game.getLocalPlayer()->getMovementProxy()->getVelocity().z;
 			Game.getLocalPlayer()->lerpMotion(moveVec);
 			bool idk = true;
 			Game.getGameMode()->buildBlock(&blok, i, idk);
@@ -77,12 +77,12 @@ void Tower::onPostRender(MinecraftUIRenderContext* renderCtx) {
 		return;
 
 	Vec3 blockBelow = Game.getLocalPlayer()->eyePos;  // Block below the player
-	blockBelow.y -= Game.getLocalPlayer()->getAABBDim().x;
+	blockBelow.y -= Game.getLocalPlayer()->getMovementProxy()->getAABBDim().y;
 	blockBelow.y -= 0.5f;
 
 	// Adjustment by velocity
-	float speed = Game.getLocalPlayer()->velocity.magnitudexy();
-	Vec3 vel = Game.getLocalPlayer()->velocity;
+	float speed = Game.getLocalPlayer()->getMovementProxy()->getVelocity().magnitudexy();
+	Vec3 vel = Game.getLocalPlayer()->getMovementProxy()->getVelocity();
 	vel.normalize();  // Only use values from 0 - 1
 
 	if (!tryTower(blockBelow)) {

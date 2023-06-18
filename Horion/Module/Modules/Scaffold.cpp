@@ -15,7 +15,7 @@ Scaffold::Scaffold() : IModule(VK_NUMPAD1, Category::WORLD, "Automatically build
 }
 
 bool Scaffold::tryScaffold(Vec3 blockBelow) {
-	Vec3 vel = Game.getLocalPlayer()->velocity;
+	Vec3 vel = Game.getLocalPlayer()->getMovementProxy()->getVelocity();
 	vel = vel.normalize();  // Only use values from 0 - 1
 	blockBelow = blockBelow.floor();
 
@@ -64,7 +64,7 @@ bool Scaffold::tryScaffold(Vec3 blockBelow) {
 }
 
 bool Scaffold::tryClutchScaffold(Vec3 blockBelow) {
-	Vec3 vel = Game.getLocalPlayer()->velocity;
+	Vec3 vel = Game.getLocalPlayer()->getMovementProxy()->getVelocity();
 	vel = vel.normalize();  // Only use values from 0 - 1
 	blockBelow = blockBelow.floor();
 
@@ -160,8 +160,8 @@ void Scaffold::onPostRender(MinecraftUIRenderContext* ctx) {
 		return;
 	}
 
-	float speed = player->velocity.magnitudexz();
-	Vec3 velocity = player->velocity.normalize();
+	float speed = player->getMovementProxy()->getVelocity().magnitudexz();
+	Vec3 velocity = player->getMovementProxy()->getVelocity().normalize();
 
 	if (down) {
 		handleScaffoldDown(player, speed, velocity);
@@ -200,7 +200,7 @@ void Scaffold::handleScaffoldUp(Player* player, float speed, const Vec3& velocit
 
 Vec3 Scaffold::getBlockBelow(Player* player, float yOffset) {
 	Vec3 blockBelow = player->eyePos;
-	blockBelow.y -= player->getAABBDim().x + yOffset;
+	blockBelow.y -= player->getMovementProxy()->getAABBDim().y + yOffset;
 	return blockBelow;
 }
 
@@ -281,9 +281,9 @@ void Scaffold::onSendPacket(Packet* packet) {
 	auto player = Game.getLocalPlayer();
 	if (player == nullptr) return;
 	if (hive || rotations) {
-		float speed = player->velocity.magnitudexz();
+		float speed = player->getMovementProxy()->getVelocity().magnitudexz();
 		Vec3 blockBelow = player->eyePos;  // Block 1 block below the player
-		blockBelow.y -= player->getAABBDim().x;
+		blockBelow.y -= player->getMovementProxy()->getAABBDim().y;
 		blockBelow.y -= 0.5f;
 
 		if (packet->isInstanceOf<C_MovePlayerPacket>()) {
@@ -301,16 +301,16 @@ void Scaffold::onSendPacket(Packet* packet) {
 void Scaffold::onPlayerTick(Player* player) {
 	if (player == nullptr) return;
 	if (hive || rotations) {
-		float speed = player->velocity.magnitudexz();
+		float speed = player->getMovementProxy()->getVelocity().magnitudexz();
 		Vec3 blockBelow = player->eyePos;  // Block 1 block below the player
-		blockBelow.y -= player->getAABBDim().x;
+		blockBelow.y -= player->getMovementProxy()->getAABBDim().y;
 		blockBelow.y -= 0.5f;
 
 		if (speed > 0.05f) {
 			Vec2 angle = Game.getLocalPlayer()->getPos()->CalcAngle(blockBelow);
-			player->pitch = angle.x;
-			player->yawUnused1 = angle.y;
-			player->bodyYaw = angle.y;
+			player->getMovementProxy()->setRot(angle);
+			player->getMovementProxy()->setYHeadRot(angle.y);
+			player->getMovementProxy()->_setYHeadRotOld(angle.y);
 		}
 	}
 }

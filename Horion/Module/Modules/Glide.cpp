@@ -25,7 +25,10 @@ void Glide::onTick(GameMode* gm) {
 		if (GameData::isKeyDown(*input->sneakKey))
 			glideModEffective -= 0.2f;
 	}
-	gm->player->velocity.y = glideModEffective;
+
+	Vec3 vel = gm->player->getMovementProxy()->getVelocity();
+	vel.y = glideModEffective;
+	gm->player->getMovementProxy()->setVelocity(vel);
 }
 
 const char* Glide::getRawModuleName() {

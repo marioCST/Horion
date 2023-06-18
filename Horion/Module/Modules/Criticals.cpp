@@ -14,13 +14,13 @@ const char* Criticals::getModuleName() {
 void Criticals::onTick(GameMode* gm) {
 	if (test) {
 		LocalPlayer* player = Game.getLocalPlayer();
-		Vec3 pos = player->eyePos0;
+		Vec3 pos = player->eyePos;
 		pos.y += 2.f;
 		C_MovePlayerPacket movePlayerPacket;
 		movePlayerPacket.onGround = false;
 		movePlayerPacket = C_MovePlayerPacket(player, pos);
 		PlayerAuthInputPacket authInputPacket;
-		authInputPacket = PlayerAuthInputPacket(pos, player->getRot().x, player->getRot().y, player->getYHeadYaw());
+		authInputPacket = PlayerAuthInputPacket(pos, player->getMovementProxy()->getRot().y, player->getMovementProxy()->getRot().x, player->getYHeadYaw());
 		Game.getClientInstance()->loopbackPacketSender->sendToServer(&movePlayerPacket);
 		Game.getClientInstance()->loopbackPacketSender->sendToServer(&authInputPacket);
 	}

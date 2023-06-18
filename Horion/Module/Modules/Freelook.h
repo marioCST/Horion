@@ -16,9 +16,10 @@ public:
 	virtual const char* getModuleName() override { return "Freelook"; }
 	void onEnable() override { 
 		if (Game.getLocalPlayer() != nullptr)
-		oldPos = Game.getLocalPlayer()->getRot(); 
+			oldPos = Game.getLocalPlayer()->getMovementProxy()->getRot(); 
 	}
-	void onDisable() override { Game.getLocalPlayer()->setRot(oldPos);
+	void onDisable() override {
+		Game.getLocalPlayer()->getMovementProxy()->setRot(oldPos);
 	}
 	bool callWhenDisabled() override {
 		return true;

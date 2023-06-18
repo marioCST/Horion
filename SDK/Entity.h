@@ -67,13 +67,318 @@ class Player;
 class Dimension;
 struct MobEffectInstance;
 
+class Attribute;
+class AttributeInstance;
+
+class IPlayerMovementProxy {
+public:
+	virtual __int64 _getStateProvider(void);
+	virtual __int64 _getStateProvider2(void);
+	virtual bool isRiding(void);
+	virtual bool hasPassenger(void);
+	virtual bool isClientside(void);
+	virtual bool isCreative(void);
+	virtual bool isInWater(void);
+	virtual bool isOverScaffolding(void);
+	virtual bool isSwimming(void);
+	virtual bool isImmersedInWater(void);
+	virtual bool isHeadInWater(void);
+	virtual bool isSwimmer(void);
+	virtual bool isImmobile(void);
+	virtual bool isKnockedBackOnDeath(void);
+	virtual bool shouldBeImmobile(void);
+	virtual bool isControlledByLocalInstance(void);
+	virtual bool hasTeleported(void);
+	virtual bool isWearingLeatherBoots(void);
+	virtual bool hasFamily(HashedString const &);
+	virtual bool isWorldBuilder(void);
+	virtual bool isSleeping(void);
+	virtual bool usesOneWayCollision(void);
+	virtual bool isStuckInCollider(void);
+	virtual void setStuckInCollider(bool);
+	virtual bool isStuckItem(void);
+	virtual std::vector<AABB, std::allocator<AABB>> getOnewayPhysicsBlocks(void);
+	virtual bool wasPenetratingLastFrame(void);
+	virtual void setWasPenetratingLastFrame(bool);
+	virtual bool isPrimaryLocalPlayer(void);
+	virtual std::vector<AABB, std::allocator<AABB>> getSubAABBs(void);
+	virtual void setSubAABBs(std::vector<AABB, std::allocator<AABB>> const &);
+	virtual AABB getLiquidAABB(int);
+	virtual bool isStackable(void);
+	virtual void testForEntityStacking(AABB const &, std::vector<AABB, std::allocator<AABB>> &);
+	virtual bool getCollidableActorNear(void);
+	virtual void setCollidableActorNear(bool);
+	virtual float getWalkDist(void);
+	virtual void setWalkDist(float);
+	virtual bool isFlying(void);
+
+private:
+	virtual void TryroFunc_FlagVil39();  // 39
+
+public:
+	virtual bool isOnGround(void);
+	virtual void setOnGround(bool);
+	virtual bool wasOnGround(void);
+	virtual void setWasOnGround(bool);
+	virtual int getHealth(void);
+	virtual bool getHorizontalCollision(void);
+	virtual void setHorizontalCollision(bool);
+	virtual bool getVerticalCollision(void);
+	virtual void setVerticalCollision(bool);
+	virtual bool getCollision(void);
+	virtual void setCollision(bool);
+	virtual float getMaxAutoStep(void);
+	virtual float getHeightOffset(void);
+	virtual Vec3 getSlideOffset(void);
+	virtual void setSlideOffset(Vec3 const &);
+	virtual void setTerrainSurfaceOffset(float);
+	virtual Vec3 getBlockMovementSlowdownMultiplier(void);
+	virtual void setBlockMovementSlowdownMultiplier(BlockLegacy const &, Vec3 const &);
+	virtual void resetBlockMovementSlowdownMultiplier(void);
+	virtual float getCurrentSwimAmount(void);
+	virtual AttributeInstance getAttribute(Attribute const &);
+	virtual void hasEffect(__int64 const &);
+	virtual int getEffect(__int64 const &);
+	virtual int getActiveEffectCount(void);
+	virtual __int64 _getEntityData(void);
+	virtual void HashReset(void);
+	virtual int getStatusFlag(int);
+	virtual bool hasCategory(int);
+	virtual bool isType(int);
+	virtual int getEntityTypeId(void);
+	virtual Vec3 getPos(void);
+	virtual Vec3 getPosPrev(void);
+	virtual void setPosDirect(Vec3 const &);
+	virtual void setPos(Vec3 const &);
+	virtual Vec3 getPosDeltaNonConst(void);
+	virtual Vec3 getPosDeltaNonConst2(void);
+	virtual void setAABB(AABB const &);
+	virtual AABB getAABB(void);
+	virtual Vec2 getAABBDim(void);
+	virtual float getAttachPos(Vec3, float);
+	virtual Vec2 getRot(void);
+	virtual void setRot(Vec2 const &);
+	virtual Vec2 getRotPrev(void);
+	virtual float getFallDistance(void);
+	virtual void setFallDistance(float);
+	virtual bool isSneaking(void);
+	virtual void setSneaking(bool);
+	virtual float getHeadLookVector(float);
+	virtual int getDimensionBlockSource(void);
+	virtual int getRegionFromDimension(void);
+	virtual __int64 fetchCollisionShapes(AABB const &, float *, bool, IPlayerMovementProxy *);
+	virtual __int64 fetchEntities(IPlayerMovementProxy const *, AABB const &);
+	virtual bool hasDimension(void);
+	virtual __int64 getVehicle(void);
+	virtual bool isWASDControlled(void);
+	virtual int getControllingSeat(void);
+	virtual int getPassengerIndex(IPlayerMovementProxy const &);
+	virtual __int64 tryAsBoat(void);
+
+private:
+	virtual void unknown1();
+	virtual void unknown2();
+	virtual void unknown3();
+	virtual void unknown4();
+
+public:
+	virtual int64_t getUniqueID(void);
+	virtual int64_t getRuntimeID(void);
+	virtual Vec3i getBlockPosCurrentlyStandingOn(IPlayerMovementProxy *, BlockSource const &);
+	virtual Vec3i getBlockPosCurrentlyStandingOn(IPlayerMovementProxy *);
+	virtual void shouldTriggerOnStandOn(BlockLegacy const &, Vec3i const &);
+	virtual void _containsSneakCollisionShapes(AABB const &);
+	virtual void move(Vec3 const &);
+	virtual void moveBBs(Vec3 const &);
+	virtual void checkFallDamage(float, bool);
+	virtual void onBounceStarted(Vec3i const &, Block const &);
+	virtual void updatePrevPosRot(void);
+	virtual void sendActorMove(Vec3 const &);
+	virtual void _teleportTo(Vec3 const &, bool, int, int);
+
+private:
+	virtual void TryroFunc_FlagVil115();  // 115
+	virtual void TryroFunc_FlagVil116();  // 116
+
+public:
+	virtual __int64 _getEntityData2(void);
+	virtual void _setPreviousPosRot(void);
+	virtual void _setHasTeleported(bool);
+	virtual __int64 _getAttributes(void);
+	virtual int _advanceLiveFrame(__int64 const &);
+	virtual Entity* getEntity(void);
+	virtual Entity* getEntity2(void);
+	virtual int getNoJumpDelay(void);
+	virtual void setNoJumpDelay(int);
+	virtual bool isJumping(void);
+	virtual void setJumping(bool);
+	virtual bool getJumpVelRedux(void);
+	virtual void setJumpVelRedux(bool);
+	virtual Vec3 getJumpStartPos(void);
+	virtual void setJumpStartPos(Vec3 const &);
+	virtual float getJumpPower(void);
+	virtual int getJumpTicks(void);
+	virtual void setJumpTicks(int);
+	virtual void _endJump(void);
+	virtual void onPlayerJump(int);
+	virtual float getSpeed(void);
+	virtual void setSpeed(float);
+	virtual bool isSprinting(void);
+	virtual void setSprinting(bool);
+	virtual bool isAllowedStandSliding(void);
+	virtual void discardFriction(void);
+	virtual float getTilt(void);
+	virtual void setTilt(float);
+	virtual void _allowAscendingScaffolding(void);
+	virtual void ascendBlockByJumping(void);
+	virtual void descendBlockByCrouching(void);
+	virtual void ascendLadder(void);
+	virtual void jumpFromGround(BlockSource const &);
+	virtual void canAscendCurrentBlockByJumping(void);
+	virtual void canDescendBlockBelowByCrouching(void);
+	virtual bool isGliding(void);
+	virtual Vec3 getVelocity(void);
+	virtual void setVelocity(Vec3 const &);
+	virtual float getActorRotation(void);
+	virtual void setActorRotation(float);
+	virtual void newServerAiStep(void);
+	virtual void aiStep(void);
+	virtual void updateAttackAnim(void);
+	virtual int getNoActionTime(void);
+	virtual void setNoActionTime(int);
+	virtual float getYHeadRot(void);
+	virtual void setYHeadRot(float);
+	virtual float getSwimSpeedMultiplier(void);
+	virtual void setSwimSpeedMultiplier(float);
+	virtual void pushActors(void);
+	virtual void updateGliding(void);
+	virtual void travel(float, float, float, bool);
+	virtual void playJumpSound(BlockSource const &);
+	virtual void emitJumpPreventedEvent(Vec3i const &);
+	virtual float getWaterWalkerEnchant(void);
+	virtual float getFlySpeed(void);
+	virtual void setFlySpeed(float);
+	virtual void applyFinalFriction(float, bool);
+	virtual float getFrictionModifier(void);
+	virtual void setFrictionModifier(float);
+
+private:
+	virtual void TryroFunc_FlagVil177();  // 177
+
+public:
+	virtual void _setYHeadRotOld(float);
+	virtual bool isSlowedByItemUse(void);
+	virtual int getItemUseMovementModifier(void);
+	virtual void startGliding(void);
+	virtual void stopGliding(void);
+	virtual bool isSpectator(void);
+	virtual bool isUsingItem(void);
+	virtual bool isServerAuthoritativeMovement(void);
+	virtual bool isAutoJumping(void);
+	virtual void setAutoJumping(bool);
+	virtual bool isAutoJumpEnabled(void);
+
+private:
+	virtual void TryroFunc_FlagVil189();  // 189
+	virtual void TryroFunc_FlagVil190();  // 190
+
+public:
+	virtual bool isLocalPlayer(void);
+	virtual int getSneakHeight(void);
+	virtual float getBob(void);
+	virtual void setBob(float);
+	virtual float getLastBob(void);
+	virtual void setLastBob(float);
+	virtual void tryGetPlayerActionComponent(void);
+	virtual int getCurrentTick(void);
+
+private:
+	virtual void unknown5();
+	virtual void unknown6();
+
+public:
+	virtual int getGlidingTicks(void);
+	virtual int getVRMoveAdjustAngle(void);
+	virtual int getPlayerPaddleForce(int);
+	virtual void setPlayerPaddleForce(int, float);
+	virtual bool isPaddling(int);
+	virtual bool areHandsBusy(void);
+	virtual void setHandsBusy(bool);
+	virtual bool getAbilityBool(int);
+	virtual void setAbilityBool(int, bool);
+	virtual float getAbilityFloat(int);
+	virtual void setAbilityFloat(int, float);
+	virtual __int64 getAbilities(void);
+
+private:
+	virtual void TryroFunc_FlagVil213();  // 213
+
+public:
+	virtual bool isEmoting(void);
+	virtual void setEmotingStatus(bool);
+
+private:
+	virtual void TryroFunc_FlagVil216();  // 216
+
+public:
+	virtual void sendPacket(__int64 &);
+	virtual void sendPacket2(__int64 &);
+	virtual void sendRequestAbilityPacket(int, bool);
+	virtual bool isArmorFlyEnabled(void);
+	virtual void TryroFunc_FlagVil221();  // 221
+	virtual int getShadowHeightOffs(void);
+
+private:
+	virtual void TryroFunc_FlagVil223();  // 223
+	virtual void unknown7();
+	virtual void TryroFunc_FlagVil225();  // 225
+	virtual void TryroFunc_FlagVil226();  // 226
+
+public:
+	virtual Vec3 getWorldPosition(void);
+
+private:
+	virtual void TryroFunc_FlagVil228();  // 228
+
+public:
+	virtual Vec3 getWorldPosition2(void);
+	virtual void sendPlayerInput(void);
+
+private:
+	virtual void TryroFunc_FlagVil231();  // 231
+	virtual void TryroFunc_FlagVil232();  // 232
+
+public:
+	virtual bool shouldSendPosition(void);
+
+private:
+	virtual void TryroFunc_FlagVil234();  // 234
+
+public:
+	virtual void checkMovementStats(Vec3 const &);
+	virtual void sendPlayerMove(void);
+	virtual void updateTouch(void);
+
+private:
+	virtual void TryroFunc_FlagVil238();  // 238
+
+public:
+	virtual void _setPositionMode(int);
+	virtual void _onMovePlayerPacketNormal(Vec3 const &, Vec2 const &, float);
+	virtual void _resetPos(bool);
+
+private:
+	virtual void TryroFunc_FlagVil242();  // 242
+	virtual void TryroFunc_FlagVil243();  // 243
+};
+
 #pragma pack(push, 4)
 class Entity {
 	uint64_t ptrToEntityList;  // 0x8
 private:
 	char pad_0x10[0x128];  // 0x10
 public:
-	union {
+	/*union {
 		struct {
 			float pitch;  // 0x0138
 			float yaw;    // 0x013C
@@ -86,17 +391,21 @@ public:
 			float yaw2;    // 0x013C
 		};
 		Vec2 viewAngles2;
-	};
+	};*/
+	char pad_128[0x10];
 
 private:
 	char pad_0148[16];  // 0x0148
 public:
-	Vec3 eyePos0;  // 0x0158
+	//Vec3 eyePos0;  // 0x0158
+	char pad_158[0xC];
+
 private:
 	char pad_0164[112];  // 0x0164
 public:
-	float fallDistance;  // 0x01D4
-	bool onGround;       // 0x01D8
+	//float fallDistance;  // 0x01D4
+	char pad_1D4[5];
+	//bool onGround;       // 0x01D8
 private:
 	char pad_01D9[95];  // 0x01D9
 public:
@@ -138,27 +447,33 @@ public:
 	char pad_4B8[8];
 	float width;      // 0x04D0
 	float height;     // 0x04D4
-	Vec3 currentPos;  // 0x04D8
-	Vec3 oldPos;      // 0x04E4
-	Vec3 velocity;    // 0x04F0
-	Vec3 velocity2;   // 0x04FC
+	char pad_4D8[0x30];
+	//Vec3 currentPos;  // 0x04D8
+	//Vec3 oldPos;      // 0x04E4
+	//Vec3 velocity;    // 0x04F0
+	//Vec3 velocity2;   // 0x04FC
 private:
 	char pad_0508[80];  // 0x0508
 public:
-	int64_t entityRuntimeId;  // 0x0558
+	//int64_t entityRuntimeId;  // 0x0558
+	char pad_558[8];
+
 private:
 	char pad_0560[0x1C8];  // 0x0560
 public:
-	float bodyYaw;                    // 0x0728
+	char pad_728[0x18];
+	/*float bodyYaw;               // 0x0728
 	float oldBodyYaw;                 // 0xtoolazytoupdatethesecommentsxd
 	float yawUnused1;                 // 0x0748
-	float yawUnused2;                 // 0x074C
-	int32_t damageTime;               // 0x0750
-	int32_t damageAnimationDuration;  // 0x0754
+	float yawUnused2;                 // 0x074C*/
+	//int32_t damageTime;               // 0x0750
+	//int32_t damageAnimationDuration;  // 0x0754
 private:
 	char pad_0758[136];  // 0x0758
 public:
-	int32_t timeSinceDeath;  // 0x07E0
+	//int32_t timeSinceDeath;  // 0x07E0
+	char pad_7E0[8];
+
 private:
 	char pad_07E4[244];  // 0x07E4
 public:
@@ -185,15 +500,17 @@ private:
 public:
 	int gamemode;  // 0x1D7C
 
-	BUILD_ACCESS(this, __int64*, entityContext, 0x8);
+	BUILD_ACCESS(this, __int64, entityContext, 0x8);
 	BUILD_ACCESS(this, uint32_t, entityIdentifier, 0x10);
+	BUILD_ACCESS(this, int16_t, damageTime, 0x188);
 	BUILD_ACCESS(this, int32_t, ticksAlive, 0x200);
 	BUILD_ACCESS(this, Level *, level, 0x260);
 	BUILD_ACCESS(this, AABB *, aabb, 0x2A8);
+	BUILD_ACCESS(this, int64_t, timeSinceDeath, 0x62C);
 	BUILD_ACCESS(this, Vec3, eyePosPrev, 0x814);
 	BUILD_ACCESS(this, Vec3, eyePos, 0x820);
 	BUILD_ACCESS(this, BlockSource *, region, 0xB98);
-	BUILD_ACCESS(this, bool, whatIsThis, 0xBA0);
+	BUILD_ACCESS(this, __int64*, regionSharedPtr, 0xBA0);
 
 	virtual int getStatusFlag(__int64);
 	virtual void setStatusFlag(__int64, bool);
@@ -286,7 +603,7 @@ public:
 	virtual void playerTouch(Player &);
 	virtual void onAboveBubbleColumn(bool);
 	virtual void onInsideBubbleColumn(bool);
-	virtual bool isImEntityile(void);
+	virtual bool isImmobile(void);
 	virtual bool isSilent(void);
 	virtual bool isSilentObserver(void);
 	virtual bool isPickable(void);
@@ -532,8 +849,8 @@ public:
 	virtual void descendBlockByCrouching(void);
 	virtual void dropContainer(void);
 	virtual void initBodyControl(void);
-	virtual void jumpFromGround(); //these may be wrong but idk
-	virtual void jumpFromGround(__int64 &, __int64 const &);
+	virtual void jumpFromGround(IPlayerMovementProxy &, BlockSource const &);  // these may be wrong but idk
+	virtual void jumpFromGround(BlockSource const &);
 	virtual void newServerAiStep(void);
 	virtual void _serverAiEntityStep(void);
 	virtual void dropBags(void);
@@ -713,67 +1030,6 @@ public:
 
 	void lerpTo(Vec3 const &pos, Vec2 const &a2, int a3);
 
-	void setPos(Vec3 const& pos) {
-		using setPos = void(__thiscall *)(Entity*, Vec3*);
-		static setPos setPosFunc = reinterpret_cast<setPos>(FindSignature("48 89 5C 24 ? 48 89 74 24 ? 57 48 83 EC ? 48 8B DA 48 8B F9 48 8B CB 48 8D 15"));
-		setPosFunc(this, &Vec3(pos));
-	}
-
-	void setRot(Vec2 const& rot) {
-		/*using setRot = void(__thiscall *)(Entity *, Vec2 *);
-		static setRot setRotFunc = reinterpret_cast<setRot>(FindSignature("48 83 EC ? 48 8B 41 ? 48 89 54 ? ? 48 85 C0"));
-		setRotFunc(this, &Vec2(rot));*/
-
-		float *ptr = reinterpret_cast<float *>(this + 0x2B0);
-
-		*ptr = rot.x;
-		*(ptr + 0x4) = rot.y;
-	}
-
-	void setRotPrev(Vec2 const &rot) {
-		float *ptr = reinterpret_cast<float *>(this + 0x2B0);
-
-		*(ptr + 0x8) = rot.x;
-		*(ptr + 0xC) = rot.y;
-	}
-
-	Vec2 getRot() {
-		using getRot = Vec2(__thiscall *)(Entity *);
-		static getRot getRotFunc = reinterpret_cast<getRot>(FindSignature("48 83 EC 28 48 8B 81 B0 02 00 00 48 85 C0 74 05"));
-		return getRotFunc(this);
-	}
-
-	Vec2 getRotPrev() {
-		float *ptr = reinterpret_cast<float *>(this + 0x2B0);
-
-		Vec2 vec;
-
-		vec.x = *(ptr + 0x8);
-		vec.y = *(ptr + 0xC);
-
-		return vec;
-	}
-
-	Vec2 getAABBDim() {
-		using getAABBDim = Vec2(__thiscall *)(Entity *);
-		static getAABBDim getAABBDimFunc = reinterpret_cast<getAABBDim>(FindSignature("48 83 EC 28 48 8B 81 ? ? ? ? 48 85 C0 74 09 48 83 C0 18"));
-		return getAABBDimFunc(this);
-	}
-
-	bool isOnGround() {
-		using ActorCollision_isOnGround = bool(__thiscall *)(__int64*);
-		static ActorCollision_isOnGround ActorCollision_isOnGroundFunc = reinterpret_cast<ActorCollision_isOnGround>(FindSignature("40 53 48 83 EC ? 48 8B 01 48 8B D9 BA E1 2D 1F 21"));
-		return ActorCollision_isOnGroundFunc(this->entityContext);
-	}
-
-	int64_t getRuntimeId() {
-		uint32_t id = this->entityIdentifier;
-
-		using getRuntimeId = bool(__thiscall *)(__int64 *, uint32_t*);
-		static getRuntimeId getRuntimeIdFunc = reinterpret_cast<getRuntimeId>(FindSignature("40 53 48 83 EC ? 48 8B DA BA 14 14 A1 3C"));
-		return getRuntimeIdFunc(this->entityContext, &id);
-	}
-
 	float getYHeadYaw() {
 		using getYHeadYaw = float(__thiscall *)(Entity*);
 		static getYHeadYaw getYHeadYawFunc = reinterpret_cast<getYHeadYaw>(FindSignature("48 83 EC 28 8B 41 10 48 8D 54 24 ? 48 8B 49 08 89 44 24 30 48 8B 09 E8 ? ? ? ? 48 85 C0 74 09 F3 0F 10 00 48 83 C4 28 C3 0F 57 C0"));
@@ -785,6 +1041,25 @@ public:
 		static getYHeadRotationsNewOld getYHeadRotationsNewOldFunc = reinterpret_cast<getYHeadRotationsNewOld>(FindSignature("40 53 48 83 EC 20 48 8B 41 08 4C 8B C1"));
 		return getYHeadRotationsNewOldFunc(this);
 	}
+
+	void jumpFromGround() {
+		this->jumpFromGround(*this->region);
+	}
+
+	IPlayerMovementProxy *getMovementProxy() {
+		using getMovementProxySharedPtr = void(__fastcall *)(Entity *, std::shared_ptr<void> *);
+		static getMovementProxySharedPtr getMovementProxySharedPtrFunc = reinterpret_cast<getMovementProxySharedPtr>(FindSignature("40 53 48 83 EC ? 8B 41 10 48 8B DA 48 8B 49 ? 48 8D 54 ? ? 89 44 24 ? 48 8B 09 E8 ? ? ? ? 45 33 C9"));
+
+		std::shared_ptr<void> ptr;
+		getMovementProxySharedPtrFunc(this, &ptr);
+		return reinterpret_cast<IPlayerMovementProxy *>(ptr.get());
+	}
+
+	/*int getGamemode() {
+		using getUnmappedGametype = int(__fastcall*)(__int64);
+		static getUnmappedGametype getUnmappedGametypeFunc = reinterpret_cast<getUnmappedGametype>(FindSignature(""));
+		return getUnmappedGametypeFunc(this->entityContext);
+	}*/
 };
 #pragma pack(pop)
 

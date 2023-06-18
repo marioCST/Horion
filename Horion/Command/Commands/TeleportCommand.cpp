@@ -17,7 +17,7 @@ bool TeleportCommand::execute(std::vector<std::string>* args) {
 	pos.y = assertFloat(args->at(2)) + 1;
 	pos.z = assertFloat(args->at(3));
 
-	Game.getLocalPlayer()->setPos(pos);
+	Game.getLocalPlayer()->getMovementProxy()->setPos(pos);
 	clientMessageF("%sTeleported!", GREEN);
 	return true;
 }
