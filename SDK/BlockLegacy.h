@@ -7,21 +7,20 @@
 
 class Material {
 public:
-	int type;  // 5 for water, 6 for lava
-	bool isFlammable;
-	bool isNeverBuildable;
-	bool isAlwaysDestroyable;
-	bool isReplaceable;
-	bool isLiquid;  // 0x0008
-private:
-	char pad2[0x3];  // 0x009
-public:
-	float translucency;  // 0x00C
-	bool isBlockingMotion;
-	bool isBlockingPrecipitation;
-	bool isSolid;
-	bool isSuperHot;
-	float color[4];
+	BUILD_ACCESS(this, int, type, 0x0);
+	BUILD_ACCESS(this, bool, isFlammable, 0x4);
+	BUILD_ACCESS(this, bool, isNeverBuildable, 0x5);
+	BUILD_ACCESS(this, bool, isReplaceable, 0x6);
+	BUILD_ACCESS(this, bool, isLiquid, 0x8);
+	BUILD_ACCESS(this, bool, isSolid, 0xC);
+	BUILD_ACCESS(this, bool, isBlockingMotion, 0xD);
+	BUILD_ACCESS(this, bool, isSuperHot, 0xF);
+
+	bool isType(int materialType) {
+		using isType = bool(__thiscall *)(Material*, int);
+		static isType isTypeFunc = reinterpret_cast<isType>(FindSignature("83 FA 35 74 07"));
+		return isTypeFunc(this, materialType);
+	}
 };
 
 class Entity;
@@ -30,20 +29,12 @@ class BlockSource;
 
 class BlockLegacy {
 public:
-	uintptr_t** Vtable;         // 0x0000
-	class TextHolder tileName;  // 0x0008
-private:
-	char pad_0028[8];  // 0x0028
-public:
-	class TextHolder name;  // 0x0030
-private:
-	char pad_0050[136];  // 0x0050
-public:
-	class Material* material;  // 0x00D8
-private:
-	char pad_00E0[108];  // 0x00E0
-public:
-	short blockId;  // 0x014C
+	BUILD_ACCESS(this, uintptr_t**, Vtable, 0x0);
+	BUILD_ACCESS(this, TextHolder, tileName, 0x8);
+	BUILD_ACCESS(this, TextHolder, name, 0x30);
+	BUILD_ACCESS(this, Material*, material, 0x108);
+	BUILD_ACCESS(this, float, translucency, 0x14C);
+	BUILD_ACCESS(this, short, blockId, 0x186);
 
 	int liquidGetDepth(BlockSource*, const Vec3i* pos);
 	void liquidGetFlow(Vec3* flowOut, BlockSource*, const Vec3i* pos);
@@ -53,13 +44,8 @@ public:
 
 class Block {
 public:
-	uint8_t data;  // 0x8
-
-private:
-	char pad[0x7];
-
-public:
-	BlockLegacy* blockLegacy;  // 0x10
+	BUILD_ACCESS(this, uint8_t, data, 0x8);
+	BUILD_ACCESS(this, BlockLegacy*, blockLegacy, 0x10);
 
 	inline BlockLegacy* toLegacy() { return blockLegacy; }
 
