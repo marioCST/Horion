@@ -20,7 +20,7 @@ void CommandMgr::initCommands() {
 	commandList.push_back(new PlayerTeleportCommand());
 	commandList.push_back(new SetOffhandCommand());
 	commandList.push_back(new FriendListCommand());
-	commandList.push_back(new NameSpoofCommand());
+	//commandList.push_back(new NameSpoofCommand());
 	commandList.push_back(new SetPrefixCommand());
 	commandList.push_back(new WaypointCommand());
 	commandList.push_back(new GameModeCommand());
