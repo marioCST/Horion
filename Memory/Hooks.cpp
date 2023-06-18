@@ -132,6 +132,9 @@ void Hooks::Init() {
 		void* Actor__setRotAddr = reinterpret_cast<void*>(FindSignature("48 83 EC ? 48 8B 41 ? 48 89 54 ? ? 48 85 C0"));
 		g_Hooks.Actor__setRotHook = std::make_unique<FuncHook>(Actor__setRotAddr, Hooks::Actor__setRot);
 
+		void* _isAllowedUIOpenForNonImplementedSource = reinterpret_cast<void*>(FindSignature("40 53 48 83 EC 20 48 8B 02 48 8B CA 48 8B DA 48 8B 80 ? ? ? ? FF 15 ? ? ? ? 84 C0 75 21"));
+		g_Hooks.isAllowedUIOpenForNonImplementedSourceHook = std::make_unique<FuncHook>(_isAllowedUIOpenForNonImplementedSource, Hooks::isAllowedUIOpenForNonImplementedSource);
+
 		static constexpr auto counterStart = __COUNTER__ + 1;
 		#define lambda_counter (__COUNTER__ - counterStart)
 
@@ -1423,19 +1426,9 @@ bool Hooks::Actor__isInWall(Entity* ent) {
 
 	return func(ent);
 }
-/*
-void Hooks::testFunction(class networkhandler* _this, const void* networkIdentifier, Packet* packet, int a4) {
-	auto func = g_Hooks.testHook->GetFastcall<void, networkhandler*, const void*, Packet*, int>();
-	static auto test = moduleMgr->getModule<TestModule>();
-	
-	if (test->isEnabled()) {
-		//if (strcmp(packet->getName()->getText(), "SetTitlePacket") != 0) {
-			Game.getClientInstance()->getGuiData()->displayClientMessageF("%s", packet->getName()->getText());
-		//}
-	}
-	if (test->isEnabled() && test->bool1) {
-		return;
-	}
-	moduleMgr->onSendClientPacket(packet);
-	func(_this, networkIdentifier, packet, a4);
-}*/
+
+__int64 Hooks::isAllowedUIOpenForNonImplementedSource(__int64 a1, Player* a2) { //This is not the exact name for this function but as of 1.19.60 this is needed to be hooked so that item related features work
+	auto func = g_Hooks.isAllowedUIOpenForNonImplementedSourceHook->GetFastcall<__int64, __int64, Player*>();
+
+	return 1i64;
+}
