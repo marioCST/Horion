@@ -134,7 +134,7 @@ private:
 	static void Actor_causeFallDamage(Entity* _this, float f);
 	static void Actor_checkFallDamage(Entity* _this, float f, bool b);
 	static bool Actor__isInWall(Entity* ent);
-	//static void testFunction(class networkhandler* _this, const void* networkIdentifier, Packet* packet, int a4);
+	static __int64 isAllowedUIOpenForNonImplementedSource(__int64 a1, Player* a2);
 
 	std::unique_ptr<FuncHook> Actor_rotationHook;
 	std::unique_ptr<FuncHook> setPosHook;
@@ -200,7 +200,7 @@ private:
 	std::unique_ptr<FuncHook> Actor_causeFallDamageHook;
 	std::unique_ptr<FuncHook> Actor_checkFallDamageHook;
 	std::unique_ptr<FuncHook> ActorisInWallHook;
-	//std::unique_ptr<FuncHook> testFunctionHook;
+	std::unique_ptr<FuncHook> isAllowedUIOpenForNonImplementedSourceHook;
 };
 
 extern Hooks g_Hooks;
