@@ -816,8 +816,8 @@ public:
 	virtual void descendBlockByCrouching(void);
 	virtual void dropContainer(void);
 	virtual void initBodyControl(void);
-	virtual void jumpFromGround(IPlayerMovementProxy &, BlockSource const &);  // these may be wrong but idk
 	virtual void jumpFromGround(BlockSource const &);
+	virtual void jumpFromGround(IPlayerMovementProxy &, BlockSource const &);
 	virtual void newServerAiStep(void);
 	virtual void _serverAiEntityStep(void);
 	virtual void dropBags(void);

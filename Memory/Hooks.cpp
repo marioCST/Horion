@@ -193,7 +193,7 @@ void Hooks::Init() {
 			if (moveInputVtable == 0x0)
 				logF("MoveInputHandler is invalid");
 			else {
-				g_Hooks.MoveInputHandler_tickHook = std::make_unique<FuncHook>(moveInputVtable[1], Hooks::MoveInputHandler_tick);
+				g_Hooks.MoveInputHandler_tickHook = std::make_unique<FuncHook>(moveInputVtable[2], Hooks::MoveInputHandler_tick);
 			}
 		} else logF("MoveTurnInput is null");
 
