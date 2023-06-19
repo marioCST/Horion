@@ -60,8 +60,8 @@ void NoFall::onTick(GameMode* gm) {
 				break;
 			}
 			case 2: {
-				gm->player->velocity->velocity.y = 0.f;
-				localPlayer->getMovementProxy()->setPos((*localPlayer->getPos()).add(0, (float)0.2, 0.f));
+				gm->player->location->velocity.y = 0.f;
+				localPlayer->setPos((*localPlayer->getPos()).add(0, (float)0.2, 0.f));
 				break;
 			}
 			case 3: {
@@ -72,7 +72,7 @@ void NoFall::onTick(GameMode* gm) {
 			}
 			case 4: {
 				Vec3 blockBelow = localPlayer->eyePos;
-				blockBelow.y -= localPlayer->getMovementProxy()->getAABBDim().y;
+				blockBelow.y -= localPlayer->aabb->size.x;
 				blockBelow.y -= 0.17999f;
 				while (localPlayer->region->getBlock(blockBelow)->blockLegacy->blockId == 0 && !localPlayer->region->getBlock(blockBelow)->blockLegacy->material->isSolid) {
 					blockBelow.y -= 1.f;

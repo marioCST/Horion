@@ -25,7 +25,7 @@ void Fly::onEnable() {
 	switch (mode.selected) {
 	case 5:
 		if (Game.getLocalPlayer() != nullptr)
-			Game.getLocalPlayer()->getMovementProxy()->setPos((*Game.getLocalPlayer()->getPos()).add(Vec3(0, 1, 0)));
+			Game.getLocalPlayer()->setPos((*Game.getLocalPlayer()->getPos()).add(Vec3(0, 1, 0)));
 		break;
 	}
 }
@@ -38,7 +38,7 @@ void Fly::onTick(GameMode *gm) {
 		gm->player->canFly = true;
 		break;
 	case 1: {
-		float calcYaw = (gm->player->getMovementProxy()->getRot().x + 90) * (PI / 180);
+		float calcYaw = (gm->player->getRot().x + 90) * (PI / 180);
 
 		gameTick++;
 
@@ -58,24 +58,24 @@ void Fly::onTick(GameMode *gm) {
 
 		if (gameTick >= 5) {
 			gameTick = 0;
-			float yaw = gm->player->getMovementProxy()->getRot().x * (PI / 180);
+			float yaw = gm->player->getRot().x * (PI / 180);
 			float length = 4.f;
 
 			float x = -sin(yaw) * length;
 			float z = cos(yaw) * length;
 
-			gm->player->getMovementProxy()->setPos(pos.add(Vec3(x, 0.5f, z)));
+			gm->player->setPos(pos.add(Vec3(x, 0.5f, z)));
 		}
 
 		break;
 	}
 	case 2:
-		gm->player->getMovementProxy()->setVelocity(Vec3(0, 0, 0));
+		gm->player->location->velocity = Vec3(0, 0, 0);
 		break;
 
 	case 3: {
-		float calcYaw = (gm->player->getMovementProxy()->getRot().x + 90) * (PI / 180);
-		float calcPitch = (gm->player->getMovementProxy()->getRot().y) * -(PI / 180);
+		float calcYaw = (gm->player->getRot().x + 90) * (PI / 180);
+		float calcPitch = (gm->player->getRot().y) * -(PI / 180);
 
 		Vec3 moveVec;
 		moveVec.x = cos(calcYaw) * cos(calcPitch) * horizontalSpeed;
@@ -88,8 +88,8 @@ void Fly::onTick(GameMode *gm) {
 	}
 	case 4: {
 		if (gameTick >= 5) {
-			float calcYaw = (gm->player->getMovementProxy()->getRot().x + 90) * (PI / 180);
-			float calcPitch = (gm->player->getMovementProxy()->getRot().y) * -(PI / 180);
+			float calcYaw = (gm->player->getRot().x + 90) * (PI / 180);
+			float calcPitch = (gm->player->getRot().y) * -(PI / 180);
 
 			Vec3 pos = *Game.getLocalPlayer()->getPos();
 			C_MovePlayerPacket a(Game.getLocalPlayer(), pos);
@@ -98,31 +98,31 @@ void Fly::onTick(GameMode *gm) {
 			a = C_MovePlayerPacket(Game.getLocalPlayer(), pos);
 			Game.getClientInstance()->loopbackPacketSender->sendToServer(&a);
 
-			gm->player->velocity->velocity.y = 0.465f;
+			gm->player->location->velocity.y = 0.465f;
 			Vec3 moveVec;
 			moveVec.x = cos(calcYaw) * cos(calcPitch) * horizontalSpeed;
 			moveVec.z = sin(calcYaw) * cos(calcPitch) * horizontalSpeed;
 
-			gm->player->velocity->velocity.x = moveVec.x;
-			gm->player->velocity->velocity.z = moveVec.z;
+			gm->player->location->velocity.x = moveVec.x;
+			gm->player->location->velocity.z = moveVec.z;
 
 			float teleportX = cos(calcYaw) * cos(calcPitch) * 0.00000005f;
 			float teleportZ = sin(calcYaw) * cos(calcPitch) * 0.00000005f;
 
 			pos = *gm->player->getPos();
-			Game.getLocalPlayer()->getMovementProxy()->setPos(Vec3(pos.x + teleportX, pos.y - 0.15f, pos.z + teleportZ));
+			gm->player->setPos(Vec3(pos.x + teleportX, pos.y - 0.15f, pos.z + teleportZ));
 
-			gm->player->velocity->velocity.y -= 0.15f;
+			gm->player->location->velocity.y -= 0.15f;
 			gameTick = 0;
 		}
 
-		gm->player->velocity->velocity = Vec3(0, 0, 0);
+		gm->player->location->velocity = Vec3(0, 0, 0);
 
 		break;
 	}
 	case 5:
 	case 6:
-		gm->player->velocity->velocity = Vec3(0, 0, 0);
+		gm->player->location->velocity = Vec3(0, 0, 0);
 	}
 }
 
@@ -137,7 +137,7 @@ void Fly::onDisable() {
 		break;
 	case 1:
 	case 6:
-		Game.getLocalPlayer()->velocity->velocity = Vec3(0, 0, 0);
+		Game.getLocalPlayer()->location->velocity = Vec3(0, 0, 0);
 	}
 }
 
@@ -151,7 +151,7 @@ void Fly::onMove(MoveInputHandler *input) {
 	bool jumping = GameData::isKeyDown(*inputf->spaceBarKey);
 	bool sneaking = GameData::isKeyDown(*inputf->sneakKey);
 
-	float calcYaw = (localPlayer->getMovementProxy()->getRot().x + 90) * (PI / 180);
+	float calcYaw = (localPlayer->getRot().x + 90) * (PI / 180);
 	float c = cos(calcYaw);
 	float s = sin(calcYaw);
 
@@ -165,16 +165,16 @@ void Fly::onMove(MoveInputHandler *input) {
 	case 5: {
 		Vec3 *localPlayerPos = localPlayer->getPos();
 
-		float yaw = localPlayer->getMovementProxy()->getRot().x;
+		float yaw = localPlayer->getRot().x;
 		Vec2 moveVec2d = {input->forwardMovement, -input->sideMovement};
 		bool pressed = moveVec2d.magnitude() > 0.01f;
 
 		if (input->isJumping) {
-			localPlayer->velocity->velocity.y += verticalSpeed;
+			localPlayer->location->velocity.y += verticalSpeed;
 		}
 
 		if (input->isSneakDown) {
-			localPlayer->velocity->velocity.y -= verticalSpeed;
+			localPlayer->location->velocity.y -= verticalSpeed;
 		}
 
 		if (input->right) {
@@ -202,7 +202,7 @@ void Fly::onMove(MoveInputHandler *input) {
 			float calcYaw = (yaw + 90.f) * (PI / 180.f);
 			Vec3 moveVec;
 			moveVec.x = cos(calcYaw) * horizontalSpeed;
-			moveVec.y = localPlayer->velocity->velocity.y;
+			moveVec.y = localPlayer->location->velocity.y;
 			moveVec.z = sin(calcYaw) * horizontalSpeed;
 			localPlayer->lerpMotion(moveVec);
 		}
@@ -215,7 +215,7 @@ void Fly::onMove(MoveInputHandler *input) {
 		// Idea from Weather Client (dead by now), TurakanFly from BadMan worked similar with less height loss
 
 		if (!localPlayer->getMovementProxy()->isOnGround()) {
-			localPlayer->velocity->velocity.y = 0.f;
+			localPlayer->location->velocity.y = 0.f;
 		}
 
 		GameSettingsInput *input = Game.getClientInstance()->getGameSettingsInput();
@@ -223,7 +223,7 @@ void Fly::onMove(MoveInputHandler *input) {
 		if (input == nullptr)
 			return;
 
-		float yaw = localPlayer->getMovementProxy()->getRot().x;
+		float yaw = localPlayer->getRot().x;
 
 		if (GameData::isKeyDown(*input->forwardKey) && GameData::isKeyDown(*input->backKey))
 			return;
@@ -251,8 +251,8 @@ void Fly::onMove(MoveInputHandler *input) {
 			yaw -= 90.f;
 			keyPressed = true;
 		} else {
-			localPlayer->velocity->velocity.x = 0.f;
-			localPlayer->velocity->velocity.z = 0.f;
+			localPlayer->location->velocity.x = 0.f;
+			localPlayer->location->velocity.z = 0.f;
 			keyPressed = false;
 		}
 
@@ -262,7 +262,7 @@ void Fly::onMove(MoveInputHandler *input) {
 		float calcYaw = (yaw + 90) * (PI / 180);
 		Vec3 moveVec;
 		moveVec.x = cos(calcYaw) * horizontalSpeed;
-		moveVec.y = localPlayer->velocity->velocity.y;
+		moveVec.y = localPlayer->location->velocity.y;
 		moveVec.z = sin(calcYaw) * horizontalSpeed;
 
 		if (keyPressed) {
@@ -277,7 +277,7 @@ void Fly::onMove(MoveInputHandler *input) {
 				pos.y = localPlayer->getPos()->y - 0.025f;
 				pos.z = localPlayer->getPos()->z;
 
-				localPlayer->getMovementProxy()->setPos(pos);
+				localPlayer->setPos(pos);
 			}
 
 			gameTick = 0;

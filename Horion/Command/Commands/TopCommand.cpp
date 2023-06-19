@@ -26,7 +26,7 @@ bool TopCommand::execute(std::vector<std::string>* args) {
 	if (groundAbove) {
 		for (int y(blockPos.y); y < 256; ++y) {  // This time we're going through loop again, but continuing where we left off to find open air pocket.
 			if ((player->region->getBlock({blockPos.x, y, blockPos.z})->toLegacy()->blockId == 0) && (player->region->getBlock({blockPos.x, y + 1, blockPos.z})->toLegacy()->blockId == 0)) {
-				player->getMovementProxy()->setPos({(float)blockPos.x, y + 1.f, (float)blockPos.z});
+				player->setPos({(float)blockPos.x, y + 1.f, (float)blockPos.z});
 				clientMessageF("Whoosh!");
 				return true;
 			}

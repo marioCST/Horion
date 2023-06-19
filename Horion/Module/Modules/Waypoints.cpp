@@ -65,7 +65,7 @@ void Waypoints::onPreRender(MinecraftUIRenderContext* renderCtx) {
 		if (fadeOutAtDistance && dist > 15) {
 				
 			Vec2 angle = localPlayer->getPos()->CalcAngle(pos);
-			float diff = angle.sub(localPlayer->getMovementProxy()->getRot()).normAngles().magnitude();
+			float diff = angle.sub(localPlayer->getRot()).normAngles().magnitude();
 			if (dist > 30) {
 				float neededDiff = lerp(40, 15, std::min((dist - 30) / 300, 1.f));
 				float minAlpha = lerp(0.6f, 0.3f, std::min((dist - 30) / 50, 1.f));

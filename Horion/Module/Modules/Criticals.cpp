@@ -20,7 +20,7 @@ void Criticals::onTick(GameMode* gm) {
 		movePlayerPacket.onGround = false;
 		movePlayerPacket = C_MovePlayerPacket(player, pos);
 		PlayerAuthInputPacket authInputPacket;
-		authInputPacket = PlayerAuthInputPacket(pos, player->getMovementProxy()->getRot().y, player->getMovementProxy()->getRot().x, player->getYHeadYaw());
+		authInputPacket = PlayerAuthInputPacket(pos, player->getRot().y, player->getRot().x, player->getYHeadYaw());
 		Game.getClientInstance()->loopbackPacketSender->sendToServer(&movePlayerPacket);
 		Game.getClientInstance()->loopbackPacketSender->sendToServer(&authInputPacket);
 	}

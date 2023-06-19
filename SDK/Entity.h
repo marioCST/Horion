@@ -372,11 +372,17 @@ private:
 	virtual void TryroFunc_FlagVil243();  // 243
 };
 
-class VelocityHolder {
-private:
-	char pad[0x18]; // 0x18
+class EntityLocation {
 public:
+	Vec3 posPrev;
+	Vec3 pos;
 	Vec3 velocity;
+};
+
+class EntityRotation {
+public:
+	Vec2 rotPrev;
+	Vec2 rot;
 };
 
 #pragma pack(push, 4)
@@ -451,9 +457,9 @@ private:
 	char pad_0370[328];  // 0x0370
 public:
 	//AABB aabb;        // 0x04B8
-	char pad_4B8[8];
-	float width;      // 0x04D0
-	float height;     // 0x04D4
+	char pad_4B8[0x10];
+	/*float width;  // 0x04D0
+	float height;     // 0x04D4*/
 	char pad_4D8[0x30];
 	//Vec3 currentPos;  // 0x04D8
 	//Vec3 oldPos;      // 0x04E4
@@ -501,7 +507,9 @@ public:
 private:
 	char pad_1024[508];  // 0x1024
 public:
-	class InventoryTransactionManager transac;  // 0x1220
+	//class InventoryTransactionManager transac;  // 0x1220
+	char pad_1220[0x60];
+
 private:
 	char pad_1280[2828];  // 0x1280
 public:
@@ -512,13 +520,15 @@ public:
 	BUILD_ACCESS(this, int16_t, damageTime, 0x188);
 	BUILD_ACCESS(this, int32_t, ticksAlive, 0x200);
 	BUILD_ACCESS(this, Level *, level, 0x260);
-	BUILD_ACCESS(this, VelocityHolder *, velocity, 0x2A0);
+	BUILD_ACCESS(this, EntityLocation *, location, 0x2A0);
 	BUILD_ACCESS(this, AABB *, aabb, 0x2A8);
+	BUILD_ACCESS(this, EntityRotation *, rotation, 0x2B0);
 	BUILD_ACCESS(this, int64_t, timeSinceDeath, 0x62C);
 	BUILD_ACCESS(this, Vec3, eyePosPrev, 0x814);
 	BUILD_ACCESS(this, Vec3, eyePos, 0x820);
 	BUILD_ACCESS(this, BlockSource *, region, 0xB98);
 	BUILD_ACCESS(this, __int64*, regionSharedPtr, 0xBA0);
+	BUILD_ACCESS(this, InventoryTransactionManager, transac, 0xEC8);
 
 	virtual int getStatusFlag(__int64);
 	virtual void setStatusFlag(__int64, bool);
@@ -1061,6 +1071,36 @@ public:
 		std::shared_ptr<void> ptr;
 		getMovementProxySharedPtrFunc(this, &ptr);
 		return reinterpret_cast<IPlayerMovementProxy *>(ptr.get());
+	}
+
+	void setPos(Vec3 vec) {
+		this->location->pos = vec;
+	}
+
+	void setPosPrev(Vec3 vec) {
+		this->location->posPrev = vec;
+	}
+
+	Vec2 getRot() {
+		Vec2 vec(this->rotation->rot.y, this->rotation->rot.x);
+
+		return vec;
+	}
+
+	void setRot(Vec2 vec) {
+		this->rotation->rot.x = vec.y;
+		this->rotation->rot.y = vec.x;
+	}
+
+	Vec2 getRotPrev() {
+		Vec2 vec(this->rotation->rotPrev.y, this->rotation->rotPrev.x);
+
+		return vec;
+	}
+
+	void setRotPrev(Vec2 vec) {
+		this->rotation->rotPrev.x = vec.y;
+		this->rotation->rotPrev.y = vec.x;
 	}
 
 	/*int getGamemode() {

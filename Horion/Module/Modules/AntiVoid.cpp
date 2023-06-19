@@ -14,16 +14,16 @@ const char* AntiVoid::getModuleName() {
 void AntiVoid::onTick(GameMode* gm) {
 	LocalPlayer* player = Game.getLocalPlayer();
 	Vec3 blockBelow = player->eyePos;
-	blockBelow.y -= player->getMovementProxy()->getAABBDim().y;
+	blockBelow.y -= player->aabb->size.x;
 	blockBelow.y -= 0.5f;
 
 	if (((player->region->getBlock(blockBelow)->blockLegacy))->blockId != 0 && ((player->region->getBlock(blockBelow)->blockLegacy))->material->isSolid) {
 		savepos = blockBelow;
-		savepos.y += player->getMovementProxy()->getAABBDim().y;
+		savepos.y += player->aabb->size.x;
 		savepos.y += 0.5f;
 	}
 
 	if (player->getMovementProxy()->getFallDistance() >= distance) {
-		player->getMovementProxy()->setPos(savepos);
+		player->setPos(savepos);
 	}
 }

@@ -20,7 +20,7 @@ bool RelativeTeleportCommand::execute(std::vector<std::string>* args) {
 	pos.y = assertFloat(args->at(2)) + pPos.y;
 	pos.z = assertFloat(args->at(3)) + pPos.z;
 
-	Game.getLocalPlayer()->getMovementProxy()->setPos(pos);
+	Game.getLocalPlayer()->setPos(pos);
 	clientMessageF("%sTeleported!", GREEN);
 	return true;
 }

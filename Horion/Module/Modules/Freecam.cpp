@@ -18,7 +18,7 @@ void Freecam::onEnable() {
 	auto Player = Game.getLocalPlayer();
 	if (cameraAddr != nullptr) NopBytes((BYTE*)((uintptr_t)cameraAddr), 33);
 
-	if (Player != nullptr) initialViewAngles = Vec2(Player->getMovementProxy()->getRot().y, Player->getMovementProxy()->getRot().x);
+	if (Player != nullptr) initialViewAngles = Vec2(Player->getRot().y, Player->getRot().x);
 }
 
 void Freecam::onDisable() {

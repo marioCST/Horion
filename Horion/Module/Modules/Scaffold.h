@@ -35,7 +35,7 @@ public:
 		auto player = Game.getLocalPlayer();
 		if (player == nullptr) return;
 		float yPos = player->eyePos.y;  // Block 1 block below the player
-		yPos -= player->height;
+		yPos -= player->aabb->size.x;
 		yPos -= 0.5f;
 		YCoord = yPos;
 	};

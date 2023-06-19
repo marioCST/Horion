@@ -60,7 +60,7 @@ bool WaypointCommand::execute(std::vector<std::string>* args) {
 		if (auto wp = mod->getWaypoint(name)) {
 			auto wpV = wp.value();
 			auto pos = wpV.pos;
-			player->getMovementProxy()->setPos(pos);
+			player->setPos(pos);
 			clientMessageF("%sTeleported to waypoint \"%s\" (%.02f, %.02f, %.02f)", GREEN, name.c_str(), pos.x, pos.y, pos.z);
 		} else {
 			clientMessageF("%sUnknown waypoint \"%s\"", RED, name.c_str());
