@@ -18,10 +18,10 @@ public:
 	virtual void onMove(MoveInputHandler* input) override;
 	virtual void onEnable() {
 		auto player = Game.getLocalPlayer();
-		if (player == nullptr) return; else cashedStepHeignt = player->stepHeight;
+		if (player == nullptr) return; else cashedStepHeignt = player->getStepHeight();
 	};
 	virtual void onDisable() {
 		auto player = Game.getLocalPlayer();
-		if (player == nullptr) return; else player->stepHeight = cashedStepHeignt;
+		if (player == nullptr) return; else player->setStepHeight(cashedStepHeignt);
 	};
 };

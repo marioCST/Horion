@@ -33,7 +33,7 @@ void Bhop::onMove(MoveInputHandler* input) {
 	moveVec2d = {moveVec2d.x * c - moveVec2d.y * s, moveVec2d.x * s + moveVec2d.y * c};
 
 	if (hive) {
-		player->stepHeight = 0.f;
+		player->setStepHeight(0.f);
 		static bool useVelocity = false;
 		if (0.4000000059604645 >= 0.385) {
 			if (player->getMovementProxy()->isOnGround() && pressed) player->jumpFromGround();
