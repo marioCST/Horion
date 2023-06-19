@@ -95,7 +95,7 @@ Item ***ItemRegistry::getItemFromId(void *ptr, int itemId) {
 
 Item ***ItemRegistry::lookUpByName(void *a1, void *a2, TextHolder &text) {
 	using ItemRegistry__lookupByName_t = Item ***(__fastcall *)(void *, void *, TextHolder &);
-	static ItemRegistry__lookupByName_t ItemRegistry__lookupByNameF = reinterpret_cast<ItemRegistry__lookupByName_t>(FindSignature("48 89 5C ? ? 57 48 83 EC ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 ? ? 48 8B DA 4C 8B C9"));
+	static ItemRegistry__lookupByName_t ItemRegistry__lookupByNameF = reinterpret_cast<ItemRegistry__lookupByName_t>(FindSignature("40 55 53 56 57 41 54 41 55 41 56 41 57 48 8D 6C 24 ? 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 45 ? 4D 8B E8 48 8B F2"));
 	return ItemRegistry__lookupByNameF(a1, a2, text);
 }
 
