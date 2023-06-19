@@ -72,6 +72,7 @@ class AttributeInstance;
 
 class IPlayerMovementProxy {
 public:
+	virtual void Destructor();
 	virtual __int64 _getStateProvider(void);
 	virtual __int64 _getStateProvider2(void);
 	virtual bool isRiding(void);
@@ -111,11 +112,7 @@ public:
 	virtual float getWalkDist(void);
 	virtual void setWalkDist(float);
 	virtual bool isFlying(void);
-
-private:
-	virtual void TryroFunc_FlagVil39();  // 39
-
-public:
+	virtual void setIsFlying(bool);
 	virtual bool isOnGround(void);
 	virtual void setOnGround(bool);
 	virtual bool wasOnGround(void);
@@ -174,14 +171,10 @@ public:
 	virtual int getControllingSeat(void);
 	virtual int getPassengerIndex(IPlayerMovementProxy const &);
 	virtual __int64 tryAsBoat(void);
-
-private:
-	virtual void unknown1();
-	virtual void unknown2();
-	virtual void unknown3();
-	virtual void unknown4();
-
-public:
+	virtual void tryAsMob(void);
+	virtual void tryAsMob1(void);
+	virtual void tryAsPlayer(void);
+	virtual void tryAsPlayer1(void);
 	virtual int64_t getUniqueID(void);
 	virtual int64_t getRuntimeID(void);
 	virtual Vec3i getBlockPosCurrentlyStandingOn(IPlayerMovementProxy *, BlockSource const &);
@@ -195,12 +188,8 @@ public:
 	virtual void updatePrevPosRot(void);
 	virtual void sendActorMove(Vec3 const &);
 	virtual void _teleportTo(Vec3 const &, bool, int, int);
-
-private:
-	virtual void TryroFunc_FlagVil115();  // 115
-	virtual void TryroFunc_FlagVil116();  // 116
-
-public:
+	virtual void _getRawActor(void);
+	virtual void _getRawActor2(void);
 	virtual __int64 _getEntityData2(void);
 	virtual void _setPreviousPosRot(void);
 	virtual void _setHasTeleported(bool);
@@ -261,11 +250,7 @@ public:
 	virtual void applyFinalFriction(float, bool);
 	virtual float getFrictionModifier(void);
 	virtual void setFrictionModifier(float);
-
-private:
-	virtual void TryroFunc_FlagVil177();  // 177
-
-public:
+	virtual void _getMob(void);
 	virtual void _setYHeadRotOld(float);
 	virtual bool isSlowedByItemUse(void);
 	virtual int getItemUseMovementModifier(void);
@@ -277,12 +262,8 @@ public:
 	virtual bool isAutoJumping(void);
 	virtual void setAutoJumping(bool);
 	virtual bool isAutoJumpEnabled(void);
-
-private:
-	virtual void TryroFunc_FlagVil189();  // 189
-	virtual void TryroFunc_FlagVil190();  // 190
-
-public:
+	virtual void wasAutoJumping(void);
+	virtual void setWasAutoJumping(bool);
 	virtual bool isLocalPlayer(void);
 	virtual int getSneakHeight(void);
 	virtual float getBob(void);
@@ -291,12 +272,8 @@ public:
 	virtual void setLastBob(float);
 	virtual void tryGetPlayerActionComponent(void);
 	virtual int getCurrentTick(void);
-
-private:
-	virtual void unknown5();
-	virtual void unknown6();
-
-public:
+	virtual int getClientInstance(void);
+	virtual int getClientInstance1(void);
 	virtual int getGlidingTicks(void);
 	virtual int getVRMoveAdjustAngle(void);
 	virtual int getPlayerPaddleForce(int);
@@ -309,67 +286,39 @@ public:
 	virtual float getAbilityFloat(int);
 	virtual void setAbilityFloat(int, float);
 	virtual __int64 getAbilities(void);
-
-private:
-	virtual void TryroFunc_FlagVil213();  // 213
-
-public:
+	virtual void updateClientPlayerInputState(void);
 	virtual bool isEmoting(void);
 	virtual void setEmotingStatus(bool);
-
-private:
-	virtual void TryroFunc_FlagVil216();  // 216
-
-public:
+	virtual void fireEventPersonaEmotePlayed(bool);
 	virtual void sendPacket(__int64 &);
 	virtual void sendPacket2(__int64 &);
 	virtual void sendRequestAbilityPacket(int, bool);
 	virtual bool isArmorFlyEnabled(void);
-	virtual void TryroFunc_FlagVil221();  // 221
-	virtual int getShadowHeightOffs(void);
-
-private:
-	virtual void TryroFunc_FlagVil223();  // 223
-	virtual void unknown7();
-	virtual void TryroFunc_FlagVil225();  // 225
-	virtual void TryroFunc_FlagVil226();  // 226
-
-public:
-	virtual Vec3 getWorldPosition(void);
-
-private:
-	virtual void TryroFunc_FlagVil228();  // 228
-
-public:
-	virtual Vec3 getWorldPosition2(void);
+	virtual void setJumpRidingScale(float);
+	virtual int getJumpRidingScale(void);
+	virtual void registerFramewiseActionOrStop(void);
+	virtual int getLoadingState(void);
+	virtual void setCurrentLocalMoveVelocity(Vec2 const &);
+	virtual void setLastPos(Vec3 const &);
+	virtual Vec3 getLastPos(void);
+	virtual void setLastDelta(Vec3 const &);
+	virtual __int64 getLastDelta(void);
 	virtual void sendPlayerInput(void);
-
-private:
-	virtual void TryroFunc_FlagVil231();  // 231
-	virtual void TryroFunc_FlagVil232();  // 232
-
-public:
-	virtual bool shouldSendPosition(void);
-
-private:
-	virtual void TryroFunc_FlagVil234();  // 234
-
-public:
+	virtual void sendInput(void);
+	virtual void sendClientAuthInput(void);
+	virtual void shouldSendPosition(void);
+	virtual void sendPosition(void);
 	virtual void checkMovementStats(Vec3 const &);
 	virtual void sendPlayerMove(void);
 	virtual void updateTouch(void);
-
-private:
-	virtual void TryroFunc_FlagVil238();  // 238
-
-public:
+	virtual void _getPlayer(void);
 	virtual void _setPositionMode(int);
 	virtual void _onMovePlayerPacketNormal(Vec3 const &, Vec2 const &, float);
 	virtual void _resetPos(bool);
-
-private:
-	virtual void TryroFunc_FlagVil242();  // 242
-	virtual void TryroFunc_FlagVil243();  // 243
+	virtual void _extractStateFromComponents(void);
+	virtual void _applyStateToComponents(void);
+	virtual int getControllingPlayer(void);
+	virtual void setPaddleState(int, bool);
 };
 
 class EntityLocation {
