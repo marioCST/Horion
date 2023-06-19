@@ -371,7 +371,9 @@ public:
 private:
 	char pad_01D9[95];  // 0x01D9
 public:
-	float stepHeight;  // 0x0238
+	//float stepHeight;  // 0x0238
+	char pad_238[0x4];
+
 private:
 	char pad_023C[16];  // 0x023C
 public:
@@ -464,7 +466,7 @@ private:
 public:
 	int gamemode;  // 0x1D7C
 
-	BUILD_ACCESS(this, __int64, entityContext, 0x8);
+	BUILD_ACCESS(this, __int64**, entityContext, 0x8);
 	BUILD_ACCESS(this, uint32_t, entityIdentifier, 0x10);
 	BUILD_ACCESS(this, int16_t, damageTime, 0x188);
 	BUILD_ACCESS(this, int32_t, ticksAlive, 0x200);
@@ -1050,6 +1052,24 @@ public:
 	void setRotPrev(Vec2 vec) {
 		this->rotation->rotPrev.x = vec.y;
 		this->rotation->rotPrev.y = vec.x;
+	}
+
+	float getStepHeight() {
+		uint32_t id = this->entityIdentifier;
+
+		using MaxAutoStepComponent_try_get = float*(__thiscall *)(__int64*, uint32_t*);
+		static MaxAutoStepComponent_try_get MaxAutoStepComponent_try_getFunc = reinterpret_cast<MaxAutoStepComponent_try_get>(FindSignature("40 53 48 83 EC 20 48 8B DA BA 16 72 6F 0E"));
+		return *MaxAutoStepComponent_try_getFunc(*this->entityContext, &id);
+	}
+
+	void setStepHeight(float stepHeight) {
+		uint32_t id = this->entityIdentifier;
+
+		using MaxAutoStepComponent_try_get = float *(__thiscall *)(__int64*, uint32_t*);
+		static MaxAutoStepComponent_try_get MaxAutoStepComponent_try_getFunc = reinterpret_cast<MaxAutoStepComponent_try_get>(FindSignature("40 53 48 83 EC 20 48 8B DA BA 16 72 6F 0E"));
+		float *f = MaxAutoStepComponent_try_getFunc(*this->entityContext, &id);
+
+		*f = stepHeight;
 	}
 
 	/*int getGamemode() {
