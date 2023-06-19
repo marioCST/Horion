@@ -72,6 +72,7 @@ class AttributeInstance;
 
 class IPlayerMovementProxy {
 public:
+	virtual void Destructor();
 	virtual __int64 _getStateProvider(void);
 	virtual __int64 _getStateProvider2(void);
 	virtual bool isRiding(void);
