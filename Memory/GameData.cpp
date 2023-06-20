@@ -147,8 +147,8 @@ void GameData::setHIDController(HIDController* Hid) {
 	Game.hidController = Hid;
 }
 
-void GameData::setRakNetInstance(RakNetInstance* raknet) {
-	Game.raknetInstance = raknet;
+void GameData::setRakNetConnector(RakNetConnector* raknet) {
+	Game.raknetConnector = raknet;
 }
 
 void GameData::forEachEntity(std::function<void(Entity*, bool)> callback) {

@@ -686,8 +686,8 @@ public:
 	virtual void buildDebugInfo(std::string &);
 	virtual int getCommandPermissionLevel(void);
 	virtual bool isClientSide(void);
-	virtual int getMutableAttribute(class Attribute const &);
-	virtual int getAttribute(Attribute const &);
+	virtual class AttributeInstance *getMutableAttribute(class Attribute *Attribute);
+	virtual class AttributeInstance *getAttribute(class Attribute *Attribute);
 	virtual int getDeathTime(void);
 	virtual void heal(int);
 	virtual bool isInvertedHealAndHarm(void);

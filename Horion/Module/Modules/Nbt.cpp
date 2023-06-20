@@ -21,7 +21,7 @@ void Nbt::onTick(GameMode* gm) {
 	if (GameData::isRightClickDown()) {  // && Utils::getClipboardText() != lastCopy) {
 		if (level->getEntity() != nullptr) {
 
-			if (!(Game.getRakNetInstance()->serverIp.getTextLength() < 1))
+			if (!(Game.getRakNetConnector()->serverIp.getTextLength() < 1))
 				return;
 			std::unique_ptr<CompoundTag> tag = std::make_unique<CompoundTag>();
 			level->getEntity()->save(tag.get());
