@@ -62,5 +62,6 @@ public:
 };
 
 struct FlySpeedComponent {
+public:
 	float flySpeed; // it's more like in air speed then fly speed
 };

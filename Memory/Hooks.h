@@ -24,7 +24,7 @@
 #include "../SDK/GameMode.h"
 #include "../SDK/MinecraftUIRenderContext.h"
 #include "../SDK/MoveInputHandler.h"
-#include "../SDK/RakNetInstance.h"
+#include "../SDK/RakNetConnector.h"
 #include "../SDK/TextHolder.h"
 #include "../SDK/UIScene.h"
 #include "../Utils/Logger.h"
@@ -109,7 +109,7 @@ private:
 	static void Actor_ascendLadder(Entity* _this);
 	static void Actor_swing(Entity* _this);
 	static void Actor_startSwimming(Entity* _this);
-	static void RakNetInstance_tick(RakNetInstance* _this, __int64 a2, __int64 a3);
+	static void RakNetConnector_tick(RakNetConnector* _this);
 	static float GameMode_getPickRange(GameMode* _this, __int64 a2, char a3);
 	static __int64 GameMode_attack(GameMode* _this, Entity*);
 	static __int64 ConnectionRequest_create(__int64 _this, __int64 privateKeyManager, void* a3, TextHolder* selfSignedId, TextHolder* serverAddress, __int64 clientRandomId, TextHolder* skinId, SkinData* skinData, __int64 capeData, CoolSkinData* coolSkinStuff, TextHolder* deviceId, int inputMode, int uiProfile, int guiScale, TextHolder* languageCode, bool sendEduModeParams, char a17, TextHolder* tenantId, __int64 a19, TextHolder* platformUserId, TextHolder* thirdPartyName, bool thirdPartyNameOnly, TextHolder* platformOnlineId, TextHolder* platformOfflineId, TextHolder* capeId, char a26);
@@ -171,7 +171,7 @@ private:
 	std::unique_ptr<FuncHook> Actor_swingHook;
 	std::unique_ptr<FuncHook> Actor_lookAtHook;
 	std::unique_ptr<FuncHook> Actor_startSwimmingHook;
-	std::unique_ptr<FuncHook> RakNetInstance_tickHook;
+	std::unique_ptr<FuncHook> RakNetConnector_tickHook;
 	std::unique_ptr<FuncHook> GameMode_getPickRangeHook;
 	std::unique_ptr<FuncHook> GameMode_attackHook;
 	std::unique_ptr<FuncHook> ConnectionRequest_createHook;
