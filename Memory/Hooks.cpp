@@ -52,9 +52,6 @@ void Hooks::Init() {
 		void* chestTick = reinterpret_cast<void*>(FindSignature("40 53 57 48 83 EC ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 ? ? 48 83 79"));
 		g_Hooks.ChestBlockActor_tickHook = std::make_unique<FuncHook>(chestTick, Hooks::ChestBlockActor_tick);
 
-		void* lerpFunc = reinterpret_cast<void*>(FindSignature("48 83 EC 28 4C 8B 81 ? ? ? ? 4D 85 C0 74 19 8B 02 41 89 40 18 8B"));
-		g_Hooks.Actor_lerpMotionHook = std::make_unique<FuncHook>(lerpFunc, Hooks::Actor_lerpMotion);
-
 		void* getRenderLayer = reinterpret_cast<void*>(FindSignature("8B 81 E4 ? ? ? C3 CC CC CC CC CC CC CC CC CC F3"));
 		g_Hooks.BlockLegacy_getRenderLayerHook = std::make_unique<FuncHook>(getRenderLayer, Hooks::BlockLegacy_getRenderLayer);
 
@@ -210,6 +207,8 @@ void Hooks::Init() {
 				//g_Hooks.setPosHook = std::make_unique<FuncHook>(localPlayerVtable[19], Hooks::setPos); // Removed from vtable
 
 				g_Hooks.Actor_baseTickHook = std::make_unique<FuncHook>(localPlayerVtable[49], Hooks::Actor_baseTick);
+
+				g_Hooks.Actor_lerpMotionHook = std::make_unique<FuncHook>(localPlayerVtable[46], Hooks::Actor_lerpMotion);
 
 				g_Hooks.Mob__isImmobileHook = std::make_unique<FuncHook>(localPlayerVtable[91], Hooks::Mob__isImmobile);
 
@@ -642,7 +641,7 @@ void Hooks::Actor_lerpMotion(Entity* _this, Vec3 motVec) {
 	if (noKnockbackmod->isEnabled()) {
 		static void* networkSender = nullptr;
 		if (!networkSender)
-			networkSender = reinterpret_cast<void*>(9 + FindSignature("48 8B CB FF ?? ?? ?? ?? 00 C6 47 ?? 01 48 8B 5C 24"));
+			networkSender = reinterpret_cast<void*>(16 + FindSignature("48 8B CB 48 8B 80 ? ? ? ? FF 15 ? ? ? ? C6 46 ? ? 48 8B 5C 24"));
 
 		if (networkSender == _ReturnAddress()) {
 			motVec = _this->location->velocity.lerp(motVec, noKnockbackmod->xModifier, noKnockbackmod->yModifier, noKnockbackmod->xModifier);
