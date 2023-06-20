@@ -132,7 +132,7 @@ void Fly::onDisable() {
 
 	switch (mode.selected) {
 	case 0:
-		if (Game.getLocalPlayer()->gamemode != 1)
+		if (Game.getLocalPlayer()->getActorGameTypeComponent()->gameType != 1)
 			Game.getLocalPlayer()->canFly = false;
 		break;
 	case 1:

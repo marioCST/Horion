@@ -10,6 +10,7 @@
 #include "Inventory.h"
 #include "InventoryTransaction.h"
 #include "TextHolder.h"
+#include "Components.h"
 
 class GameMode;
 
@@ -62,11 +63,18 @@ public:
 		return {};
 	}
 };
+class EntityRegistry;
+struct EntityId {
+	uint32_t id;
+};
+struct EntityContext {
+	EntityRegistry *registry;
+	EntityId id;
+};
 
 class Player;
 class Dimension;
 struct MobEffectInstance;
-
 class Attribute;
 class AttributeInstance;
 
@@ -336,7 +344,8 @@ public:
 
 #pragma pack(push, 4)
 class Entity {
-	uint64_t ptrToEntityList;  // 0x8
+public:
+	EntityContext ctx;
 private:
 	char pad_0x10[0x128];  // 0x10
 public:
@@ -359,19 +368,19 @@ public:
 private:
 	char pad_0148[16];  // 0x0148
 public:
-	//Vec3 eyePos0;  // 0x0158
+	// Vec3 eyePos0;  // 0x0158
 	char pad_158[0xC];
 
 private:
 	char pad_0164[112];  // 0x0164
 public:
-	//float fallDistance;  // 0x01D4
+	// float fallDistance;  // 0x01D4
 	char pad_1D4[5];
-	//bool onGround;       // 0x01D8
+	// bool onGround;       // 0x01D8
 private:
 	char pad_01D9[95];  // 0x01D9
 public:
-	//float stepHeight;  // 0x0238
+	// float stepHeight;  // 0x0238
 	char pad_238[0x4];
 
 private:
@@ -389,37 +398,37 @@ public:
 private:
 	char pad_0260[72];  // 0x0260
 public:
-	//int32_t ticksAlive;  // 0x02A8
+	// int32_t ticksAlive;  // 0x02A8
 	char pad_2A8[0x4];
 
 private:
 	char pad_02AC[172];  // 0x02AC
 public:
-	//class BlockSource *region;  // 0x0358
+	// class BlockSource *region;  // 0x0358
 	char pad_0x358[8];
 
 private:
 	char pad_0360[8];  // 0x0360
 public:
-	//Level *level;  // 0x0368
+	// Level *level;  // 0x0368
 	char pad_368[8];
 
 private:
 	char pad_0370[328];  // 0x0370
 public:
-	//AABB aabb;        // 0x04B8
+	// AABB aabb;        // 0x04B8
 	char pad_4B8[0x10];
 	/*float width;  // 0x04D0
 	float height;     // 0x04D4*/
 	char pad_4D8[0x30];
-	//Vec3 currentPos;  // 0x04D8
-	//Vec3 oldPos;      // 0x04E4
-	//Vec3 velocity;    // 0x04F0
-	//Vec3 velocity2;   // 0x04FC
+	// Vec3 currentPos;  // 0x04D8
+	// Vec3 oldPos;      // 0x04E4
+	// Vec3 velocity;    // 0x04F0
+	// Vec3 velocity2;   // 0x04FC
 private:
 	char pad_0508[80];  // 0x0508
 public:
-	//int64_t entityRuntimeId;  // 0x0558
+	// int64_t entityRuntimeId;  // 0x0558
 	char pad_558[8];
 
 private:
@@ -430,12 +439,12 @@ public:
 	float oldBodyYaw;                 // 0xtoolazytoupdatethesecommentsxd
 	float yawUnused1;                 // 0x0748
 	float yawUnused2;                 // 0x074C*/
-	//int32_t damageTime;               // 0x0750
-	//int32_t damageAnimationDuration;  // 0x0754
+	// int32_t damageTime;               // 0x0750
+	// int32_t damageAnimationDuration;  // 0x0754
 private:
 	char pad_0758[136];  // 0x0758
 public:
-	//int32_t timeSinceDeath;  // 0x07E0
+	// int32_t timeSinceDeath;  // 0x07E0
 	char pad_7E0[8];
 
 private:
@@ -458,15 +467,9 @@ public:
 private:
 	char pad_1024[508];  // 0x1024
 public:
-	//class InventoryTransactionManager transac;  // 0x1220
-	char pad_1220[0x60];
+	// class InventoryTransactionManager transac;  // 0x1220
 
-private:
-	char pad_1280[2828];  // 0x1280
-public:
-	int gamemode;  // 0x1D7C
-
-	BUILD_ACCESS(this, __int64**, entityContext, 0x8);
+	BUILD_ACCESS(this, EntityContext, entityContext, 0x8);
 	BUILD_ACCESS(this, uint32_t, entityIdentifier, 0x10);
 	BUILD_ACCESS(this, int16_t, damageTime, 0x188);
 	BUILD_ACCESS(this, int32_t, ticksAlive, 0x200);
@@ -478,8 +481,9 @@ public:
 	BUILD_ACCESS(this, Vec3, eyePosPrev, 0x814);
 	BUILD_ACCESS(this, Vec3, eyePos, 0x820);
 	BUILD_ACCESS(this, BlockSource *, region, 0xB98);
-	BUILD_ACCESS(this, __int64*, regionSharedPtr, 0xBA0);
+	BUILD_ACCESS(this, __int64 *, regionSharedPtr, 0xBA0);
 	BUILD_ACCESS(this, InventoryTransactionManager, transac, 0xEC8);
+	BUILD_ACCESS(this, TextHolder, playerName, 0x1D08);
 
 	virtual int getStatusFlag(__int64);
 	virtual void setStatusFlag(__int64, bool);
@@ -498,14 +502,14 @@ public:
 	virtual void _doInitialMove(void);
 	virtual void hasComponent(HashedString const &);
 	virtual void Destructor();
-	//virtual void ~Player();
+	// virtual void ~Player();
 	virtual void resetUserPos(bool);
 	virtual int getOwnerEntityType(void);
 	virtual void remove(void);
 	virtual bool isRuntimePredictedMovementEnabled(void);
 	virtual int getPredictedMovementValues(void);
-	virtual Vec3* getPos(void);
-	virtual Vec3* getPosOld(void);
+	virtual Vec3 *getPos(void);
+	virtual Vec3 *getPosOld(void);
 	virtual float getPosExtrapolated(float);
 	virtual float getAttachPos(__int64, float);
 	virtual int getFiringPos(void);
@@ -545,9 +549,9 @@ public:
 	virtual bool canShowNameTag(void);
 	virtual void canExistInPeaceful(void);
 	virtual void setNameTagVisible(bool);
-	virtual TextHolder* getNameTag(void);
+	virtual TextHolder *getNameTag(void);
 	virtual int getNameTagAsHash(void);
-	virtual TextHolder* getFormattedNameTag(void);
+	virtual TextHolder *getFormattedNameTag(void);
 	virtual void filterFormattedNameTag(__int64 const &);
 	virtual void setNameTag(std::string const &);
 	virtual int getAlwaysShowNameTag(void);
@@ -641,9 +645,9 @@ public:
 	virtual void setCarriedItem(ItemStack const *);
 	virtual int getCarriedItem(void);
 	virtual void setOffhandSlot(ItemStack const *);
-	virtual ItemStack* getEquippedTotem(void);
+	virtual ItemStack *getEquippedTotem(void);
 	virtual void consumeTotem(void);
-	virtual void save(CompoundTag*);
+	virtual void save(CompoundTag *);
 	virtual void saveWithoutId(CompoundTag &);
 	virtual void load(CompoundTag const &, __int64 &);
 	virtual void loadLinks(CompoundTag const &, std::vector<__int64> &, __int64 &);
@@ -658,7 +662,7 @@ public:
 	virtual int getPortalCooldown(void);
 	virtual int getPortalWaitTime(void);
 	virtual void canChangeDimensionsUsingPortal(void);
-	virtual void changeDimension(Dimension*, int);
+	virtual void changeDimension(Dimension *, int);
 	virtual void changeDimension(__int64 const &);
 	virtual int getControllingPlayer(void);
 	virtual void checkFallDamage(float, bool);
@@ -777,7 +781,7 @@ public:
 	virtual int getTimeAlongSwing(void);
 	virtual void ate(void);
 	virtual int getMaxHeadXRot(void);
-	virtual bool isAlliedTo(Entity*);
+	virtual bool isAlliedTo(Entity *);
 	virtual void doHurtTarget(Entity *, __int64 const &);
 	virtual void canBeControlledByPassenger(void);
 	virtual void leaveCaravan(void);
@@ -1000,7 +1004,7 @@ public:
 	void lerpTo(Vec3 const &pos, Vec2 const &a2, int a3);
 
 	float getYHeadYaw() {
-		using getYHeadYaw = float(__thiscall *)(Entity*);
+		using getYHeadYaw = float(__thiscall *)(Entity *);
 		static getYHeadYaw getYHeadYawFunc = reinterpret_cast<getYHeadYaw>(FindSignature("48 83 EC 28 8B 41 10 48 8D 54 24 ? 48 8B 49 08 89 44 24 30 48 8B 09 E8 ? ? ? ? 48 85 C0 74 09 F3 0F 10 00 48 83 C4 28 C3 0F 57 C0"));
 		return getYHeadYawFunc(this);
 	}
@@ -1054,22 +1058,68 @@ public:
 		this->rotation->rotPrev.y = vec.x;
 	}
 
-	float getStepHeight() {
-		uint32_t id = this->entityIdentifier;
+	ActorRotationComponent *getActorRotationComponent() {
+		using getActorRotationComponent = ActorRotationComponent*(__cdecl*)(void*, EntityId*);
+		static auto func = reinterpret_cast<getActorRotationComponent>(FindSignature("40 53 48 83 EC ? 48 8B DA BA CE 21 1E DC"));
+		auto registryBase = *reinterpret_cast<void**>(this->ctx.registry);
+		return func(registryBase, &this->ctx.id);
+	}
 
-		using MaxAutoStepComponent_try_get = float*(__thiscall *)(__int64*, uint32_t*);
-		static MaxAutoStepComponent_try_get MaxAutoStepComponent_try_getFunc = reinterpret_cast<MaxAutoStepComponent_try_get>(FindSignature("40 53 48 83 EC 20 48 8B DA BA 16 72 6F 0E"));
-		return *MaxAutoStepComponent_try_getFunc(*this->entityContext, &id);
+	ActorHeadRotationComponent *getActorHeadRotationComponent() {
+		using getActorHeadRotationComponent = ActorHeadRotationComponent*(__cdecl*)(void*, EntityId*);
+		static auto func = reinterpret_cast<getActorHeadRotationComponent>(FindSignature("40 53 48 83 EC ? 48 8B DA BA 1C 58 40 E9"));
+		auto registryBase = *reinterpret_cast<void**>(this->ctx.registry);
+		return func(registryBase, &this->ctx.id);
+	}
+
+	ActorGameTypeComponent *getActorGameTypeComponent() {
+		using getActorGameTypeComponent = ActorGameTypeComponent*(__cdecl*)(void*, EntityId*);
+		static auto func = reinterpret_cast<getActorGameTypeComponent>(FindSignature("40 53 48 83 EC ? 48 8B DA BA DE AB CB AF"));
+		auto registryBase = *reinterpret_cast<void**>(this->ctx.registry);
+		return func(registryBase, &this->ctx.id);
+	}
+
+	FallDistanceComponent *getFallDistanceComponent() {
+		using getFallDistanceComponent = FallDistanceComponent*(__cdecl*)(void*, EntityId*);
+		static auto func = reinterpret_cast<getFallDistanceComponent>(FindSignature("40 53 48 83 EC ? 48 8B DA BA B5 5C 12 81"));
+		auto registryBase = *reinterpret_cast<void**>(this->ctx.registry);
+		return func(registryBase, &this->ctx.id);
+	}
+
+	SwimSpeedMultiplierComponent *getSwimSpeedMultiplierComponent() {
+		using getSwimSpeedMultiplierComponent = SwimSpeedMultiplierComponent *(__cdecl *)(void *, EntityId *);
+		static auto func = reinterpret_cast<getSwimSpeedMultiplierComponent>(FindSignature("40 53 48 83 EC ? 48 8B DA BA 5B A2 66 7A"));
+		auto registryBase = *reinterpret_cast<void **>(this->ctx.registry);
+		return func(registryBase, &this->ctx.id);
+	}
+
+	RenderPositionComponent *getRenderPositionComponent() {
+		using getRenderPositionComponent = RenderPositionComponent *(__cdecl *)(void *, EntityId *);
+		static auto func = reinterpret_cast<getRenderPositionComponent>(FindSignature("40 53 48 83 EC ? 48 8B DA BA 6E F3 E8 D4"));
+		auto registryBase = *reinterpret_cast<void **>(this->ctx.registry);
+		return func(registryBase, &this->ctx.id);
+	}
+
+	RenderRotationComponent *getRenderRotationComponent() {
+		using getRenderRotationComponent = RenderRotationComponent *(__cdecl *)(void *, EntityId *);
+		static auto func = reinterpret_cast<getRenderRotationComponent>(FindSignature("40 53 48 83 EC ? 48 8B DA BA A5 3A 53 2B"));
+		auto registryBase = *reinterpret_cast<void **>(this->ctx.registry);
+		return func(registryBase, &this->ctx.id);
+	}
+
+	float getMaxAutoStepComponent() {
+		using getMaxAutoStepComponent = float(__cdecl *)(void *, EntityId *);
+		static auto func = reinterpret_cast<getMaxAutoStepComponent>(FindSignature("40 53 48 83 EC 20 48 8B DA BA 16 72 6F 0E"));
+		auto registryBase = *reinterpret_cast<void **>(this->ctx.registry);
+		return func(registryBase, &this->ctx.id);
 	}
 
 	void setStepHeight(float stepHeight) {
-		uint32_t id = this->entityIdentifier;
-
-		using MaxAutoStepComponent_try_get = float *(__thiscall *)(__int64*, uint32_t*);
-		static MaxAutoStepComponent_try_get MaxAutoStepComponent_try_getFunc = reinterpret_cast<MaxAutoStepComponent_try_get>(FindSignature("40 53 48 83 EC 20 48 8B DA BA 16 72 6F 0E"));
-		float *f = MaxAutoStepComponent_try_getFunc(*this->entityContext, &id);
-
-		*f = stepHeight;
+		using getMaxAutoStepComponent = float*(__cdecl *)(void *, EntityId *);
+		static auto func = reinterpret_cast<getMaxAutoStepComponent>(FindSignature("40 53 48 83 EC 20 48 8B DA BA 16 72 6F 0E"));
+		auto registryBase = *reinterpret_cast<void **>(this->ctx.registry);
+		float* height = func(registryBase, &this->ctx.id);
+		*height = stepHeight;
 	}
 
 	/*int getGamemode() {
