@@ -35,7 +35,7 @@ void Fly::onTick(GameMode *gm) {
 
 	switch (mode.selected) {
 	case 0:
-		gm->player->canFly = true;
+		gm->player->getAbilitiesComponent()->canFly = true;
 		break;
 	case 1: {
 		float calcYaw = (gm->player->getRot().x + 90) * (PI / 180);
@@ -133,7 +133,8 @@ void Fly::onDisable() {
 	switch (mode.selected) {
 	case 0:
 		if (Game.getLocalPlayer()->getActorGameTypeComponent()->gameType != 1)
-			Game.getLocalPlayer()->canFly = false;
+			Game.getLocalPlayer()->getAbilitiesComponent()->canFly = false;
+			Game.getLocalPlayer()->getAbilitiesComponent()->isFlying = false;
 		break;
 	case 1:
 	case 6:

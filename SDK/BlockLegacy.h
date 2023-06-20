@@ -3,7 +3,6 @@
 #include "../Utils/HMath.h"
 #include "../Utils/Utils.h"
 #include "TextHolder.h"
-//#include "Tag.h"
 
 class Material {
 public:
@@ -65,53 +64,47 @@ public:
 };
 
 class BlockSource {
-public:
+private:
 	virtual void Destructor();
-	virtual Block* getBlock(Vec3i const &, uint32_t);
-	virtual Block* getBlock(Vec3i const &);
+
+public:
 	virtual Block* getBlock(int, int, int);
+	virtual Block* getBlock(Vec3i const &);
+	virtual Block* getBlock(Vec3i const &, int);
 	virtual BlockActor* getBlockEntity(Vec3i const &);
 	virtual Block* getExtraBlock(Vec3i const &);
 	virtual Block* getLiquidBlock(Vec3i const &);
 	virtual bool hasBlock(Vec3i const &);
-	virtual bool containsAnyLiquid(__int64 const &, AABB const &);
+	virtual bool containsAnyLiquid(AABB const &);
 	virtual bool containsMaterial(AABB const &, struct MaterialType);
-	virtual Material* getMaterial(int, int, int);
 	virtual Material* getMaterial(Vec3i const &);
-	virtual bool hasChunksAt(AABB const &, bool);
-	virtual bool hasChunksAt(Vec3i const &, int, bool);
+	virtual Material* getMaterial(int, int, int);
 	virtual bool hasChunksAt(__int64 const &, bool);
+	virtual bool hasChunksAt(Vec3i const &, int, bool);
+	virtual bool hasChunksAt(AABB const &, bool);
 	virtual int getDimensionId(void);
-	virtual std::vector<AABB>* fetchAABBs(std::vector<AABB, std::allocator<AABB>> &, AABB const &, bool);
-	virtual std::vector<AABB>* fetchCollisionShapes(std::vector<AABB, std::allocator<AABB>> &, AABB const &, float *, bool, __int64);
-	virtual float getTallestCollisionShape(AABB const &, float *, bool, __int64);
+	virtual void fetchAABBs(std::vector<AABB> &, AABB const &, bool);
+	virtual void fetchCollisionShapes(std::vector<AABB> &, AABB const &, float *, bool, __int64 const);
+	virtual float getTallestCollisionShape(AABB const &, float *, bool, __int64 const);
 	virtual int getBrightness(Vec3i const &);
-	virtual void fetchAABBs(AABB const &, bool);
-	virtual void fetchCollisionShapes(AABB const &, float *, bool, __int64 *);
-	virtual __int64 getWeakRef(void);
+	virtual int getWeakRef(void);
 	virtual void addListener(__int64 &);
 	virtual void removeListener(__int64 &);
-	virtual void fetchEntities(int, AABB const &, Entity const *, __int64);
 	virtual void fetchEntities(Entity const *, AABB const &, bool, bool);
+	virtual void fetchEntities(struct EntityId, AABB const &, Entity const *, __int64);
 	virtual void setBlock(Vec3i const &, Block const &, int, __int64 const *, Entity *);
 	virtual int16_t getMaxHeight(void);
 	virtual int16_t getMinHeight(void);
-
-private:
-	virtual void TryroFunc_FlagVil29();  // 29
-	virtual void TryroFunc_FlagVil30();  // 30
-	virtual void TryroFunc_FlagVil31();  // 31
-
-public:
+	virtual class Dimension* getDimension(void);
+	virtual Dimension* getDimensionConst(void);
+	virtual Dimension* getDimension2(void);
 	virtual __int64 getChunkAt(Vec3i const &);
-	virtual Entity* getKilledEntity(void);
-
-private:
-	virtual void TryroFunc_FlagVil34();  // 34
-
-public:
-	virtual bool isSolidBlockingBlock(int, int, int);
+	virtual __int64 getILevel(void);
+	virtual void fetchAABBs(AABB const &, bool);
+	virtual void fetchCollisionShapes(AABB const &, float *, bool, class IPlayerMovementProxy *);
+	virtual __int64 getChunkSource(void);
 	virtual bool isSolidBlockingBlock(Vec3i const &);
+	virtual bool isSolidBlockingBlock(int, int, int);
 	virtual bool areChunksFullyLoaded(Vec3i const &, int);
 	virtual bool canDoBlockDrops(void);
 	virtual bool canDoContainedItemDrops(void);
