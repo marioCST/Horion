@@ -337,10 +337,6 @@ public:
 		return this->getUnicodeFont();
 	}
 
-	MoveInputHandler* getMoveTurnInput() {
-		return (MoveInputHandler*)*reinterpret_cast<__int64*>(reinterpret_cast<MoveInputHandler*>(reinterpret_cast<__int64>(this) + 0x120));
-	}
-
 	void grabMouse() {
 		return Utils::CallVFunc<304, void>(this);
 	}
@@ -359,6 +355,16 @@ public:
 
 	class LocalPlayer* getCILocalPlayer() {
 		return Utils::CallVFunc<27, LocalPlayer*>(this);
+	}
+
+	MoveInputHandler* getMoveTurnInput() {
+		uint32_t id = this->getCILocalPlayer()->entityIdentifier;
+		LocalPlayer* player = this->getCILocalPlayer();
+
+		using MoveInputComponent_try_get = MoveInputHandler*(__cdecl *)(void *, EntityId *);
+		static MoveInputComponent_try_get MoveInputComponent_try_getFunc = reinterpret_cast<MoveInputComponent_try_get>(FindSignature("40 53 48 83 EC 20 48 8B DA BA 2E CD 8B 46"));
+		auto registryBase = *reinterpret_cast<void**>(player->ctx.registry);
+		return MoveInputComponent_try_getFunc(registryBase, &player->ctx.id);
 	}
 
 	inline GameSettingsInput* getGameSettingsInput() { return this->ptr->ptr->ptr->settingsInput; };

@@ -6,7 +6,7 @@ JoeMovementController::JoeMovementController(std::shared_ptr<JoePath> path) : cu
 }
 
 void JoeMovementController::step(LocalPlayer *player, MoveInputHandler *movementHandler) {
-	movementHandler->clearMovementState();
+	//movementHandler->clearMovementState();
 	if(stateInfo.currentPathSegment < 0 || stateInfo.currentPathSegment >= currentPath->getNumSegments()){
 		overrideViewAngles = false;
 		return;

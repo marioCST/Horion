@@ -101,7 +101,7 @@ private:
 	static __int8* BlockLegacy_getLightEmission(BlockLegacy* _this, __int8* a2);
 	static __int64 LevelRenderer_renderLevel(__int64 _this, __int64 a2, __int64 a3);
 	static void ClickFunc(__int64 a1, char a2, char a3, __int16 a4, __int16 a5, __int16 a6, __int16 a7, char a8);
-	static __int64 MoveInputHandler_tick(MoveInputHandler* _this, Entity* a2);
+	static void MoveInputHandler_tick(__int64 a1, int* a2, uint32_t* a3, __int64* a4, MoveInputHandler* input, int a6);
 	static __int64 ChestScreenController_tick(ChestScreenController* _this);
 	static float GetGamma(uintptr_t* a1);
 	static bool Actor_isInWater(Entity* _this);

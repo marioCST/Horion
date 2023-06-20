@@ -135,6 +135,10 @@ void Hooks::Init() {
 		void* _isAllowedUIOpenForNonImplementedSource = reinterpret_cast<void*>(FindSignature("40 53 48 83 EC 20 48 8B 02 48 8B CA 48 8B DA 48 8B 80 ? ? ? ? FF 15 ? ? ? ? 84 C0 75 21"));
 		g_Hooks.isAllowedUIOpenForNonImplementedSourceHook = std::make_unique<FuncHook>(_isAllowedUIOpenForNonImplementedSource, Hooks::isAllowedUIOpenForNonImplementedSource);
 
+		// I have no idea if it even is MoveInputHandler tick stuff or not lol, but it works
+		void* MoveInputHandler_tickAddr = reinterpret_cast<void*>(FindSignature("48 89 5C ? ? 55 56 57 41 56 41 57 48 8B EC 48 83 EC ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 45 ? 49 8B 01"));
+		g_Hooks.MoveInputHandler_tickHook = std::make_unique<FuncHook>(MoveInputHandler_tickAddr, Hooks::MoveInputHandler_tick);
+
 		static constexpr auto counterStart = __COUNTER__ + 1;
 		#define lambda_counter (__COUNTER__ - counterStart)
 
@@ -187,16 +191,6 @@ void Hooks::Init() {
 			}
 		} else logF("LoopbackPacketSender is null");
 
-		// MoveInputHandler::vtable
-		if (Game.getClientInstance()->getMoveTurnInput() != nullptr) {
-			uintptr_t** moveInputVtable = reinterpret_cast<uintptr_t**>(*(uintptr_t*)Game.getClientInstance()->getMoveTurnInput());
-			if (moveInputVtable == 0x0)
-				logF("MoveInputHandler is invalid");
-			else {
-				g_Hooks.MoveInputHandler_tickHook = std::make_unique<FuncHook>(moveInputVtable[2], Hooks::MoveInputHandler_tick);
-			}
-		} else logF("MoveTurnInput is null");
-
 		// LocalPlayer::vtable
 		{
 			uintptr_t** localPlayerVtable = GetVtableFromSig("48 8D 05 ? ? ? ? 48 89 01 B8 ? ? ? ? 8D 50 FA 44 8D 48 ? 44 8D 40 ? 66 89 44 ? ? E8 ? ? ? ? 48 8B 8B", 3);
@@ -211,7 +205,7 @@ void Hooks::Init() {
 
 				g_Hooks.Actor_swingHook = std::make_unique<FuncHook>(localPlayerVtable[213], Hooks::Actor_swing);
 
-				g_Hooks.JumpPowerHook = std::make_unique<FuncHook>(localPlayerVtable[337], Hooks::JumpPower); //jump from ground with movement proxy
+				//g_Hooks.JumpPowerHook = std::make_unique<FuncHook>(localPlayerVtable[337], Hooks::JumpPower); //jump from ground with movement proxy
 
 				//g_Hooks.setPosHook = std::make_unique<FuncHook>(localPlayerVtable[19], Hooks::setPos); // Removed from vtable
 
@@ -997,13 +991,11 @@ void Hooks::ClickFunc(__int64 a1, char mouseButton, char isDown, __int16 mouseX,
 	return oFunc(a1, mouseButton, isDown, mouseX, mouseY, relativeMovementX, relativeMovementY, a8);
 }
 
-__int64 Hooks::MoveInputHandler_tick(MoveInputHandler* a1, Entity* a2) {
-	static auto oTick = g_Hooks.MoveInputHandler_tickHook->GetFastcall<__int64, MoveInputHandler*, Entity*>();
+void Hooks::MoveInputHandler_tick(__int64 a1, int* a2, uint32_t* a3, __int64* a4, MoveInputHandler* input, int a6) {
+	static auto oTick = g_Hooks.MoveInputHandler_tickHook->GetFastcall<void, __int64, int*, uint32_t*, __int64 *, MoveInputHandler *, int>();
 
-	auto ret = oTick(a1, a2);
-	moduleMgr->onMove(a1);
-
-	return 0;
+	oTick(a1, a2, a3, a4, input, a6);
+	moduleMgr->onMove(input);
 }
 
 __int64 Hooks::ChestScreenController_tick(ChestScreenController* a1) {
