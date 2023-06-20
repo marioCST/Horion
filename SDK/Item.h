@@ -132,7 +132,7 @@ public:
 	virtual __int64 shouldInteractionWithBlockBypassLiquid(Block const &);                                                               // 52
 	virtual __int64 requiresInteract(void);                                                                                                // 53
 	virtual __int64 appendFormattedHovertext(ItemStack const &, Level &, std::string &, bool);                                  // 54
-	virtual bool isValidRepairItem(ItemStack const &, ItemStack const &, __int64 const &);
+	virtual bool isValidRepairItem(ItemStack const &, ItemStack const &, Item const &);
 	virtual __int64 getEnchantSlot(void);                                                                                                  // 56
 	virtual __int64 getEnchantValue(void);                                                                                                 // 57
 	virtual __int64 getArmorValue(void);                                                                                                   // 58
@@ -155,13 +155,13 @@ public:
 	virtual __int64 getActorIdentifier(ItemStack const &);                                                                               // 74                                                               // 76
 	virtual __int64 buildIdAux(short, CompoundTag const *);                                                                                // 77
 	virtual bool canUseOnSimTick(void);                                                                                                    // 78
-	virtual __int64 use(ItemStack &, Player &);                                                                                        // 79
-	virtual __int64 dispense(BlockSource &, __int64, int, Vec3 const &, unsigned char);                                                // 80
+	virtual __int64 use(ItemStack*, Player*);                                                                                        // 79
+	virtual __int64 dispense(BlockSource *region, class Container *container, int slot, const Vec3 &pos, char face);                                                                                           // 80
 	virtual __int64 useTimeDepleted(ItemStack &, Level *, Player *);                                                          // 81
-	virtual __int64 releaseUsing(ItemStack &, Player *, int);                                                                          // 82
+	virtual __int64 releaseUsing(ItemStack &, Player *, int durationLeft);                                                             // 82
 	virtual __int64 getDestroySpeed(ItemStack const &, Block const &);                                                                 // 83
-	virtual __int64 hurtActor(ItemStack &, Entity &, Entity &);                                                                      // 84
-	virtual __int64 hitActor(ItemStack &, Entity &, Entity &);                                                                       // 85
+	virtual __int64 hurtActor(ItemStack &, Entity *mob, Entity *attacker);                                                             // 84
+	virtual __int64 hitActor(ItemStack &, Entity *mob, Entity *attacker);                                                              // 85
 	virtual __int64 hitBlock(ItemStack &, Block const &, Vec3i const &, Entity &);                                                 // 86
 	virtual __int64 mineBlock(ItemStack &, Block const &, int, int, int, Entity *);                                                  // 87
 	virtual __int64 mineBlock(ItemStack &, Block const &, int, int, int, Entity *) const;                                            // 88
@@ -205,7 +205,7 @@ public:
 	virtual int getAuxValuesDescription(void);
 	virtual void _checkUseOnPermissions(Entity &, ItemStack &, char const &, Vec3i const &);
 	virtual void _calculatePlacePos(ItemStack &, Entity &, char &, Vec3i &);
-	virtual void _useOn(ItemStack &, Entity &, Vec3i, char, Vec3 const &);
+	virtual void _useOn(ItemStack *itemStack, Entity *entity, Vec3i xyz, char face, Vec3 const & clickXYZ);
 
 public:
 	bool isTool(void) {
@@ -245,7 +245,7 @@ public:
 	}
 
 	bool isBlock(void) {
-		auto val = *reinterpret_cast<__int64 ***>(reinterpret_cast<__int64>(this) + 0x1A0);
+		auto val = *reinterpret_cast<__int64 ***>(reinterpret_cast<__int64>(this) + 0x1B8);
 		return val != nullptr && *val != nullptr;
 	}
 
