@@ -520,6 +520,7 @@
     <ClInclude Include="SDK\ClientInstance.h" />
     <ClInclude Include="SDK\ClientInstanceScreenModel.h" />
     <ClInclude Include="SDK\ComplexInventoryTransaction.h" />
+    <ClInclude Include="SDK\Components.h" />
     <ClInclude Include="SDK\Entity.h" />
     <ClInclude Include="SDK\EntityList.h" />
     <ClInclude Include="SDK\GameMode.h" />
