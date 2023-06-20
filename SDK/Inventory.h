@@ -92,9 +92,9 @@ class ContainerScreenController {
 private:
 	virtual __int64 destructor();
 	virtual __int64 tick(void);
-	virtual __int64 handleEvent(__int64&);
+	virtual __int64 handleEvent(__int64 &);
 	virtual __int64 getRoute(void);
-	virtual __int64 setScreenState(__int64, std::string const&);
+	virtual __int64 setScreenState(__int64, std::string const &);
 	virtual __int64 onOpen(void);
 	virtual __int64 onTerminate(void);
 	virtual __int64 onInit(void);
@@ -108,9 +108,12 @@ public:
 private:
 	virtual __int64 areControllerTabsEnabled(void);
 	virtual __int64 onCreation(void);
-	virtual __int64 logCreationTime(std::string const&, double, double, unsigned char);
+	virtual __int64 logCreationTime(std::string const &, double, double, unsigned char);
 	virtual __int64 unknown2();
 	virtual __int64 unknown3();
+	virtual __int64 unknown4();
+	virtual __int64 unknown5();
+	virtual __int64 unknown6();
 
 public:
 	virtual __int64 onLeave(void);
@@ -118,18 +121,20 @@ public:
 
 private:
 	virtual __int64 handleGameEventNotification(__int64);
-	virtual __int64 bind(std::string const&, unsigned int, int, std::string const&, unsigned int, std::string const&, __int64&);
-	virtual __int64 bind(std::string const&, unsigned int, std::string const&, __int64&);
+	virtual __int64 bind(std::string const &, unsigned int, int, std::string const &, unsigned int, std::string const &, __int64 &);
+	virtual __int64 bind(std::string const &, unsigned int, std::string const &, __int64 &);
 	virtual __int64 handleLicenseChanged(void);
-	virtual __int64 onDictationEvent(std::string const&);
+	virtual __int64 onDictationEvent(std::string const &);
 
 public:
-	virtual __int64 getCallbackInterval(void);
-	virtual void setAssociatedBlockPos(Vec3i const&);
+	virtual void setAssociatedBlockPos(Vec3i const &);
 	virtual void setAssociatedEntityUniqueID(__int64);
 	virtual void setSuspendInput(bool);
+
+private:
+	virtual __int64 getCallbackInterval(void);
 	virtual __int64 onRender(void);
-	virtual __int64 addStaticScreenVars(__int64&);
+	virtual __int64 addStaticScreenVars(__int64 &);
 	virtual __int64 getAdditionalScreenInfo(void);
 	virtual __int64 getTelemetryOverride(void);
 	virtual __int64 addEventProperties(__int64) const;
@@ -138,7 +143,7 @@ public:
 	virtual __int64 screenHandlesGamepadMenuButton(void);
 	virtual __int64 getProxy(void);
 	virtual __int64 onEntered(void);
-	virtual __int64 getNameId(std::string const&);
+	virtual __int64 getNameId(std::string const &);
 	virtual __int64 _doesScreenHaveExitBehavior(void);
 	virtual __int64 _isStillValid(void);
 	virtual __int64 _getGamepadHelperVisible(void);
@@ -150,28 +155,29 @@ public:
 	virtual __int64 _getButtonYDescription(void);
 	virtual __int64 _getButtonKeyboardDescription(void);
 
+public:
+	virtual __int64 _handlePlaceAll(std::string const &, int);
+	virtual __int64 _handlePlaceOne(std::string const &, int);
+	virtual __int64 _handleSelectSlot(std::string const &, int);
+	virtual __int64 _getSelectedSlotInfo(void);
+
 private:
-	virtual void pleasePad1();
-	virtual void pleasePad2();
-	virtual void pleasePad3();
+	virtual __int64 unknown7();
+	virtual __int64 unknown8();
 
 public:
-	virtual __int64 _handlePlaceAll(std::string const&, int);
-	virtual __int64 _handlePlaceOne(std::string const&, int);
-	virtual __int64 _handleSelectSlot(std::string const&, int);
-	virtual __int64 _getSelectedSlotInfo(void);
-	virtual ItemStack* _getItemStack(TextHolder, int) const;
+	virtual ItemStack *_getItemStack(TextHolder, int) const;
 
 private:
-	virtual __int64 _getVisualItemStack(std::string const&, int);
-	virtual __int64 _getTakeableItemStackBase(std::string const&, int);
-	virtual __int64 _onContainerSlotHovered(std::string const&, int);
-	virtual __int64 _onContainerSlotSelected(std::string const&, int);
-	virtual __int64 _onContainerSlotPressed(std::string const&, int);
-	virtual __int64 _shouldSwap(std::string const&, int, std::string const&, int);
-	virtual __int64 _getCollectionName(__int64*);
-	virtual __int64 _canSplit(std::string const&, int);
-	virtual __int64 _sendFlyingItem(__int64 const&, std::string const&, int, std::string const&, int);
+	virtual __int64 _getVisualItemStack(std::string const &, int);
+	virtual __int64 _getTakeableItemStackBase(std::string const &, int);
+	virtual __int64 _onContainerSlotHovered(std::string const &, int);
+	virtual __int64 _onContainerSlotSelected(std::string const &, int);
+	virtual __int64 _onContainerSlotPressed(std::string const &, int);
+	virtual __int64 _shouldSwap(std::string const &, int, std::string const &, int);
+	virtual __int64 _getCollectionName(__int64 *);
+	virtual __int64 _canSplit(std::string const &, int);
+	virtual __int64 _sendFlyingItem(__int64 const &, std::string const &, int, std::string const &, int);
 
 public:
 	void handleAutoPlace(std::string name, int slot);
