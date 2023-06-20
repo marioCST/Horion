@@ -48,26 +48,31 @@ class ItemStack;
 class Level;
 
 class Item {
-	char pad_0008[0x70];  //0x8
-public:
-	int16_t maxStackSize;  //0x78
-	int16_t itemId;        //0x7A
 private:
-	char pad_0094[4];  //0x7C
+	char pad_0x8[0x48];  // 0x8
 public:
-	TextHolder tileName;  //0x80
+	TextHolder rawName;  // 0x50 don't use
 private:
-	char pad_00B8[8];  //0xA0
+	char pad_0x70[0x20];  // 0x70
 public:
-	TextHolder name;  //0xA8
+	int16_t maxStackSize;  // 0x90
+	int16_t itemId;        // 0x92
 private:
-	char pad_00E0[8];  //0xC8
+	char pad_0x94[0x4];  // 0x94
 public:
-	TextHolder isFrom;  //0xD0
+	TextHolder tileName;  // 0x98
 private:
-	char pad_0108[80];  //0xF0
+	char pad_0xB8[0x8];  // 0xB8
 public:
-	int16_t duration;  //0x140
+	TextHolder name;  // 0xC0
+private:
+	char pad_0xE0[0x30];  // 0xE0
+public:
+	TextHolder isFrom;  // 0x110
+private:
+	char pad_0x130[0xC];  // 0x130
+public:
+	int16_t duration;  // 0x13C
 
 private:
 	virtual void destructor();                     // 0
