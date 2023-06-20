@@ -1114,6 +1114,13 @@ public:
 		return func(registryBase, &this->ctx.id);
 	}
 
+	FlySpeedComponent *getFlySpeedComponent() {
+		using getFlySpeedComponent = FlySpeedComponent *(__cdecl *)(void *, EntityId *);
+		static auto func = reinterpret_cast<getFlySpeedComponent>(FindSignature("40 53 48 83 EC ? 48 8B DA BA E3 B6 3B 2C"));
+		auto registryBase = *reinterpret_cast<void **>(this->ctx.registry);
+		return func(registryBase, &this->ctx.id);
+	}
+
 	float getMaxAutoStepComponent() {
 		using getMaxAutoStepComponent = float(__cdecl *)(void *, EntityId *);
 		static auto func = reinterpret_cast<getMaxAutoStepComponent>(FindSignature("40 53 48 83 EC 20 48 8B DA BA 16 72 6F 0E"));

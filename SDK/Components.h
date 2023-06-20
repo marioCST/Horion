@@ -60,3 +60,7 @@ public:
 	BUILD_ACCESS(this, bool, isFlying, 0x158);
 	BUILD_ACCESS(this, bool, canFly, 0x164);
 };
+
+struct FlySpeedComponent {
+	float flySpeed; // it's more like in air speed then fly speed
+};
