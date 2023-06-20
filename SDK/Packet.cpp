@@ -136,7 +136,7 @@ C_MovePlayerPacket::C_MovePlayerPacket(LocalPlayer* player, Vec3 pos) {
 	}
 	memset(this, 0, sizeof(C_MovePlayerPacket));  // Avoid overwriting vtable
 	vTable = movePlayerPacketVtable;
-	entityRuntimeID = player->getMovementProxy()->getRuntimeID();
+	entityRuntimeID = player->getRuntimeIDComponent()->runtimeID;
 	Position = pos;
 	pitch = player->getRot().y;
 	yaw = player->getRot().x;

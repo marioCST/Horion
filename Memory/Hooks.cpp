@@ -813,7 +813,7 @@ void Hooks::LoopbackPacketSender_sendToServer(LoopbackPacketSender* a, Packet* p
 	if (autoSneakMod->isEnabled() && Game.getLocalPlayer() != nullptr && autoSneakMod->doSilent && packet->isInstanceOf<PlayerActionPacket>()) {
 		auto* pp = reinterpret_cast<PlayerActionPacket*>(packet);
 
-		if (pp->action == 12 && pp->entityRuntimeId == Game.getLocalPlayer()->getMovementProxy()->getRuntimeID())
+		if (pp->action == 12 && pp->entityRuntimeId == Game.getLocalPlayer()->getRuntimeIDComponent()->runtimeID)
 			return;  // dont send uncrouch
 	}
 

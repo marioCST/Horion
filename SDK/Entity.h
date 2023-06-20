@@ -1121,16 +1121,23 @@ public:
 		return func(registryBase, &this->ctx.id);
 	}
 
+	RuntimeIDComponent *getRuntimeIDComponent() {
+		using getRuntimeIDComponent = RuntimeIDComponent *(__cdecl *)(void *, EntityId *);
+		static auto func = reinterpret_cast<getRuntimeIDComponent>(FindSignature("40 53 48 83 EC ? 48 8B DA BA 14 14 A1 3C"));
+		auto registryBase = *reinterpret_cast<void **>(this->ctx.registry);
+		return func(registryBase, &this->ctx.id);
+	}
+
 	float getMaxAutoStepComponent() {
 		using getMaxAutoStepComponent = float(__cdecl *)(void *, EntityId *);
-		static auto func = reinterpret_cast<getMaxAutoStepComponent>(FindSignature("40 53 48 83 EC 20 48 8B DA BA 16 72 6F 0E"));
+		static auto func = reinterpret_cast<getMaxAutoStepComponent>(FindSignature("40 53 48 83 EC ? 48 8B DA BA 16 72 6F 0E"));
 		auto registryBase = *reinterpret_cast<void **>(this->ctx.registry);
 		return func(registryBase, &this->ctx.id);
 	}
 
 	void setStepHeight(float stepHeight) {
 		using getMaxAutoStepComponent = float*(__cdecl *)(void *, EntityId *);
-		static auto func = reinterpret_cast<getMaxAutoStepComponent>(FindSignature("40 53 48 83 EC 20 48 8B DA BA 16 72 6F 0E"));
+		static auto func = reinterpret_cast<getMaxAutoStepComponent>(FindSignature("40 53 48 83 EC ? 48 8B DA BA 16 72 6F 0E"));
 		auto registryBase = *reinterpret_cast<void **>(this->ctx.registry);
 		float* height = func(registryBase, &this->ctx.id);
 		*height = stepHeight;

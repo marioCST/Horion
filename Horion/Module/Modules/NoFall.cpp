@@ -55,7 +55,7 @@ void NoFall::onTick(GameMode* gm) {
 			case 0: {
 				PlayerActionPacket actionPacket;
 				actionPacket.action = 7;  // Respawn
-				actionPacket.entityRuntimeId = localPlayer->getMovementProxy()->getRuntimeID();
+				actionPacket.entityRuntimeId = localPlayer->getRuntimeIDComponent()->runtimeID;
 				Game.getClientInstance()->loopbackPacketSender->sendToServer(&actionPacket);
 				break;
 			}
@@ -67,7 +67,7 @@ void NoFall::onTick(GameMode* gm) {
 			case 3: {
 				PlayerActionPacket actionPacket;
 				actionPacket.action = 15;  // Open Elytra
-				actionPacket.entityRuntimeId = localPlayer->getMovementProxy()->getRuntimeID();
+				actionPacket.entityRuntimeId = localPlayer->getRuntimeIDComponent()->runtimeID;
 				Game.getClientInstance()->loopbackPacketSender->sendToServer(&actionPacket);
 			}
 			case 4: {

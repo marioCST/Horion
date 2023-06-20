@@ -65,3 +65,8 @@ struct FlySpeedComponent {
 public:
 	float flySpeed; // it's more like in air speed then fly speed
 };
+
+struct RuntimeIDComponent {
+public:
+	int64_t runtimeID;
+};
