@@ -71,7 +71,7 @@ void NoFall::onTick(GameMode* gm) {
 				Game.getClientInstance()->loopbackPacketSender->sendToServer(&actionPacket);
 			}
 			case 4: {
-				Vec3 blockBelow = localPlayer->eyePos;
+				Vec3 blockBelow = localPlayer->getRenderPositionComponent()->renderPos;
 				blockBelow.y -= localPlayer->aabb->size.x;
 				blockBelow.y -= 0.17999f;
 				while (localPlayer->region->getBlock(blockBelow)->blockLegacy->blockId == 0 && !localPlayer->region->getBlock(blockBelow)->blockLegacy->material->isSolid) {

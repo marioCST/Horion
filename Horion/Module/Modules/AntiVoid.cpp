@@ -13,7 +13,7 @@ const char* AntiVoid::getModuleName() {
 
 void AntiVoid::onTick(GameMode* gm) {
 	LocalPlayer* player = Game.getLocalPlayer();
-	Vec3 blockBelow = player->eyePos;
+	Vec3 blockBelow = player->getRenderPositionComponent()->renderPos;
 	blockBelow.y -= player->aabb->size.x;
 	blockBelow.y -= 0.5f;
 

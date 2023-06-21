@@ -50,9 +50,9 @@ void doRenderStuff(Entity* ent, bool isRegularEntitie) {
 	} else
 		return;
 	if (espMod->is2d)
-		DrawUtils::draw2D(ent, (float)fmax(0.5f, 1 / (float)fmax(1, localPlayer->eyePos.dist(ent->eyePos) * 3.f)));
+		DrawUtils::draw2D(ent, (float)fmax(0.5f, 1 / (float)fmax(1, localPlayer->getRenderPositionComponent()->renderPos.dist(ent->getRenderPositionComponent()->renderPos) * 3.f)));
 	else 
-		DrawUtils::drawEntityBox(ent, (float)fmax(0.5f, 1 / (float)fmax(1, localPlayer->eyePos.dist(ent->eyePos))));
+		DrawUtils::drawEntityBox(ent, (float)fmax(0.5f, 1 / (float)fmax(1, localPlayer->getRenderPositionComponent()->renderPos.dist(ent->getRenderPositionComponent()->renderPos))));
 }
 
 void ESP::onPreRender(MinecraftUIRenderContext* renderCtx) {

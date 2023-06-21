@@ -53,7 +53,7 @@ void BowAimbot::onPostRender(MinecraftUIRenderContext* renderCtx) {
 
 	if (!targetList.empty()) {
 		std::sort(targetList.begin(), targetList.end(), CompareTargetEnArray());
-		Vec3 origin = Game.getLocalPlayer()->eyePos;  // TODO: sort list
+		Vec3 origin = Game.getLocalPlayer()->getRenderPositionComponent()->renderPos;  // TODO: sort list
 		Entity* entity = targetList[0];
 		Vec3 pos = entity->aabb->centerPoint();
 		if (predict) {
