@@ -61,7 +61,7 @@ void Hooks::Init() {
 		void* getGameEdition = reinterpret_cast<void*>(FindSignature("8B 91 ?? ?? ?? ?? 85 D2 74 1C 83 EA 01"));
 		g_Hooks.AppPlatform_getGameEditionHook = std::make_unique<FuncHook>(getGameEdition, Hooks::AppPlatform_getGameEdition);
 
-		void* tick_entityList = reinterpret_cast<void*>(FindSignature("40 53 48 83 EC ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 ? ? ? ? C0 48 8B D9 48 8D 4C ? ? ? ? 44 24 ? ? ? 44 24 ? E8 ? ? ? ? 48 8B 44 ? ? 48 85 C0 ? ? ? ? ? ? 48 8B 00"));
+		void* tick_entityList = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 57 48 83 EC ? 48 8B D9 FF 15 ? ? ? ? 48 8B F8 FF 15 ? ? ? ? 48 81 FF ? ? ? ? 75 ? 48 6B C0 ? EB ? 48 99 48 F7 FF 48 8B C8 48 69 C2 ? ? ? ? 48 69 C9 ? ? ? ? 48 99 48 F7 FF 48 03 C1 48 2B 83 ? ? ? ? 48 B9 ? ? ? ? ? ? ? ? 48 3B C1 7C"));
 		g_Hooks.MultiLevelPlayer_tickHook = std::make_unique<FuncHook>(tick_entityList, Hooks::MultiLevelPlayer_tick);
 
 		void* keyMouseFunc = reinterpret_cast<void*>(FindSignature("48 89 5C ? ? 55 56 57 41 54 41 55 41 56 41 57 48 8B EC 48 81 EC ? ? ? ? ? ? 74 24 ? ? ? 7C 24 ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 45 ? 49 8B F8"));
