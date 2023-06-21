@@ -23,7 +23,7 @@ public:
     char pad_0000[88];    // 0x0000
     ItemRenderer* itemRenderer;   // 0x0058
     char pad_0060[4000];  // 0x0060
-    BaseActorRenderContext(ScreenContext* ScreenCtx, ClientInstanceclient*, MinecraftGame *game);
+    BaseActorRenderContext(ScreenContext* ScreenCtx, ClientInstance* client, MinecraftGame *game);
 };
 
 class ItemRenderer {
