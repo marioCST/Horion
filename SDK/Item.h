@@ -19,22 +19,11 @@ class ClientInstance;
 class MinecraftGame;
 
 class BaseActorRenderContext {
-private:
-	char pad_0x0[0x18];											// 0x00
 public:
-	ClientInstance* clientInstance;                             // 0x18
-	MinecraftGame* minecraftGame;                               // 0x20
-	ScreenContext* screenContext;                               // 0x28
-private:
-	char pad_0x30[0x18];										// 0x30
-public:
-	ItemInHandRenderer* itemInHandRenderer;                     // 0x48
-	ItemRenderer* itemRenderer;                                 // 0x50
-private:
-	char pad_0x58[0x240];										// 0x58
-
-public:
-	BaseActorRenderContext(ScreenContext *ScreenCtx, ClientInstance *client, MinecraftGame *game);
+    char pad_0000[88];    // 0x0000
+    ItemRenderer* itemRenderer;   // 0x0058
+    char pad_0060[4000];  // 0x0060
+    BaseActorRenderContext(ScreenContext* ScreenCtx, ClientInstanceclient*, MinecraftGame *game);
 };
 
 class ItemRenderer {
