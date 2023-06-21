@@ -10,7 +10,7 @@ bool TopCommand::execute(std::vector<std::string>* args) {
 	assertTrue(Game.getLocalPlayer() != nullptr);
 
 	LocalPlayer* player = Game.getLocalPlayer();
-	Vec3 playerPos = player->eyePos;
+	Vec3 playerPos = player->getRenderPositionComponent()->renderPos;
 	bool groundAbove = false;  // Checking if ground above us.
 	Vec3i blockPos;
 

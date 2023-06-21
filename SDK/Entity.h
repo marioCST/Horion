@@ -478,8 +478,8 @@ public:
 	BUILD_ACCESS(this, AABB *, aabb, 0x2A8);
 	BUILD_ACCESS(this, EntityRotation *, rotation, 0x2B0);
 	BUILD_ACCESS(this, int64_t, timeSinceDeath, 0x62C);
-	BUILD_ACCESS(this, Vec3, eyePosPrev, 0x814);
-	BUILD_ACCESS(this, Vec3, eyePos, 0x820);
+	//BUILD_ACCESS(this, Vec3, eyePosPrev, 0x814);
+	//BUILD_ACCESS(this, Vec3, eyePos, 0x820);
 	BUILD_ACCESS(this, BlockSource *, region, 0xB98);
 	BUILD_ACCESS(this, __int64 *, regionSharedPtr, 0xBA0);
 	BUILD_ACCESS(this, InventoryTransactionManager, transac, 0xEC8);

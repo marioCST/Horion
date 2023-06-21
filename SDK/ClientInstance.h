@@ -302,8 +302,8 @@ public:
 
 	Vec2 getFov() {
 		Vec2 fov;
-		fov.x = *reinterpret_cast<float*>((uintptr_t)(this) + 0x624);
-		fov.y = *reinterpret_cast<float*>((uintptr_t)(this) + 0x638);
+		fov.x = *reinterpret_cast<float*>((uintptr_t)(this) + 0x6A0);
+		fov.y = *reinterpret_cast<float*>((uintptr_t)(this) + 0x6B4);
 		return fov;
 	}
 

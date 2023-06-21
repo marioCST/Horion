@@ -16,7 +16,7 @@ void JoeMovementController::step(LocalPlayer *player, MoveInputHandler *movement
 		currentPath->initPathSegments();
 	}
 
-	auto pPos = player->eyePos;
+	auto pPos = player->getRenderPositionComponent()->renderPos;
 	pPos.y -= 1.62f;
 	Vec3i playerNode((int)floorf(pPos.x), (int)roundf(pPos.y), (int)floorf(pPos.z));
 

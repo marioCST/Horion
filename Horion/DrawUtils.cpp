@@ -469,7 +469,7 @@ void DrawUtils::drawNameTags(Entity* ent, float textSize, bool drawHealth, bool 
 	float textWidth = getTextWidth(&text, textSize);
 	float textHeight = DrawUtils::getFont(Fonts::SMOOTH)->getLineHeight() * textSize;
 
-	if (refdef->OWorldToScreen(origin, ent->eyePos.add(0, 0.5f, 0), textPos, fov, screenSize)) {
+	if (refdef->OWorldToScreen(origin, ent->getRenderPositionComponent()->renderPos.add(0, 0.5f, 0), textPos, fov, screenSize)) {
 		textPos.y -= textHeight;
 		textPos.x -= textWidth / 2.f;
 		rectPos.x = textPos.x - 1.f * textSize;
@@ -513,7 +513,7 @@ void DrawUtils::drawNameTags(Entity* ent, float textSize, bool drawHealth, bool 
 }
 
 void DrawUtils::drawEntityBox(Entity* ent, float lineWidth, bool fill) {
-	Vec3 end = ent->eyePos;
+	Vec3 end = ent->getRenderPositionComponent()->renderPos;
 	AABB render;
 	if (ent->isPlayer()) {
 		render = AABB(end, ent->aabb->size.y, ent->aabb->size.x, ent->aabb->size.x);
@@ -523,13 +523,13 @@ void DrawUtils::drawEntityBox(Entity* ent, float lineWidth, bool fill) {
 		render = AABB(end, ent->aabb->size.y, ent->aabb->size.x, 0);
 	render.upper.y += 0.1f;
 
-	float LineWidth = (float)fmax(0.5f, 1 / (float)fmax(1, (float)Game.getLocalPlayer()->eyePos.dist(end)));
+	float LineWidth = (float)fmax(0.5f, 1 / (float)fmax(1, (float)Game.getLocalPlayer()->getRenderPositionComponent()->renderPos.dist(end)));
 	DrawUtils::drawBox(render.lower, render.upper, lineWidth == 0 ? LineWidth : lineWidth, fill);
 }
 
 void DrawUtils::draw2D(Entity* ent, float lineWidth) {
 	if (Game.getLocalPlayer() == nullptr) return;
-	Vec3 end = ent->eyePos;
+	Vec3 end = ent->getRenderPositionComponent()->renderPos;
 	AABB render;
 	if (ent->isPlayer()) {
 		render = AABB(end, ent->aabb->size.y, ent->aabb->size.x, ent->aabb->size.x);
@@ -564,7 +564,7 @@ void DrawUtils::draw2D(Entity* ent, float lineWidth) {
 		if (point.x > resultRect.z) resultRect.z = point.x;
 		if (point.y > resultRect.w) resultRect.w = point.y;
 	}
-	float LineWidth = (float)fmax(0.5f, 1 / (float)fmax(1, (float)Game.getLocalPlayer()->eyePos.dist(end)));
+	float LineWidth = (float)fmax(0.5f, 1 / (float)fmax(1, (float)Game.getLocalPlayer()->getRenderPositionComponent()->renderPos.dist(end)));
 	DrawUtils::drawRectangle(Vec2(resultRect.x, resultRect.y), Vec2(resultRect.z, resultRect.w), lineWidth == 0 ? LineWidth : lineWidth);
 }
 
