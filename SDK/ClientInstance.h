@@ -103,7 +103,7 @@ public:
 	mce::TexturePtr atlasTexture;  // 0x140
 
 	Vec3& getOrigin() {
-		return *(Vec3*)((char*)this + (0x79C));
+		return *(Vec3*)((char*)this + (0x780));
 	}
 };
 
@@ -134,18 +134,10 @@ public:
 };
 
 class MinecraftGame {
-private:
-	char pad_0000[312];                     // 0x0000
 public:
-	bool canUseKeys;                        // 0x0138
-private:
-	char pad_0139[3319];                    // 0x0139
-public:
-	FontRepository** fontRepository;  // 0x0E30
-private:
-	char pad_0E38[8];                       // 0x0E38
-public:
-	Font* mcFont;                     // 0x0E40
+	BUILD_ACCESS(this, bool, canUseKeys, 0xD8);
+	BUILD_ACCESS(this, FontRepository**, fontRepository, 0xE58);
+	BUILD_ACCESS(this, Font*, mcFont, 0xE68);
 
 	Font* getTheGoodFontThankYou() {
 		return (*fontRepository)->fontList->fontEntries[7].font;
