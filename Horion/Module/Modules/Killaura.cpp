@@ -46,7 +46,7 @@ void findEntity(Entity* currentEntity, bool isRegularEntity) {
 	if (killauraMod->isMobAura) {
 		if (currentEntity->getNameTag()->getTextLength() <= 1 && currentEntity->getEntityTypeId() == 63)
 			return;
-		if(currentEntity->width <= 0.01f || currentEntity->height <= 0.01f) // Don't hit this pesky antibot on 2b2e.org
+		if (currentEntity->aabb->width <= 0.01f || currentEntity->aabb->height <= 0.01f)  // Don't hit this pesky antibot on 2b2e.org
 			return;
 		if(currentEntity->getEntityTypeId() == 64) // item
 			return;
@@ -96,7 +96,7 @@ void Killaura::onTick(GameMode* gm) {
 
 		if (autoweapon) findWeapon();
 
-		if (Game.getLocalPlayer()->velocity.squaredxzlen() < 0.01) {
+		if (Game.getLocalPlayer()->entityLocation->velocity.squaredxzlen() < 0.01) {
 			C_MovePlayerPacket p(Game.getLocalPlayer(), *Game.getLocalPlayer()->getPos());
 			Game.getClientInstance()->loopbackPacketSender->sendToServer(&p);  // make sure to update rotation if player is standing still
 		}

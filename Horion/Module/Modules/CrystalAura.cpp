@@ -52,7 +52,7 @@ bool CanPlaceC(Vec3i* pos) {
 	Game.forEachEntity([](Entity* ent, bool b) {
 		if (!space)
 			return;
-		if (ent->aabb.intersects(AABB(_pos, _pos.add(1.f))))
+		if (ent->aabb->intersects(AABB(_pos, _pos.add(1.f))))
 			space = false;
 	});
 	return space;

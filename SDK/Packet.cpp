@@ -138,9 +138,9 @@ C_MovePlayerPacket::C_MovePlayerPacket(LocalPlayer* player, Vec3 pos) {
 	vTable = movePlayerPacketVtable;
 	entityRuntimeID = player->entityRuntimeId;
 	Position = pos;
-	pitch = player->pitch;
-	yaw = player->yaw;
-	headYaw = player->yaw;
+	pitch = player->getActorHeadRotationComponent()->rot.x;
+	yaw = player->getActorRotationComponent()->rot.y;
+	headYaw = player->getActorHeadRotationComponent()->rot.y;
 	onGround = true;
 	mode = 0;
 }

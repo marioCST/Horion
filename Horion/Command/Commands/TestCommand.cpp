@@ -11,7 +11,7 @@ TestCommand::~TestCommand() {
 }
 
 void listEnts() {
-	Level* level = Game.getLocalPlayer()->getlevel();
+	Level* level = Game.getLocalPlayer()->getLevel();
 	Entity* entity = level->getEntity();
 	if (entity != nullptr) {
 		int64_t id = entity->getEntityTypeId();
@@ -41,7 +41,7 @@ void itemId() {
 
 void showAimedBlockInfo() {
 	LocalPlayer* player = Game.getLocalPlayer();
-	Level* level = player->getlevel();
+	Level* level = player->getLevel();
 	Block* block = player->region->getBlock(level->block);
 	if (block != nullptr && level != nullptr && block->blockLegacy != nullptr && block->blockLegacy->blockId != 7) {
 		const char* name = block->toLegacy()->name.getText();

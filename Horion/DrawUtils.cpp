@@ -515,11 +515,11 @@ void DrawUtils::drawEntityBox(Entity* ent, float lineWidth, bool fill) {
 	Vec3 end = ent->eyePos0;
 	AABB render;
 	if (ent->isPlayer()) {
-		render = AABB(end, ent->width, ent->height, ent->height);
+		render = AABB(end, ent->aabb->width, ent->aabb->height, ent->aabb->height);
 		render.upper.y += 0.2f;
 		render.lower.y += 0.2f;
 	} else
-		render = AABB(end, ent->width, ent->height, 0);
+		render = AABB(end, ent->aabb->width, ent->aabb->height, 0);
 	render.upper.y += 0.1f;
 
 	float LineWidth = (float)fmax(0.5f, 1 / (float)fmax(1, (float)Game.getLocalPlayer()->eyePos0.dist(end)));
@@ -531,11 +531,11 @@ void DrawUtils::draw2D(Entity* ent, float lineWidth) {
 	Vec3 end = ent->eyePos0;
 	AABB render;
 	if (ent->isPlayer()) {
-		render = AABB(end, ent->width, ent->height, ent->height);
+		render = AABB(end, ent->aabb->width, ent->aabb->height, ent->aabb->height);
 		render.upper.y += 0.2f;
 		render.lower.y += 0.2f;
 	} else
-		render = AABB(end, ent->width, ent->height, 0);
+		render = AABB(end, ent->aabb->width, ent->aabb->height, 0);
 	render.upper.y += 0.1f;
 
 	Vec3 worldPoints[8];

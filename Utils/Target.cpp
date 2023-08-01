@@ -81,13 +81,16 @@ bool Target::isValidTarget(Entity* ent) {
 		return false;
 
 	if (!hitboxMod->isEnabled() && antibot->isHitboxCheckEnabled())
-		if ((ent->height < 1.5f || ent->width < 0.49f || ent->height > 2.1f || ent->width > 0.9f))
+		if ((ent->aabb->height < 1.5f || ent->aabb->width < 0.49f || ent->aabb->height > 2.1f || ent->aabb->width > 0.9f))
 			return false;
 
 	if (!localPlayer->canAttack(ent, false))
 		return false;
 
 	if (antibot->isExtraCheckEnabled() && !ent->canShowNameTag())
+		return false;
+
+	if (antibot->isPlayerCheckEnabled() && !ent->isPlayer())
 		return false;
 
 	return (ent != nullptr);

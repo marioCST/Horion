@@ -523,12 +523,14 @@
     <ClInclude Include="Memory\Hooks.h" />
     <ClInclude Include="Memory\MinHook.h" />
     <ClInclude Include="Memory\SlimMem.h" />
+    <ClInclude Include="SDK\ActorFlags.h" />
     <ClInclude Include="SDK\BlockLegacy.h" />
     <ClInclude Include="SDK\Camera.h" />
     <ClInclude Include="SDK\ChestBlockActor.h" />
     <ClInclude Include="SDK\ClientInstance.h" />
     <ClInclude Include="SDK\ClientInstanceScreenModel.h" />
     <ClInclude Include="SDK\ComplexInventoryTransaction.h" />
+    <ClInclude Include="SDK\Components.h" />
     <ClInclude Include="SDK\Entity.h" />
     <ClInclude Include="SDK\EntityList.h" />
     <ClInclude Include="SDK\GameMode.h" />

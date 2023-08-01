@@ -20,7 +20,7 @@ void NoFall::onSendPacket(Packet* packet) {
 	if (localPlayer == nullptr)
 		return;
 
-	if (localPlayer->fallDistance > 2.f && mode.selected == 0) {
+	if (localPlayer->getFallDistanceComponent()->fallDistance > 2.f && mode.selected == 0) {
 		if (packet->isInstanceOf<C_MovePlayerPacket>()) {
 			C_MovePlayerPacket* movePacket = reinterpret_cast<C_MovePlayerPacket*>(packet);
 			movePacket->onGround = true;
@@ -50,7 +50,7 @@ bool NoFall::isOverVoid() {
 void NoFall::onTick(GameMode* gm) {
 	LocalPlayer* localPlayer = Game.getLocalPlayer();
 	if (localPlayer != nullptr) {
-		if (localPlayer->fallDistance > 2.f) {
+		if (localPlayer->getFallDistanceComponent()->fallDistance > 2.f) {
 			switch (mode.selected) {
 			case 0: {
 				PlayerActionPacket actionPacket;
@@ -60,7 +60,7 @@ void NoFall::onTick(GameMode* gm) {
 				break;
 			}
 			case 2: {
-				localPlayer->velocity.y = 0.f;
+				localPlayer->entityLocation->velocity.y = 0.f;
 				localPlayer->setPos((*localPlayer->getPos()).add(0, (float)0.2, 0.f));
 				break;
 			}
@@ -72,7 +72,7 @@ void NoFall::onTick(GameMode* gm) {
 			}
 			case 4: {
 				Vec3 blockBelow = localPlayer->eyePos0;
-				blockBelow.y -= localPlayer->height;
+				blockBelow.y -= localPlayer->aabb->height;
 				blockBelow.y -= 0.17999f;
 				while (localPlayer->region->getBlock(blockBelow)->blockLegacy->blockId == 0 && !localPlayer->region->getBlock(blockBelow)->blockLegacy->material->isSolid) {
 					blockBelow.y -= 1.f;

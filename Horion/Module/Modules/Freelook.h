@@ -16,9 +16,9 @@ public:
 	virtual const char* getModuleName() override { return "Freelook"; }
 	void onEnable() override { 
 		if (Game.getLocalPlayer() != nullptr)
-		oldPos = Game.getLocalPlayer()->viewAngles; 
+			oldPos = Game.getLocalPlayer()->getActorHeadRotationComponent()->rot; 
 	}
-	void onDisable() override { Game.getLocalPlayer()->setRot(oldPos); }
+	void onDisable() override { Game.getLocalPlayer()->getActorHeadRotationComponent()->rot = oldPos; }
 	virtual bool isFlashMode() override {
 		return hold;
 	};

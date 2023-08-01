@@ -7,21 +7,21 @@ InventoryTransactionManager *Entity::getTransactionManager() {
 	if (offset == 0) {
 		offset = *reinterpret_cast<int*>(FindSignature("49 8D 8E ? ? ? ? E8 ? ? ? ? 90 48 8D 8D ? ? ? ? E8 ? ? ? ? 49 8B 06 48 8B 95") + 3);
 	}*/
-	return reinterpret_cast<InventoryTransactionManager *>(reinterpret_cast<__int64>(this) + 0x1218);
+	return reinterpret_cast<InventoryTransactionManager *>(reinterpret_cast<__int64>(this) + 0x1628);
 }
 PlayerInventoryProxy *Player::getSupplies() {
 	/*static unsigned int offset = 0;
 	if (offset == 0) {
 		offset = *reinterpret_cast<int *>(FindSignature("48 8B 51 ?? 4C 8B 82 ?? ?? ?? ?? 48 8B B2 ?? ?? ?? ?? 41 80 B8") + 7);  // GameMode::startDestroyBlock -> GameMode::_canDestroy -> getSupplies
 	}*/
-	return *reinterpret_cast<PlayerInventoryProxy **>(reinterpret_cast<__int64>(this) + 0xB68);
+	return *reinterpret_cast<PlayerInventoryProxy **>(reinterpret_cast<__int64>(this) + 0xDB8);
 }
 int Player::getDeviceID() {
 	/*static unsigned int offset = 0;
 	if (offset == 0) {
 		offset = *reinterpret_cast<int *>(FindSignature("8B 87 ? ? ? ? 89 83 ? ? ? ? 8B 87 ? ? ? ? 89 83 ? ? ? ? 4C 8D B3") + 3); // Player::getPlatform
 	}*/
-	return *reinterpret_cast<int*>(reinterpret_cast<__int64>(this) + 0x8D8);
+	return *reinterpret_cast<int*>(reinterpret_cast<__int64>(this) + 0x848);
 }
 void LocalPlayer::unlockAchievements() {  // MinecraftEventing::fireEventAwardAchievement
 	using fireEventAward = void(__fastcall *)(void *, int);
@@ -33,12 +33,6 @@ void LocalPlayer::applyTurnDelta(Vec2 *viewAngleDelta) {
 	using applyTurnDelta = void(__thiscall *)(void *, Vec2 *);
 	static applyTurnDelta TurnDelta = reinterpret_cast<applyTurnDelta>(FindSignature("48 8B C4 48 89 58 18 48 89 68 20 56 57 41 56 48 81 EC ?? ?? ?? ?? 0F 29 70 D8 0F 29 78 C8 44 0F 29 40 ?? 48 8B 05 ?? ?? ?? ??"));
 	TurnDelta(this, viewAngleDelta);
-}
-void LocalPlayer::setGameModeType(int gma) {
-	// Player::setPlayerGameType
-	//using setGameMode = void(__thiscall *)(void *, int);
-	//static setGameMode Game_Mode = reinterpret_cast<setGameMode>(FindSignature("48 8B C4 56 57 41 56 48 81 EC ? ? ? ? 48 C7 44 24 ? ? ? ? ? 48 89 58 ? 48 89 68 ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 84 24 ? ? ? ? 8B EA 48 8B D9 44 8B B1 ? ? ? ? 83 FA ? 75 2D"));
-	this->setPlayerGameType(gma);
 }
 
 bool Level::hasEntity() {

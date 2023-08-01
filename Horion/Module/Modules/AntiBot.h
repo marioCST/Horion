@@ -10,6 +10,7 @@ private:
 	bool entityIdCheck = true;
 	bool otherCheck = true;
 	bool extraCheck = false;
+	bool playerCheck = true;
 
 public:
 	AntiBot();
@@ -32,6 +33,9 @@ public:
 	}
 	inline bool isExtraCheckEnabled() {
 		return extraCheck && isEnabled();
+	}
+	inline bool isPlayerCheckEnabled() {
+		return playerCheck && isEnabled();
 	}
 
 	// Inherited via IModule

@@ -20,10 +20,10 @@ bool DamageCommand::execute(std::vector<std::string>* args) {
 
 	if (noFallMod->isEnabled()) {
 		noFallMod->setEnabled(false);
-		Game.getLocalPlayer()->causeFallDamage(amount + 3.f);
+		Game.getLocalPlayer()->causeFallDamage(amount + 3.f, 1, 0);
 		noFallMod->setEnabled(true);
 	} else {
-		Game.getLocalPlayer()->causeFallDamage(amount + 3.f);
+		Game.getLocalPlayer()->causeFallDamage(amount + 3.f, 1, 0);
 	}
 	return true;
 }

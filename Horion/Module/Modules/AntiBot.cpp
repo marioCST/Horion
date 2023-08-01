@@ -7,6 +7,7 @@ AntiBot::AntiBot() : IModule(0, Category::PLAYER, "Enable this module to filter 
 	registerBoolSetting("EntityID Check", &entityIdCheck, entityIdCheck);
 	registerBoolSetting("Other Check", &otherCheck, otherCheck);
 	registerBoolSetting("Extra Check", &extraCheck, extraCheck);
+	registerBoolSetting("Player Check", &playerCheck, playerCheck);
 }
 
 AntiBot::~AntiBot() {
