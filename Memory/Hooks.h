@@ -111,7 +111,7 @@ private:
 	static void Actor_startSwimming(Entity* _this);
 	static float GameMode_getPickRange(GameMode* _this, __int64 a2, char a3);
 	static __int64 GameMode_attack(GameMode* _this, Entity*);
-	static __int64 ConnectionRequest_create(__int64 _this, __int64 privateKeyManager, void* a3, TextHolder* selfSignedId, TextHolder* serverAddress, __int64 clientRandomId, TextHolder* skinId, SkinData* skinData, __int64 capeData, CoolSkinData* coolSkinStuff, TextHolder* deviceId, int inputMode, int uiProfile, int guiScale, TextHolder* languageCode, bool sendEduModeParams, TextHolder* tenantId, __int64 unused, TextHolder* platformUserId, TextHolder* thirdPartyName, bool thirdPartyNameOnly, TextHolder* platformOnlineId, TextHolder* platformOfflineId, TextHolder* capeId);
+	static __int64 ConnectionRequest_create(__int64 _this, __int64 privateKeyManager, void* a3, TextHolder* selfSignedId, TextHolder* serverAddress, __int64 clientRandomId, TextHolder* skinId, SkinData* skinData, __int64 capeData, __int64* serializedSkin, TextHolder* deviceId, int inputMode, int uiProfile, int guiScale, TextHolder* languageCode, bool sendEduModeParams, char a17, TextHolder* tenantId, __int64 a19, TextHolder* platformUserId, TextHolder* thirdPartyName, bool thirdPartyNameOnly, TextHolder* platformOnlineId, TextHolder* platformOfflineId, TextHolder* capeId, char a26);
 	static void InventoryTransactionManager_addAction(InventoryTransactionManager* a1, InventoryAction* a2);
 	static bool DirectoryPackAccessStrategy__isTrusted(__int64 _this);
 	static bool ReturnTrue(__int64 _this);
@@ -129,9 +129,6 @@ private:
 	static float getDestroySpeed(Player* _this, Block& block);
 	static bool Actor_canSee(Entity* _this, Entity& entity);
 	static bool Actor_shouldRender(Entity* _this);
-	static void Actor_handleFallDistanceOnServer(Entity* _this, float f1, float f2, bool b);
-	static void Actor_causeFallDamage(Entity* _this, float f);
-	static void Actor_checkFallDamage(Entity* _this, float f, bool b);
 	static bool Actor__isInWall(Entity* ent);
 	//static void testFunction(class networkhandler* _this, const void* networkIdentifier, Packet* packet, int a4);
 
@@ -194,9 +191,6 @@ private:
 	std::unique_ptr<FuncHook> testyHook;
 	std::unique_ptr<FuncHook> Actor_canSeeHook;
 	std::unique_ptr<FuncHook> Actor_shouldRenderHook;
-	std::unique_ptr<FuncHook> Actor_handleFallDistanceOnServerHook;
-	std::unique_ptr<FuncHook> Actor_causeFallDamageHook;
-	std::unique_ptr<FuncHook> Actor_checkFallDamageHook;
 	std::unique_ptr<FuncHook> ActorisInWallHook;
 	//std::unique_ptr<FuncHook> testFunctionHook;
 };
