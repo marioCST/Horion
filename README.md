@@ -1,6 +1,4 @@
-**IMPORTANT: This client is ONLY for Minecraft: BEDROCK (specifically Windows 10/11) Edition version 1.18.31 x64, and the client is the downloadable DLL, NOT the MCPACK!!**
-
-**DON'T ask me if something doesn't work on Minecraft: Java Edition, non-Windows 10/11 platforms or any version which isn't 1.18.31 x64. That will NEVER work.**
+**This is a work in progress. I started to make 1.19.5X Horion update cuz Hive removed support for many versions and 1.19.5X is the second oldest version which probably will be supported longer than 1.18.1X**
 
 <div align="center">
   <br />
