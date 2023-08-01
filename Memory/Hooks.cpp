@@ -37,8 +37,8 @@ void Hooks::Init() {
 		void* key = reinterpret_cast<void*>(FindSignature("48 83 EC ? 0F B6 C1 4C 8D 05"));
 		g_Hooks.KeyMapHook = std::make_unique<FuncHook>(key, Hooks::KeyMapHookCallback);
 
-		//void* _sendChatMessage = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ?? 55 56 57 41 54 41 55 41 56 41 57 48 8D AC 24 ?? ?? ?? ?? 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 85 ?? ?? ?? ?? 4C 8B EA 4C 8B F9 48 8B 49"));
-		//g_Hooks.ClientInstanceScreenModel_sendChatMessageHook = std::make_unique<FuncHook>(_sendChatMessage, Hooks::ClientInstanceScreenModel_sendChatMessage);
+		void* _sendChatMessage = reinterpret_cast<void*>(FindSignature("48 89 5C ? ? 55 56 57 41 54 41 55 41 56 41 57 48 8D AC ? ? ? ? ? 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 85 ? ? ? ? 4C 8B E2 4C 8B E9 48 8B 49"));
+		g_Hooks.ClientInstanceScreenModel_sendChatMessageHook = std::make_unique<FuncHook>(_sendChatMessage, Hooks::ClientInstanceScreenModel_sendChatMessage);
 
 		void* fogColorFunc = reinterpret_cast<void*>(FindSignature("41 0F 10 08 48 8B C2 0F"));
 		g_Hooks.Dimension_getFogColorHook = std::make_unique<FuncHook>(fogColorFunc, Hooks::Dimension_getFogColor);
@@ -95,8 +95,8 @@ void Hooks::Init() {
 		g_Hooks.SkinRepository___loadSkinPackHook = std::make_unique<FuncHook>(_getSkinPack, Hooks::SkinRepository___loadSkinPack);
 
 #ifdef TEST_DEBUG
-		//void* addAction = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 55 56 57 41 56 41 57 48 83 EC ? 45 0F B6 F8 4C 8B F2 48 8B F1 48 8B 01 48 8B 88"));
-		//g_Hooks.InventoryTransactionManager__addActionHook = std::make_unique<FuncHook>(addAction, Hooks::InventoryTransactionManager__addAction);
+		void* addAction = reinterpret_cast<void*>(FindSignature("48 89 5C ? ? 55 56 57 41 56 41 57 48 83 EC ? 45 0F B6 ? 4C 8B F2 48 8B F9"));
+		g_Hooks.InventoryTransactionManager__addActionHook = std::make_unique<FuncHook>(addAction, Hooks::InventoryTransactionManager__addAction);
 #endif
 
 		//void* localPlayerUpdateFromCam = reinterpret_cast<void*>(FindSignature("48 8B C4 53 48 81 EC ? ? ? ? 0F 29 70 ? 0F 29 78 ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 84 24 ? ? ? ? 4D 8B D0"));
@@ -108,14 +108,14 @@ void Hooks::Init() {
 		void* destroySpeed = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 48 89 74 24 ? 57 48 83 EC ? 48 8B FA 0F 29 74 24 ? 48 8B 91"));
 		g_Hooks.getDestroySpeedHook = std::make_unique<FuncHook>(destroySpeed, Hooks::getDestroySpeed);
 
-		//void* Actor_canSee = reinterpret_cast<void*>(FindSignature("4C 8B DC 49 89 5B 18 49 89 73 20 57 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 84 24 ? ? ? ? 48 8B 02"));
-		//g_Hooks.Actor_canSeeHook = std::make_unique<FuncHook>(Actor_canSee, Hooks::Actor_canSee);
+		void* Actor_canSee = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 56 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 84 24 ? ? ? ? 48 8B 02"));
+		g_Hooks.Actor_canSeeHook = std::make_unique<FuncHook>(Actor_canSee, Hooks::Actor_canSee);
 
-		//void* Actor_shouldRender = reinterpret_cast<void*>(FindSignature("48 83 EC ? 48 8B 01 FF 90 ? ? ? ? 84 C0 ? ? C0 48 83 C4 ? C3 CC CC CC CC CC CC CC CC CC 48 89 5C ? ? 57"));
-		//g_Hooks.Actor_shouldRenderHook = std::make_unique<FuncHook>(Actor_shouldRender, Hooks::Actor_shouldRender);
+		void* Actor_shouldRender = reinterpret_cast<void*>(FindSignature("48 83 EC ? 48 8B 01 48 8B 80 ? ? ? ? FF 15 ? ? ? ? 84 C0 0F 94 C0 48 83 C4 ? C3 CC CC 48 89 5C"));
+		g_Hooks.Actor_shouldRenderHook = std::make_unique<FuncHook>(Actor_shouldRender, Hooks::Actor_shouldRender);
 
-		//void* actorisInWall = reinterpret_cast<void*>(FindSignature("40 53 48 83 EC ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 24 ? 48 8B 01 48 8D 54 24 ? 0F 57 DB 41 B8 ? ? ? ? 48 8B D9 FF 90 ? ? ? ? 48 8B 8B"));
-		//g_Hooks.ActorisInWallHook = std::make_unique<FuncHook>(actorisInWall, Hooks::Actor__isInWall);
+		void* actorisInWall = reinterpret_cast<void*>(FindSignature("40 53 48 83 EC 50 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 24 ? 48 8B 01 48 8D 54 24"));
+		g_Hooks.ActorisInWallHook = std::make_unique<FuncHook>(actorisInWall, Hooks::Actor__isInWall);
 		
 		static constexpr auto counterStart = __COUNTER__ + 1;
 		#define lambda_counter (__COUNTER__ - counterStart)
@@ -179,33 +179,31 @@ void Hooks::Init() {
 			}
 		} else logF("MoveTurnInput is null");
 
-		//The reason im using a sig is because injecting on the menu causes LocalPlayer to be null so i cant get the vtable from just doing Game.getLocalPlayer(). Same with Gamemode bc i get that from local player.
 		// LocalPlayer::vtable
-		// Broken
 		{
-			uintptr_t** localPlayerVtable = GetVtableFromSig("48 8D 05 ? ? ? ? 48 89 01 48 8B 89 ? ? ? ? 48 8B 01 FF 90 ? ? ? ? 48 8B 10", 3);
+			uintptr_t** localPlayerVtable = GetVtableFromSig("48 8D 05 ? ? ? ? 48 89 01 48 8B 05 ? ? ? ? FF 15 ? ? ? ? 4C 8B C0", 3);
 			if (localPlayerVtable == 0x0)
 				logF("LocalPlayer signature not working!!!");
 			else {
-				g_Hooks.Actor_startSwimmingHook = std::make_unique<FuncHook>(localPlayerVtable[200], Hooks::Actor_startSwimming);
+				g_Hooks.Actor_startSwimmingHook = std::make_unique<FuncHook>(localPlayerVtable[202], Hooks::Actor_startSwimming);
 
-				g_Hooks.Actor_ascendLadderHook = std::make_unique<FuncHook>(localPlayerVtable[346], Hooks::Actor_ascendLadder);
+				//g_Hooks.Actor_ascendLadderHook = std::make_unique<FuncHook>(localPlayerVtable[346], Hooks::Actor_ascendLadder); // Removed :(
 				
-				g_Hooks.Actor__setRotHook = std::make_unique<FuncHook>(localPlayerVtable[27], Hooks::Actor__setRot);
+				//g_Hooks.Actor__setRotHook = std::make_unique<FuncHook>(localPlayerVtable[27], Hooks::Actor__setRot); // Removed :(
 
-				g_Hooks.Actor_swingHook = std::make_unique<FuncHook>(localPlayerVtable[218], Hooks::Actor_swing);
+				g_Hooks.Actor_swingHook = std::make_unique<FuncHook>(localPlayerVtable[220], Hooks::Actor_swing);
 
 				g_Hooks.JumpPowerHook = std::make_unique<FuncHook>(localPlayerVtable[352], Hooks::JumpPower); //jump from ground with movement proxy
 
 				//g_Hooks.setPosHook = std::make_unique<FuncHook>(localPlayerVtable[19], Hooks::setPos);
 
-				g_Hooks.Actor_baseTickHook = std::make_unique<FuncHook>(localPlayerVtable[49], Hooks::Actor_baseTick);
+				g_Hooks.Actor_baseTickHook = std::make_unique<FuncHook>(localPlayerVtable[51], Hooks::Actor_baseTick);
 
-				g_Hooks.Mob__isImmobileHook = std::make_unique<FuncHook>(localPlayerVtable[92], Hooks::Mob__isImmobile);
+				g_Hooks.Mob__isImmobileHook = std::make_unique<FuncHook>(localPlayerVtable[94], Hooks::Mob__isImmobile);
 
-				g_Hooks.Actor_isInWaterHook = std::make_unique<FuncHook>(localPlayerVtable[71], Hooks::Actor_isInWater);
+				g_Hooks.Actor_isInWaterHook = std::make_unique<FuncHook>(localPlayerVtable[73], Hooks::Actor_isInWater);
 
-				g_Hooks.Player_tickWorldHook = std::make_unique<FuncHook>(localPlayerVtable[368], Hooks::Player_tickWorld);
+				g_Hooks.Player_tickWorldHook = std::make_unique<FuncHook>(localPlayerVtable[369], Hooks::Player_tickWorld);
 
 				//g_Hooks.Actor__isInvisibleHook = std::make_unique<FuncHook>(localPlayerVtable[59], Hooks::Actor__isInvisible);
 			}
