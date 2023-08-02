@@ -37,7 +37,7 @@ void Reducer::onTick(GameMode* gm) {
 
 	switch (this->mode.selected) {
 	case 0:
-		if (player->damageTime > 0 && player->onGround) player->jumpFromGround();
+		if (player->damageTime > 0 && player->isOnGround()) player->jumpFromGround();
 		break;
 	case 1:
 		if (player->damageTime > 0 && !player->isSneaking()) {
@@ -60,7 +60,7 @@ void Reducer::onTick(GameMode* gm) {
 			this->hitCount = 0;
 		}
 
-		if (player->damageTime > 0 && this->hitCount == 2 && player->onGround) {
+		if (player->damageTime > 0 && this->hitCount == 2 && player->isOnGround()) {
 			player->jumpFromGround();
 			this->hitCount = 0;
 		}

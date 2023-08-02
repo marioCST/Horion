@@ -12,6 +12,7 @@
 #include "EntityList.h"
 #include "Inventory.h"
 #include "InventoryTransaction.h"
+#include "PlayerMovementProxy.h"
 #include "TextHolder.h"
 
 class GameMode;
@@ -82,6 +83,7 @@ class Dimension;
 class MobEffect;
 struct MobEffectInstance;
 class Packet;
+class BlockActor;
 
 struct EntityLocation {
 	Vec3 pos;
@@ -102,8 +104,6 @@ enum class GameType : int {
 #pragma pack(push, 4)
 class Entity {
 public:
-	bool onGround;       // IActorMovementProxy
-
 	BUILD_ACCESS(this, __int64 **, entityRegistryBase, 0x8);
 	BUILD_ACCESS(this, uint32_t, entityId, 0x10);
 	BUILD_ACCESS(this, int, ticksAlive, 0x24C);
@@ -207,8 +207,8 @@ public:
 	virtual int getShadowRadius(void);
 	virtual float getHeadLookVector(float);
 	virtual bool canSeeInvisible(void);
-	virtual bool canSee(Entity const &);
 	virtual bool canSee(Vec3 const &);
+	virtual bool canSee(Entity const &);
 	virtual void canInteractWithOtherEntitiesInGame(void);
 	virtual bool isSkyLit(float);
 	virtual float getBrightness(float);
@@ -493,15 +493,9 @@ public:
 	}
 
 	__int64 *getUniqueId() {
-		__int64 *v1;  // rbx
-		char v3;      // [rsp+30h] [rbp+8h]
-
-		v1 = (__int64 *)((char *)this + 256);
-		if (*((__int64 *)this + 32) == -1i64)
-			*v1 = *(__int64 *)(*(__int64(__fastcall **)(__int64, char *))(**((__int64 **)this + 110) + 1960i64))(
-				*((__int64 *)this + 110),
-				&v3);
-		return (__int64 *)v1;
+		using getUniqueId_t = __int64*(__thiscall *)(Entity*);
+		static auto getUniqueIdFunc = reinterpret_cast<getUniqueId_t>(FindSignature("40 53 48 83 EC 20 48 8D 99 ? ? ? ? 48 83 3B"));
+		return getUniqueIdFunc(this);
 	}
 
 	float getRealSpeed() {
@@ -549,6 +543,18 @@ public:
 		return this->level;
 	}
 
+	PlayerMovementProxy *getMovementProxy() {
+		return getActorMovementProxyComponent()->movementProxy;
+	}
+
+	bool isOnGround() {
+		return getMovementProxy()->isOnGround();
+	}
+
+	void setOnGround(bool onGround) {
+		getMovementProxy()->setOnGround(onGround);
+	}
+
 	void lerpTo(Vec3 const &pos, Vec2 const &rot, int steps);
 
 	ActorRotationComponent *getActorRotationComponent() {
@@ -582,6 +588,13 @@ public:
 	FallDistanceComponent *getFallDistanceComponent() {
 		using getFallDistanceComponent = FallDistanceComponent *(__cdecl *)(__int64 *, uint32_t *);
 		static auto func = reinterpret_cast<getFallDistanceComponent>(FindSignature("40 53 48 83 EC ? 48 8B DA BA B5 5C 12 81"));
+		uint32_t id = this->entityId;
+		return func(*this->entityRegistryBase, &id);
+	}
+
+	ActorMovementProxyComponent *getActorMovementProxyComponent() {
+		using getActorMovementProxyComponent = ActorMovementProxyComponent *(__cdecl *)(__int64 *, uint32_t *);
+		static auto func = reinterpret_cast<getActorMovementProxyComponent>(FindSignature("40 53 48 83 EC ? 48 8B DA BA 18 0C BD EC"));
 		uint32_t id = this->entityId;
 		return func(*this->entityRegistryBase, &id);
 	}

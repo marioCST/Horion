@@ -47,7 +47,7 @@ void JoeMovementController::step(LocalPlayer *player, MoveInputHandler *movement
 	// we should probably make seperate classes for each segment type at some point, but im just doing it here for now for faster prototyping
 	switch(curSeg.getSegmentType()){
 	case JUMP: {
-		if(player->onGround){
+		if(player->isOnGround()){
 			if(fabsf(pPos.y - end.y) < 0.1f && pPos.dist(end) < 0.5f) {  // Check for end condition
 				stateInfo.nextSegment();
 				break;
@@ -83,7 +83,7 @@ void JoeMovementController::step(LocalPlayer *player, MoveInputHandler *movement
 	} break;
 	case DROP: {
 		bool inWater = player->isInWater();
-		if(player->onGround || inWater){
+		if (player->isOnGround() || inWater) {
 			dComp = 1;
 			if (fabsf(pPos.y - end.y) < (inWater ? 0.2f : 0.1f) && pPos.sub(end).magnitudexz() < 0.5f && player->entityLocation->velocity.y > -0.1f) {  // Check for end condition
 				stateInfo.nextSegment();
@@ -106,7 +106,7 @@ void JoeMovementController::step(LocalPlayer *player, MoveInputHandler *movement
 		goto WALK;
 	} break;
 	case PARKOUR_JUMP_SINGLE: {
-		if(player->onGround){
+		if (player->isOnGround()) {
 			if(fabsf(pPos.y - end.y) < 0.1f && pPos.dist(end) < 0.5f){// Check for end condition
 				stateInfo.nextSegment();
 				break;
@@ -210,13 +210,13 @@ void JoeMovementController::step(LocalPlayer *player, MoveInputHandler *movement
 
 		auto pPosD = pPos; // p
 
-		if(!player->onGround && dComp < 2){
+		if (!player->isOnGround() && dComp < 2) {
 			dComp = 2;
 		}
 
 		pPosD = pPosD.add(player->entityLocation->velocity.mul(dComp, 0, dComp));  // d
 
-		if(player->onGround && end.y < start.y && fabsf(start.y - pPosD.y) < 0.1f && player->getTicksUsingItem() > 0 && end.sub(start).magnitudexz() > 1.5f){
+		if (player->isOnGround() && end.y < start.y && fabsf(start.y - pPosD.y) < 0.1f && player->getTicksUsingItem() > 0 && end.sub(start).magnitudexz() > 1.5f) {
 			// drop with a gap
 			// player is using item, walk back to start pos
 			walkTarget = start;

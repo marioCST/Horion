@@ -543,6 +543,7 @@
     <ClInclude Include="SDK\MinecraftUIRenderContext.h" />
     <ClInclude Include="SDK\MoveInputHandler.h" />
     <ClInclude Include="SDK\Packet.h" />
+    <ClInclude Include="SDK\PlayerMovementProxy.h" />
     <ClInclude Include="SDK\RakNetInstance.h" />
     <ClInclude Include="SDK\UIScene.h" />
     <ClInclude Include="SDK\Dimension.h" />

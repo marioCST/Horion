@@ -216,7 +216,7 @@ void Fly::onMove(MoveInputHandler *input) {
 		// This Fly/Glide worked on the Hive in the first half year of 2021
 		// Idea from Weather Client (dead by now), TurakanFly from BadMan worked similar with less height loss
 
-		if (localPlayer->onGround == false) {
+		if (!localPlayer->isOnGround()) {
 			localPlayer->entityLocation->velocity.y = 0;
 		}
 
@@ -273,7 +273,7 @@ void Fly::onMove(MoveInputHandler *input) {
 		}
 
 		if (gameTick > 6) {
-			if (localPlayer->onGround == false) {
+			if (!localPlayer->isOnGround()) {
 				Vec3 pos;
 				pos.x = localPlayer->getPos()->x;
 				pos.y = localPlayer->getPos()->y - 0.025f;

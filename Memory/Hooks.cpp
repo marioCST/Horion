@@ -851,7 +851,7 @@ void Hooks::GameMode_startDestroyBlock(GameMode* _this, Vec3i* pos, uint8_t face
 							Block* blok = region->getBlock(tempPos);
 							uint8_t data = blok->data;
 							auto id = blok->blockLegacy->blockId;
-							if (blok->blockLegacy->material->isSolid == true && (!isVeinMiner || (id == selectedBlockId && data == selectedBlockData)))
+							if (blok->blockLegacy->isSolid == true && (!isVeinMiner || (id == selectedBlockId && data == selectedBlockData)))
 								_this->destroyBlock(&tempPos, face);
 						}
 					}

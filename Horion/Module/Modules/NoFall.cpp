@@ -27,11 +27,11 @@ void NoFall::onSendPacket(Packet* packet) {
 		}
 	}
 	if (mode.selected == 4) {
-		if (packet->isInstanceOf<PlayerAuthInputPacket>() && !Game.getLocalPlayer()->onGround) {
+		if (packet->isInstanceOf<PlayerAuthInputPacket>() && !Game.getLocalPlayer()->isOnGround()) {
 			PlayerAuthInputPacket* authInput = reinterpret_cast<PlayerAuthInputPacket*>(packet);
 			authInput->pos = closestGround;
 		}
-		/*if (packet->isInstanceOf<C_MovePlayerPacket>() && !Game.getLocalPlayer()->onGround) { I don't know if this is better to have or not
+		/*if (packet->isInstanceOf<C_MovePlayerPacket>() && !Game.getLocalPlayer()->isOnGround()) { I don't know if this is better to have or not
 			C_MovePlayerPacket* movePacket = reinterpret_cast<C_MovePlayerPacket*>(packet);
 			movePacket->Position = closestGround;
 		}*/
@@ -74,7 +74,7 @@ void NoFall::onTick(GameMode* gm) {
 				Vec3 blockBelow = localPlayer->eyePos0;
 				blockBelow.y -= localPlayer->aabb->height;
 				blockBelow.y -= 0.17999f;
-				while (localPlayer->region->getBlock(blockBelow)->blockLegacy->blockId == 0 && !localPlayer->region->getBlock(blockBelow)->blockLegacy->material->isSolid) {
+				while (localPlayer->region->getBlock(blockBelow)->blockLegacy->blockId == 0 && !localPlayer->region->getBlock(blockBelow)->blockLegacy->isSolid) {
 					blockBelow.y -= 1.f;
 					if (isOverVoid()) {
 						return;
