@@ -122,7 +122,7 @@ private:
 	static void LocalPlayer__updateFromCamera(__int64 a1, Camera* camera, __int64* a3, Entity* a4);
 	static bool Mob__isImmobile(Entity*);
 	static void Actor__setRot(Entity* _this, Vec2& angle);
-	static bool playerCallBack(Player* lp, __int64 a2, __int64 a3);
+	static bool Actor_intersects(Entity* _this, Vec3 lower, Vec3 upper);
 	static void InventoryTransactionManager__addAction(Player* _this, InventoryAction* a2, char a3);
 	static void LevelRendererPlayer__renderNameTags(__int64 a1, __int64 a2, TextHolder* name, __int64 a4);
 	static void KeyMapHookCallback(unsigned char key, bool isDown);
@@ -144,7 +144,7 @@ private:
 	std::unique_ptr<FuncHook> Dimension_getSunIntensityHook;
 	std::unique_ptr<FuncHook> ChestBlockActor_tickHook;
 	std::unique_ptr<FuncHook> Actor_lerpMotionHook;
-	std::unique_ptr<FuncHook> playerCallBack_Hook;
+	std::unique_ptr<FuncHook> Actor_intersectsHook;
 	std::unique_ptr<FuncHook> AppPlatform_getGameEditionHook;
 	std::unique_ptr<FuncHook> PleaseAutoCompleteHook;
 	std::unique_ptr<FuncHook> LoopbackPacketSender_sendToServerHook;

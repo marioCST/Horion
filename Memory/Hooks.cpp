@@ -70,17 +70,17 @@ void Hooks::Init() {
 		void* keyMouseFunc = reinterpret_cast<void*>(FindSignature("48 89 5C ? ? 55 56 57 41 54 41 55 41 56 41 57 48 8B EC 48 81 EC ? ? ? ? ? ? 74 24 ? ? ? 7C 24 ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 45 ? 49 8B F8"));
 		g_Hooks.HIDController_keyMouseHook = std::make_unique<FuncHook>(keyMouseFunc, Hooks::HIDController_keyMouse);
 
-		//void* renderLevel = reinterpret_cast<void*>(FindSignature("48 89 5C 24 10 48 89 74 24 20 57 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 49 8B F8 48 8B DA"));
-		//g_Hooks.LevelRenderer_renderLevelHook = std::make_unique<FuncHook>(renderLevel, Hooks::LevelRenderer_renderLevel);
+		void* renderLevel = reinterpret_cast<void*>(FindSignature("48 89 5C ? ? 55 56 57 48 8D AC ? ? ? ? ? 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 85 ? ? ? ? 49 8B F0 48 8B DA"));
+		g_Hooks.LevelRenderer_renderLevelHook = std::make_unique<FuncHook>(renderLevel, Hooks::LevelRenderer_renderLevel);
 
-		//void* playerCallBackHook = reinterpret_cast<void*>(FindSignature("F3 0F ?? ?? ?? ?? 00 00 ?? 0F ?? 00 F3 0F ?? ?? F3 0F ?? ?? 04"));
-		//g_Hooks.playerCallBack_Hook = std::make_unique<FuncHook>(playerCallBackHook, Hooks::playerCallBack);
+		void* Actor_intersectsAddr = reinterpret_cast<void*>(FindSignature("48 83 EC ? 48 8B 81 ? ? ? ? 48 85 C0 74 50"));
+		g_Hooks.Actor_intersectsHook = std::make_unique<FuncHook>(Actor_intersectsAddr, Hooks::Actor_intersects);
 
 		void* clickHook = reinterpret_cast<void*>(FindSignature("48 8B C4 48 89 58 ? 48 89 68 ? 48 89 70 ? 57 41 54 41 55 41 56 41 57 48 83 EC ? 44 0F B7 BC 24 ? ? ? ? 48 8B D9"));
 		g_Hooks.ClickFuncHook = std::make_unique<FuncHook>(clickHook, Hooks::ClickFunc);
 
-		//void* chestScreenControllerTick = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 57 48 83 EC ? 48 8B F9 E8 ? ? ? ? 48 8B 17"));
-		//g_Hooks.ChestScreenController_tickHook = std::make_unique<FuncHook>(chestScreenControllerTick, Hooks::ChestScreenController_tick);
+		void* chestScreenControllerTick = reinterpret_cast<void*>(FindSignature("48 89 5C ? ? 48 89 6C ? ? 56 57 41 54 41 56 41 57 48 81 EC ? ? ? ? 0F 29 74 ? ? 0F 29 7C"));
+		g_Hooks.ChestScreenController_tickHook = std::make_unique<FuncHook>(chestScreenControllerTick, Hooks::ChestScreenController_tick);
 
 		void* autoComplete = reinterpret_cast<void*>(FindSignature("48 89 5C 24 ? 55 56 57 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 24 ? 41 8B D9"));
 		g_Hooks.PleaseAutoCompleteHook = std::make_unique<FuncHook>(autoComplete, Hooks::PleaseAutoComplete);
@@ -99,8 +99,8 @@ void Hooks::Init() {
 		g_Hooks.InventoryTransactionManager__addActionHook = std::make_unique<FuncHook>(addAction, Hooks::InventoryTransactionManager__addAction);
 #endif
 
-		//void* localPlayerUpdateFromCam = reinterpret_cast<void*>(FindSignature("48 8B C4 53 48 81 EC ? ? ? ? 0F 29 70 ? 0F 29 78 ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 84 24 ? ? ? ? 4D 8B D0"));
-		//g_Hooks.LocalPlayer__updateFromCameraHook = std::make_unique<FuncHook>(localPlayerUpdateFromCam, Hooks::LocalPlayer__updateFromCamera);
+		void* localPlayerUpdateFromCam = reinterpret_cast<void*>(FindSignature("48 8B C4 48 89 70 ? 57 48 81 EC ? ? ? ? 0F 29 70 ? 0F 29 78"));
+		g_Hooks.LocalPlayer__updateFromCameraHook = std::make_unique<FuncHook>(localPlayerUpdateFromCam, Hooks::LocalPlayer__updateFromCamera);
 
 		void* renderNameTags = reinterpret_cast<void*>(FindSignature("48 8B C4 48 89 58 ? 55 56 57 41 54 41 55 41 56 41 57 48 8D A8 ? ? ? ? 48 81 EC ? ? ? ? 0F 29 70 ? 0F 29 78 ? 44 0F 29 40 ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 85 ? ? ? ? 49 8B F1"));
 		g_Hooks.LevelRendererPlayer__renderNameTagsHook = std::make_unique<FuncHook>(renderNameTags, Hooks::LevelRendererPlayer__renderNameTags);
@@ -261,15 +261,16 @@ void Hooks::Enable() {
 	MH_EnableHook(MH_ALL_HOOKS);
 }
 
-bool Hooks::playerCallBack(Player* lp, __int64 a2, __int64 a3) {
-	static auto oTick = g_Hooks.playerCallBack_Hook->GetFastcall<bool, Player*, __int64, __int64>();
-	if (moduleMgr != nullptr && lp != nullptr && Game.getLocalPlayer() != nullptr && lp == Game.getLocalPlayer())
-		moduleMgr->onPlayerTick(lp);
+bool Hooks::Actor_intersects(Entity* _this, Vec3 lower, Vec3 upper) {
+	static auto oTick = g_Hooks.Actor_intersectsHook->GetFastcall<bool, Entity*, Vec3, Vec3>();
+
+	if (moduleMgr != nullptr && _this != nullptr && Game.getLocalPlayer() != nullptr && _this == Game.getLocalPlayer())
+		moduleMgr->onPlayerTick(reinterpret_cast<Player*>(_this));
 
 	if (!Game.getLocalPlayer() || !Game.getLocalPlayer()->level || !Game.getLocalPlayer()->region || !Game.isInGame())
 		g_Hooks.entityList.clear();
 
-	if (Game.getLocalPlayer() != nullptr && lp == Game.getLocalPlayer()) {
+	if (Game.getLocalPlayer() != nullptr && _this == Game.getLocalPlayer()) {
 		std::vector<EntityListPointerHolder> validEntities;
 		for (const auto& ent : g_Hooks.entityList) {
 			auto entity = ent.ent;
@@ -290,7 +291,7 @@ bool Hooks::playerCallBack(Player* lp, __int64 a2, __int64 a3) {
 		g_Hooks.entityList.clear();
 		g_Hooks.entityList = validEntities;
 	}
-	return oTick(lp, a2, a3);
+	return oTick(_this, lower, upper);
 }
 
 void* Hooks::Player_tickWorld(Player* _this, __int64 unk) {
@@ -620,13 +621,13 @@ void Hooks::Actor_lerpMotion(Entity* _this, Vec3 motVec) {
 
 	static auto noKnockbackmod = moduleMgr->getModule<Velocity>();
 	if (noKnockbackmod->isEnabled()) {
-		/*static void* networkSender = nullptr;
+		static void* networkSender = nullptr;
 		if (!networkSender)
-			networkSender = reinterpret_cast<void*>(9 + FindSignature("48 8B CB FF ?? ?? ?? ?? 00 C6 47 ?? 01 48 8B 5C 24"));
+			networkSender = reinterpret_cast<void*>(9 + FindSignature("48 8B CB 48 8B 80 ? ? ? ? FF 15 ? ? ? ? C6 46 11 ? 48 8B 5C ? ? 48 83 C4"));
 
 		if (networkSender == _ReturnAddress()) {
-			motVec = _this->velocity.lerp(motVec, noKnockbackmod->xModifier, noKnockbackmod->yModifier, noKnockbackmod->xModifier);
-		}*/
+			motVec = _this->entityLocation->velocity.lerp(motVec, noKnockbackmod->xModifier, noKnockbackmod->yModifier, noKnockbackmod->xModifier);
+		}
 	}
 
 	oLerp(_this, motVec);
@@ -732,9 +733,9 @@ void Hooks::PleaseAutoComplete(__int64 a1, __int64 a2, TextHolder* text, int a4)
 					firstResult.cmdAlias.append(" ");
 				}
 				text->setText(firstResult.cmdAlias.substr(0, maxReplaceLength));  // Set text
-				//using syncShit = void(__fastcall*)(TextHolder*, TextHolder*);
-				//static syncShit sync = reinterpret_cast<syncShit>(Utils::FindSignature("40 53 48 83 EC ? 48 8B DA 48 8D 4C 24 ? E8 ? ? ? ? 90 48 8B 40 ? 48 8B 08 48 8B 01 48 8B D3 FF 90 ? ? ? ? 90 48 8D 4C 24 ? E8 ? ? ? ? 80 7C 24 ? ? 74 ? 48 8B 4C 24 ? E8 ? ? ? ? 48 83 C4"));
-				//sync(text, text);
+				using syncShit = void(__fastcall*)(TextHolder*, TextHolder*);
+				static syncShit sync = reinterpret_cast<syncShit>(Utils::FindSignature("40 53 48 83 EC ? 48 8B DA 48 8D 4C ? ? E8 ? ? ? ? 90 48 8B 40 ? 48 8B 08 48 8B 01 48 8B D3 48 8B 80 ? ? ? ? FF 15 ? ? ? ? 90 33 C0 48 89 44 ? ? 48 8B 4C ? ? 48 89 44 ? ? 48 85 C9 74 14 E8 ? ? ? ? 48 8B 4C ? ? 48 85 C9 74 05 E8 ? ? ? ? 80 7C 24 ? ? 74 0A 48 8B 4C ? ? E8 ? ? ? ? 48 83 C4"));
+				sync(text, text);
 			}
 		}
 		return;
@@ -912,12 +913,12 @@ __int64 Hooks::LevelRenderer_renderLevel(__int64 _this, __int64 a2, __int64 a3) 
 	static auto oFunc = g_Hooks.LevelRenderer_renderLevelHook->GetFastcall<__int64, __int64, __int64, __int64>();
 
 	using reloadShit_t = void(__fastcall*)(__int64);
-	/*static reloadShit_t reloadChunk = nullptr;
+	static reloadShit_t reloadChunk = nullptr;
 
 	if (!reloadChunk) {
 		// RenderChunkCoordinator::rebuildAllRenderChunkGeometry
-		reloadChunk = reinterpret_cast<reloadShit_t>(FindSignature("48 89 5C 24 10 48 89 6C 24 18 48 89 74 24 20 57 48 83 EC ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 44 24 ?? 48 8B F9 48 8D A9"));
-	}*/
+		reloadChunk = reinterpret_cast<reloadShit_t>(FindSignature("48 89 5C ? ? 48 89 6C ? ? 56 57 41 56 48 83 EC ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 ? ? 45 0F B6 ? 48 8B F9"));
+	}
 
 	static auto xrayMod = moduleMgr->getModule<Xray>();
 
@@ -928,9 +929,9 @@ __int64 Hooks::LevelRenderer_renderLevel(__int64 _this, __int64 a2, __int64 a3) 
 		unsigned long long* v5;  // rdi
 		unsigned long long* i;   // rbx
 
-		/*v5 = *(unsigned long long**)(_this + 32);
+		v5 = *(unsigned long long**)(_this + 32);
 		for (i = (unsigned long long*)*v5; i != v5; i = (unsigned long long*)*i)
-			reloadChunk(i[3]);*/
+			reloadChunk(i[3]);
 	}
 
 	auto ret = oFunc(_this, a2, a3);
