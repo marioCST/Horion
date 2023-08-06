@@ -88,7 +88,7 @@ private:
 	std::shared_ptr<void> materialPtr;
 
 public:
-	MaterialPtr(const HashedString& materialName);
+	static MaterialPtr* createMaterial(HashedString materialName);
 };
 }  // namespace mce
 

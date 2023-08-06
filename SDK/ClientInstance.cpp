@@ -44,18 +44,17 @@ void GuiData::displayClientMessageNoSendF(const char *fmt, ...) {
 	va_end(arg);
 }
 
-mce::MaterialPtr::MaterialPtr(const HashedString &materialName) {
-	using materialPtrConst_t = void(__fastcall *)(mce::MaterialPtr *, __int64, const HashedString &);
-	static materialPtrConst_t materialPtrConst = reinterpret_cast<materialPtrConst_t>(FindSignature("48 89 5C 24 ? 48 89 74 24 ? 48 89 4C 24 ? 57 48 83 EC ? 4C 8B CA"));
+mce::MaterialPtr *mce::MaterialPtr::createMaterial(HashedString materialName) {
+	static __int64 *materialCreator = nullptr;
 
-	static __int64 renderGroupBase = 0;
-	if (renderGroupBase == 0) {
-		auto sig = FindSignature("48 8D 0D ? ? ? ? FF 50 ? 48 8B D8 48 8B 50 ? 48 85 D2 0F 84 ? ? ? ? 8B 42 ? 85 C0 0F 84 ? ? ? ? 8D 48 ? F0 0F B1 4A ? 74 ? 85 C0 0F 84 ? ? ? ? EB ? 48 8B 03 48 8B 5B ? 48 89 44 24 ? 48 89 5C 24 ? 48 8D 54 24 ? 48 8D 0D ? ? ? ? E8 ? ? ? ? BE") + 3;
-		auto off = *reinterpret_cast<int *>(sig);
-		renderGroupBase = sig + 4 + off;
+	if (materialCreator == nullptr) {
+		// Sig returns 6 addresses, all of them point to the same offset
+		uintptr_t sigOffset = FindSignature("48 8D 0D ? ? ? ? 48 8B 40 ? FF 15 ? ? ? ? 48 8B F8 48 8B 50 ? 48 85 D2 0F 84 ? ? ? ? 8B 42 08 85 C0 0F 84 ? ? ? ? 0F 1F 44");
+		int offset = *reinterpret_cast<int *>(sigOffset + 3);
+		materialCreator = reinterpret_cast<__int64 *>(sigOffset + offset + 7);
 	}
 
-	materialPtrConst(this, renderGroupBase, materialName);
+	return Utils::CallVFunc<1, mce::MaterialPtr *, const HashedString *>(materialCreator, &materialName);
 }
 
 void mce::Mesh::renderMesh(__int64 screenContext, mce::MaterialPtr *material, size_t numTextures, __int64 **textureArray) {
