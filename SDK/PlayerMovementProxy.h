@@ -92,8 +92,8 @@ public:
 	virtual void hasCategory(int);
 	virtual bool isType(int);
 	virtual int getEntityTypeId(void);
-	virtual int getPosition(void);
-	virtual int getPosPrev(void);
+	virtual Vec3 getPosition(void);
+	virtual Vec3 getPosPrev(void);
 	virtual void setPosDirect(Vec3 const &);
 	virtual void setPosition(Vec3 const &);
 	virtual int getPosDelta(void);

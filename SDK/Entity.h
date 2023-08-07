@@ -512,7 +512,7 @@ public:
 	float getBlocksPerSecond();
 
 	int getTicksUsingItem() {
-		return *reinterpret_cast<int *>(this + 0x1000);
+		return *reinterpret_cast<int *>(this + 0x1238);
 	}
 
 	bool isSneaking() {
@@ -528,15 +528,15 @@ public:
 	}
 
 	void setIsInWater(bool is) {
-		*(bool *)((uintptr_t)(this) + 0x25D) = is;
+		*(bool *)((uintptr_t)(this) + 0x1FE) = is;
 	}
 
 	void SetFieldOfView(float num) {
-		*(float *)((uintptr_t)(this) + 0x1048) = num;
+		*(float *)((uintptr_t)(this) + 0x1458) = num;
 	}
 
 	float GetFieldOfView() {
-		return *reinterpret_cast<float *>(this + 0x1048);
+		return *reinterpret_cast<float *>(this + 0x1458);
 	}
 
 	class Level *getLevel() {
@@ -628,8 +628,7 @@ private:
 	char pad_0xA8[0xD0];  // 0xA8
 
 private:
-	virtual void destructor1();
-	virtual void destructor2();
+	virtual void destructor();
 
 public:
 	virtual void applyEffects(Entity *, int, int);
