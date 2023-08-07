@@ -480,7 +480,7 @@ void DrawUtils::drawNameTags(Entity* ent, float textSize, bool drawHealth, bool 
 
 		static auto nameTagsMod = moduleMgr->getModule<NameTags>();
 
-		if (ent->getEntityTypeId() == 63 && nameTagsMod->displayArmor) {  // is player, show armor
+		if (ent->isPlayer() && nameTagsMod->displayArmor) {  // is player, show armor
 			auto* player = reinterpret_cast<Player*>(ent);
 			float scale = textSize * 0.6f;
 			float spacing = scale + 15.f;

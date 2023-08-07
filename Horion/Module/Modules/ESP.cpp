@@ -33,7 +33,7 @@ void doRenderStuff(Entity* ent, bool isRegularEntity) {
 		else
 			DrawUtils::setColor(0.9f, 0.9f, 0.9f, 1.f);
 	} else if (espMod->isMobEsp) {
-		if (ent->getNameTag()->getTextLength() <= 1 && ent->getEntityTypeId() == 63)
+		if (ent->getNameTag()->getTextLength() <= 1 && ent->isPlayer())
 			return;
 
 		if (ent->getEntityTypeId() == 64)  // Item

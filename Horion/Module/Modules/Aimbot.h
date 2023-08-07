@@ -5,7 +5,6 @@
 
 class Aimbot : public IModule {
 private:
-	float range = 4.f;
 	bool vertical = true;
 	bool sword = false;
 	bool click = false;
@@ -16,6 +15,9 @@ private:
 	bool lock = false;
 
 public:
+	float range = 4.f;
+	bool mobs = false;
+
 	Aimbot();
 	~Aimbot();
 

@@ -6,6 +6,26 @@ DeviceIDCommand::DeviceIDCommand() : IMCCommand("deviceid", "Displays the device
 DeviceIDCommand::~DeviceIDCommand() {
 }
 
+static std::vector<Entity*> targetList724;
+void findEntity84(Entity* currentEntity, bool isRegularEntity) {
+	if (currentEntity == nullptr)
+		return;
+
+	if (currentEntity == Game.getLocalPlayer())  // Skip Local player
+		return;
+
+	if (!Game.getLocalPlayer()->isAlive())
+		return;
+
+	if (!currentEntity->isAlive())
+		return;
+
+	if (!currentEntity->isPlayer())
+		return;
+
+	targetList724.push_back(currentEntity);
+}
+
 bool DeviceIDCommand::execute(std::vector<std::string>* args) {
 	if (args->size() < 2) {
 		auto player = Game.getLocalPlayer();
@@ -13,20 +33,19 @@ bool DeviceIDCommand::execute(std::vector<std::string>* args) {
 		clientMessageF("%sYour device: %s%s", GREEN, GRAY, player->getDeviceNameLocal());
 	}
 	else {
+		targetList724.clear();
+		Game.forEachEntity(findEntity84);
+
+		if (!targetList724.empty())
+			return;
+
 		std::string nameOfPlayer = args->at(1);
 		assertTrue(!nameOfPlayer.empty());
 		std::string nameOfPlayerLower = std::string(nameOfPlayer);
 		std::transform(nameOfPlayerLower.begin(), nameOfPlayerLower.end(), nameOfPlayerLower.begin(), ::tolower);
 		nameOfPlayerLower = Utils::sanitize(nameOfPlayerLower);
 
-		EntityList* entList = Game.getEntityList();
-
-		if (entList == nullptr) {
-			clientMessageF("%sInvalid entity list", RED);
-			return true;
-		}
-
-		size_t listSize = entList->getListSize();
+		size_t listSize = targetList724.size();
 
 		if (listSize > 5000) {
 			return true;
@@ -36,7 +55,7 @@ bool DeviceIDCommand::execute(std::vector<std::string>* args) {
 
 		// Loop through all our players and retrieve their information
 		for (size_t i = 0; i < listSize; i++) {
-			Entity* currentEntity = entList->get(i);
+			Entity* currentEntity = targetList724.at(i);
 
 			if (currentEntity == nullptr)
 				break;

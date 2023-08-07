@@ -30,7 +30,7 @@ bool Target::isValidTarget(Entity* ent) {
 
 	auto entityTypeId = ent->getEntityTypeId();
 
-	if (antibot->isEntityIdCheckEnabled() && entityTypeId <= 130 && entityTypeId != 63)
+	if (antibot->isEntityIdCheckEnabled() && entityTypeId <= 130 && !ent->isPlayer())
 		return false;
 
 	if (ent->isPlayer()) {

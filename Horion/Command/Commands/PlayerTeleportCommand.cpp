@@ -7,7 +7,33 @@ PlayerTeleportCommand::PlayerTeleportCommand() : IMCCommand("playertp", "Telepor
 PlayerTeleportCommand::~PlayerTeleportCommand() {
 }
 
+static std::vector<Entity*> targetList8;
+void findEntity3(Entity* currentEntity, bool isRegularEntity) {
+	if (currentEntity == nullptr)
+		return;
+
+	if (currentEntity == Game.getLocalPlayer())  // Skip Local player
+		return;
+
+	if (!Game.getLocalPlayer()->isAlive())
+		return;
+
+	if (!currentEntity->isAlive())
+		return;
+
+	if (!currentEntity->isPlayer())
+		return;
+
+	targetList8.push_back(currentEntity);
+}
+
 bool PlayerTeleportCommand::execute(std::vector<std::string>* args) {
+	targetList8.clear();
+	Game.forEachEntity(findEntity3);
+
+	if (targetList8.empty())
+		return;
+
 	assertTrue(Game.getLocalPlayer() != nullptr);
 	assertTrue(args->size() > 1);  // .playertp <player>
 	std::string nameOfPlayer = args->at(1);
@@ -16,14 +42,7 @@ bool PlayerTeleportCommand::execute(std::vector<std::string>* args) {
 	std::transform(nameOfPlayerLower.begin(), nameOfPlayerLower.end(), nameOfPlayerLower.begin(), ::tolower);
 	nameOfPlayerLower = Utils::sanitize(nameOfPlayerLower);
 
-	EntityList* entList = Game.getEntityList();
-
-	if (entList == nullptr) {
-		clientMessageF("%sInvalid entity list", RED);
-		return true;
-	}
-
-	size_t listSize = entList->getListSize();
+	size_t listSize = targetList8.size();
 	Vec3 pos;
 
 	if (listSize > 5000) {
@@ -34,7 +53,7 @@ bool PlayerTeleportCommand::execute(std::vector<std::string>* args) {
 
 	// Loop through all the players and retrieve their information
 	for (size_t i = 0; i < listSize; i++) {
-		Entity* currentEntity = entList->get(i);
+		Entity* currentEntity = targetList8.at(i);
 
 		if (currentEntity == nullptr)
 			break;

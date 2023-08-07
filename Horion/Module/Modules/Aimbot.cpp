@@ -2,6 +2,7 @@
 
 Aimbot::Aimbot() : IModule(0, Category::COMBAT, "Automatically aims at the nearest entity.") {
 	registerFloatSetting("Range", &range, range, 3.f, 8.f);
+	registerBoolSetting("Mobs", &mobs, mobs);
 	registerBoolSetting("Require Click", &click, click);
 	registerBoolSetting("Only Swords/Axes", &sword, sword);
 	registerBoolSetting("Vertical", &vertical, vertical);
@@ -26,39 +27,71 @@ struct CompareTargetEnArray {
 	}
 };
 
+static std::vector<Entity*> targetList137;
+void findEntity713(Entity* currentEntity, bool isRegularEntity) {
+	static auto aimbotMod = moduleMgr->getModule<Aimbot>();
+
+	if (currentEntity == nullptr)
+		return;
+
+	if (currentEntity == Game.getLocalPlayer())  // Skip Local player
+		return;
+
+	if (!Game.getLocalPlayer()->canAttack(currentEntity, false))
+		return;
+
+	if (!Game.getLocalPlayer()->isAlive())
+		return;
+
+	if (!currentEntity->isAlive())
+		return;
+
+	if (currentEntity->getEntityTypeId() == 66) // Falling block
+		return;
+
+	if (currentEntity->getEntityTypeId() == 69) // XP
+		return;
+
+	if (aimbotMod->mobs) {
+		if (currentEntity->getNameTag()->getTextLength() <= 1 && currentEntity->isPlayer())
+			return;
+
+		if (currentEntity->aabb->width <= 0.01f || currentEntity->aabb->height <= 0.01f)  // Don't hit this pesky antibot on 2b2e.org
+			return;
+
+		if (currentEntity->getEntityTypeId() == 64) // item
+			return;
+
+		if (currentEntity->getEntityTypeId() == 80) // arrow
+			return;
+
+		if (currentEntity->getEntityTypeId() == 51) // npc
+			return;
+	} else {
+		if (!Target::isValidTarget(currentEntity))
+			return;
+	}
+
+	float dist = (*currentEntity->getPos()).dist(*Game.getLocalPlayer()->getPos());
+
+	if (dist <= aimbotMod->range)
+		targetList137.push_back(currentEntity);
+}
+
 void Aimbot::onPostRender(MinecraftUIRenderContext* renderCtx) {
 	LocalPlayer* localPlayer = Game.getLocalPlayer();
 	if (localPlayer == nullptr)
 		return;
-	EntityList* entList = Game.getEntityList();
-	if (entList == nullptr)
-		return;
-	size_t listSize = entList->getListSize();
+	
+	targetList137.clear();
+	Game.forEachEntity(findEntity713);
 
-	if (listSize > 1000) {
-		return;
-	}
+	if (!targetList137.empty()) {
+		Vec3 origin = Game.getClientInstance()->levelRenderer->getOrigin();
 
-	Vec3 origin = Game.getClientInstance()->levelRenderer->getOrigin();
+		std::sort(targetList137.begin(), targetList137.end(), CompareTargetEnArray());
 
-	//Loop through all our players and retrieve their information
-	static std::vector<Entity*> targetList;
-	targetList.clear();
-	for (size_t i = 0; i < listSize; i++) {
-		Entity* currentEntity = entList->get(i);
-
-		if (!Target::isValidTarget(currentEntity))
-			continue;
-
-		float dist = (*currentEntity->getPos()).dist(*Game.getLocalPlayer()->getPos());
-
-		if (dist < range)
-			targetList.push_back(currentEntity);
-	}
-
-	if (targetList.size() > 0) {
-		std::sort(targetList.begin(), targetList.end(), CompareTargetEnArray());
-		Vec2 angle = origin.CalcAngle(*targetList[0]->getPos());
+		Vec2 angle = origin.CalcAngle(*targetList137[0]->getPos());
 		Vec2 appl = angle.sub(localPlayer->getActorHeadRotationComponent()->rot).normAngles();
 		appl.x = -appl.x;
 		if ((appl.x < verticalrange && appl.x > -verticalrange) && (appl.y < horizontalrange && appl.y > -horizontalrange) && GameData::canUseMoveKeys()) {

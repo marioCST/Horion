@@ -44,7 +44,7 @@ void findEntity(Entity* currentEntity, bool isRegularEntity) {
 		return;
 
 	if (killauraMod->isMobAura) {
-		if (currentEntity->getNameTag()->getTextLength() <= 1 && currentEntity->getEntityTypeId() == 63)
+		if (currentEntity->getNameTag()->getTextLength() <= 1 && currentEntity->isPlayer())
 			return;
 		if (currentEntity->aabb->width <= 0.01f || currentEntity->aabb->height <= 0.01f)  // Don't hit this pesky antibot on 2b2e.org
 			return;
