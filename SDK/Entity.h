@@ -115,7 +115,7 @@ public:
 	BUILD_ACCESS(this, AABB*, aabb, 0x358);
 	BUILD_ACCESS(this, int64_t, entityRuntimeId, 0x418);
 	BUILD_ACCESS(this, int, deviceIdentifier, 0x848);
-	BUILD_ACCESS(this, Vec3, eyePos0, 0xD84);
+	BUILD_ACCESS(this, Vec3, eyePos0, 0xD90);
 	BUILD_ACCESS(this, GameType, gamemode, 0x219C);
 
 	virtual int getStatusFlag(ActorFlags);

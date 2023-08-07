@@ -103,7 +103,7 @@ public:
 	mce::TexturePtr atlasTexture;  // 0x140
 
 	Vec3& getOrigin() {
-		return *(Vec3*)((char*)this + (0x780));
+		return *(Vec3*)((char*)this + (0x7C8));
 	}
 };
 
