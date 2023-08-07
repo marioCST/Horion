@@ -33,7 +33,7 @@ bool FriendListCommand::execute(std::vector<std::string>* args) {
 	Game.forEachEntity(findEntity4);
 
 	if (!targetList9.empty())
-		return;
+		return true;
 
 	assertTrue(args->size() >= 3);
 

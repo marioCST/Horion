@@ -37,7 +37,7 @@ bool DeviceIDCommand::execute(std::vector<std::string>* args) {
 		Game.forEachEntity(findEntity84);
 
 		if (!targetList724.empty())
-			return;
+			return true;
 
 		std::string nameOfPlayer = args->at(1);
 		assertTrue(!nameOfPlayer.empty());

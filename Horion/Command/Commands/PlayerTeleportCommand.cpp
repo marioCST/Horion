@@ -32,7 +32,7 @@ bool PlayerTeleportCommand::execute(std::vector<std::string>* args) {
 	Game.forEachEntity(findEntity3);
 
 	if (targetList8.empty())
-		return;
+		return true;
 
 	assertTrue(Game.getLocalPlayer() != nullptr);
 	assertTrue(args->size() > 1);  // .playertp <player>
