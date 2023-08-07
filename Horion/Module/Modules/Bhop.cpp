@@ -17,10 +17,10 @@ void Bhop::onMove(MoveInputHandler* input) {
 	auto player = Game.getLocalPlayer();
 	if (player == nullptr) return;
 
-	if (player->isInLava(*player->region) == 1 || player->isInWater() == 1) 
+	if (player->isInLava(*player->region) || player->isInWater()) 
 		return;
 	
-	if (player->isSneaking()) 
+	if (Game.getClientInstance()->getMoveTurnInput()->isSneakDown) 
 		return;
 
 	Vec2 moveVec2d = {input->forwardMovement, -input->sideMovement};
