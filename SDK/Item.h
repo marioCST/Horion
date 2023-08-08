@@ -239,7 +239,7 @@ public:
 	}
 
 	bool isBlock(void) {
-		auto val = *reinterpret_cast<__int64 ***>(reinterpret_cast<__int64>(this) + 0x1A0);
+		auto val = *reinterpret_cast<__int64 ***>(reinterpret_cast<__int64>(this) + 0x1B8);
 		return val != nullptr && *val != nullptr;
 	}
 
