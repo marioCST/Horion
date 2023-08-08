@@ -51,7 +51,7 @@ void doRenderStuff(Entity* ent, bool isRegularEntity) {
 			DrawUtils::setColor(0.9f, 0.9f, 0.9f, 1.f);
 		}
 
-		float drawDistance = (float)fmax(0.5f, 1 / (float)fmax(1, localPlayer->eyePos0.dist(ent->eyePos0)));
+		float drawDistance = (float)fmax(0.5f, 1 / (float)fmax(1, localPlayer->getPos()->dist(*ent->getPos())));
 		if (espMod->is2d)
 			DrawUtils::draw2D(ent, drawDistance * 3.f);
 		else

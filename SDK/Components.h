@@ -15,6 +15,7 @@ struct ActorRotationComponent {
 };
 
 struct ActorHeadRotationComponent {
+	Vec2 rotPrev;
 	Vec2 rot;
 };
 

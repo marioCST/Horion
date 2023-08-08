@@ -62,7 +62,7 @@ void FollowPathModule::onTick(GameMode *mode) {
 	shouldStartSearch = false;
 
 	auto player = Game.getLocalPlayer();
-	auto pPos = player->eyePos0;
+	auto pPos = *player->getPos();
 	Vec3i startNode((int)floorf(pPos.x), (int)roundf(pPos.y - 1.62f), (int)floorf(pPos.z));
 
 	startSearch(startNode, player->region, 0.5f, [&](bool succeeded, JoePath tempPath) {

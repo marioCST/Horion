@@ -19,8 +19,8 @@ const char* Tracer::getModuleName() {
 void Tracer::onLevelRender() {
 	if (old) {
 		if (!Game.getLocalPlayer()) return;
-		float calcYaw = (Game.getLocalPlayer()->getActorHeadRotationComponent()->rot.y + 90) * (PI / 180);
-		float calcPitch = (Game.getLocalPlayer()->getActorHeadRotationComponent()->rot.x) * -(PI / 180);
+		float calcYaw = (Game.getLocalPlayer()->getActorRotationComponent()->rot.y + 90) * (PI / 180);
+		float calcPitch = (Game.getLocalPlayer()->getActorRotationComponent()->rot.x) * -(PI / 180);
 		Vec3 moveVec;
 		moveVec.x = cos(calcYaw) * cos(calcPitch) * 0.5f;
 		moveVec.y = sin(calcPitch) * 0.5f;
@@ -30,7 +30,7 @@ void Tracer::onLevelRender() {
 		Game.forEachEntity([&](Entity* ent, bool valid) {
 			if (ent != Game.getLocalPlayer() && Target::isValidTarget(ent) && Game.canUseMoveKeys()) {
 				DrawUtils::setColor(255, 255, 255, 1);
-				DrawUtils::drawLine3d(origin, *ent->getPos(), true);
+				DrawUtils::drawLine3d(origin, ent->getRenderPos(), true);
 			}
 		});
 	}
@@ -48,7 +48,7 @@ void Tracer::onPreRender(MinecraftUIRenderContext* renderCtx) {
 				Vec2 screenSize;
 				screenSize.x = Game.getGuiData()->widthGame;
 				screenSize.y = Game.getGuiData()->heightGame;
-				refdef2->OWorldToScreen(Game.getClientInstance()->levelRenderer->getOrigin(), ent->eyePos0, target, Game.getClientInstance()->getFov(), screenSize);
+				refdef2->OWorldToScreen(Game.getClientInstance()->levelRenderer->getOrigin(), ent->getRenderPos(), target, Game.getClientInstance()->getFov(), screenSize);
 				Vec2 mid(((Game.getClientInstance()->getGuiData()->widthGame) / 2), ((Game.getClientInstance()->getGuiData()->heightGame) / 2));
 				if (target != Vec2(0, 0)) {
 					DrawUtils::setColor(255, 255, 255, 1);

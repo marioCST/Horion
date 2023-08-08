@@ -115,7 +115,6 @@ public:
 	BUILD_ACCESS(this, AABB*, aabb, 0x358);
 	BUILD_ACCESS(this, int64_t, entityRuntimeId, 0x418);
 	BUILD_ACCESS(this, int, deviceIdentifier, 0x848);
-	BUILD_ACCESS(this, Vec3, eyePos0, 0xD90);
 	BUILD_ACCESS(this, GameType, gamemode, 0x219C);
 
 	virtual int getStatusFlag(ActorFlags);
@@ -553,6 +552,15 @@ public:
 
 	void setOnGround(bool onGround) {
 		getMovementProxy()->setOnGround(onGround);
+	}
+
+	Vec3 getRenderPos() {
+		Vec3 pos = *getPos();
+
+		if (!isPlayer())
+			pos.add(0.f, aabb->height - 0.125f, 0.f);
+
+		return pos;
 	}
 
 	void lerpTo(Vec3 const &pos, Vec2 const &rot, int steps);
