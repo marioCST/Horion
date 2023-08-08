@@ -108,7 +108,6 @@ public:
 	BUILD_ACCESS(this, uint32_t, entityId, 0x10);
 	BUILD_ACCESS(this, int, ticksAlive, 0x24C);
 	BUILD_ACCESS(this, int, damageTime, 0x250);
-	BUILD_ACCESS(this, BlockSource *, region, 0x2F8);
 	BUILD_ACCESS(this, Dimension *, dimension, 0x300);
 	BUILD_ACCESS(this, Level *, level, 0x310);
 	BUILD_ACCESS(this, EntityLocation *, entityLocation, 0x350);
@@ -563,6 +562,10 @@ public:
 		return pos;
 	}
 
+	BlockSource* getRegion() {
+		return getBlockSourceComponent()->region;
+	}
+
 	void lerpTo(Vec3 const &pos, Vec2 const &rot, int steps);
 
 	ActorRotationComponent *getActorRotationComponent() {
@@ -603,6 +606,13 @@ public:
 	ActorMovementProxyComponent *getActorMovementProxyComponent() {
 		using getActorMovementProxyComponent = ActorMovementProxyComponent *(__cdecl *)(__int64 *, uint32_t *);
 		static auto func = reinterpret_cast<getActorMovementProxyComponent>(FindSignature("40 53 48 83 EC ? 48 8B DA BA 18 0C BD EC"));
+		uint32_t id = this->entityId;
+		return func(*this->entityRegistryBase, &id);
+	}
+
+	BlockSourceComponent *getBlockSourceComponent() {
+		using getBlockSourceComponent = BlockSourceComponent *(__cdecl *)(__int64 *, uint32_t *);
+		static auto func = reinterpret_cast<getBlockSourceComponent>(FindSignature("40 53 48 83 EC ? 48 8B DA BA 32 47 C1 FD"));
 		uint32_t id = this->entityId;
 		return func(*this->entityRegistryBase, &id);
 	}

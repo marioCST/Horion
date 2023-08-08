@@ -17,7 +17,7 @@ void Jesus::onTick(GameMode* gm) {
 		gm->player->entityLocation->velocity.y = 0.06f;
 		gm->player->setOnGround(true);
 		wasInWater = true;
-	} else if (gm->player->isInWater() || gm->player->isInLava(*gm->player->region)) {
+	} else if (gm->player->isInWater() || gm->player->isInLava(*gm->player->getRegion())) {
 		gm->player->entityLocation->velocity.y = 0.1f;
 		gm->player->setOnGround(true);
 		wasInWater = true;

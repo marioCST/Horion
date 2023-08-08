@@ -8,21 +8,12 @@
 
 class Material {
 public:
-	int type;  // 5 for water, 6 for lava
-	bool isFlammable;
-	bool isNeverBuildable;
-	bool isAlwaysDestroyable;
-	bool isReplaceable;
-	bool isLiquid;  // 0x0008
-private:
-	char pad2[0x3];  // 0x009
-public:
-	float translucency;  // 0x00C
-	bool isBlockingMotion;
-	bool isBlockingPrecipitation;
-	bool isSolid;
-	bool isSuperHot;
-	float color[4];
+	BUILD_ACCESS(this, int, type, 0x0);
+	BUILD_ACCESS(this, bool, isFlammable, 0x4);
+	BUILD_ACCESS(this, bool, isNeverBuildable, 0x5);
+	BUILD_ACCESS(this, bool, isLiquid, 0x6);
+	BUILD_ACCESS(this, bool, isBlockingMotion, 0xC);
+	BUILD_ACCESS(this, bool, isSuperHot, 0xF);
 };
 
 class Entity;

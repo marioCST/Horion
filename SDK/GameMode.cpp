@@ -1,20 +1,20 @@
 #include "GameMode.h"
 #include "../Memory/GameData.h"
 
-void GameMode::survivalDestroyBlockHack(Vec3i const &block, int face, bool &isDestroyedOut, bool isFirst) {
+void GameMode::survivalDestroyBlockHack(Vec3i const &block, int face, Vec3 const &playerLastPos, bool &isDestroyedOut, bool isFirst) {
 	auto p = this->player;
 	p->swing();
 	if (isFirst)
 		this->startDestroyBlock(block, face, isDestroyedOut);
 	else {
-		*reinterpret_cast<bool *>(reinterpret_cast<__int64>(p) + 0x1c5a) = 1;
-		this->continueDestroyBlock(block, face, isDestroyedOut);
+		*reinterpret_cast<bool *>(reinterpret_cast<__int64>(p) + 0x2170) = 1;
+		this->continueDestroyBlock(block, face, playerLastPos, isDestroyedOut);
 	}
 
 	p->startDestroying();
 
 	// prevents regular code from aborting block-break
-	*reinterpret_cast<bool *>(reinterpret_cast<__int64>(p) + 0x1c5a) = 0;
+	*reinterpret_cast<bool *>(reinterpret_cast<__int64>(p) + 0x2170) = 0;
 
 	PlayerActionPacket action;
 	action.action = 18;

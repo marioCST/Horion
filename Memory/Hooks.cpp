@@ -267,7 +267,7 @@ bool Hooks::Actor_intersects(Entity* _this, Vec3 lower, Vec3 upper) {
 	if (moduleMgr != nullptr && _this != nullptr && Game.getLocalPlayer() != nullptr && _this == Game.getLocalPlayer())
 		moduleMgr->onPlayerTick(reinterpret_cast<Player*>(_this));
 
-	if (!Game.getLocalPlayer() || !Game.getLocalPlayer()->level || !Game.getLocalPlayer()->region || !Game.isInGame())
+	if (!Game.getLocalPlayer() || !Game.getLocalPlayer()->level || !Game.getLocalPlayer()->getRegion() || !Game.isInGame())
 		g_Hooks.entityList.clear();
 
 	if (Game.getLocalPlayer() != nullptr && _this == Game.getLocalPlayer()) {
@@ -837,7 +837,7 @@ void Hooks::GameMode_startDestroyBlock(GameMode* _this, Vec3i* pos, uint8_t face
 		const bool isVeinMiner = nukerModule->isVeinMiner();
 		const bool isAutoMode = nukerModule->isAutoMode();
 
-		BlockSource* region = Game.getLocalPlayer()->region;
+		BlockSource* region = Game.getLocalPlayer()->getRegion();
 		auto selectedBlockId = ((region->getBlock(*pos)->blockLegacy))->blockId;
 		uint8_t selectedBlockData = region->getBlock(*pos)->data;
 

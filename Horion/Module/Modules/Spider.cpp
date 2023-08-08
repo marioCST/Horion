@@ -17,7 +17,7 @@ void Spider::onMove(MoveInputHandler* input) {
 	if (player == nullptr)
 		return;
 
-	if (player->isInLava(*player->region) || player->isInWater())
+	if (player->isInLava(*player->getRegion()) || player->isInWater())
 		return;
 
 	if (player->isSneaking())
@@ -58,14 +58,14 @@ void Spider::onMove(MoveInputHandler* input) {
 			Vec3i side = pPosI.add(0, yOff, 0).add(current);
 			if (side.y < 0 || side.y >= 256)
 				break;
-			auto block = player->region->getBlock(side);
+			auto block = player->getRegion()->getBlock(side);
 			if (block == nullptr || block->blockLegacy == nullptr)
 				continue;
 			BlockLegacy* blockLegacy = block->toLegacy();
 			if (blockLegacy == nullptr)
 				continue;
 			AABB collisionVec;
-			if (!blockLegacy->getCollisionShape(&collisionVec, block, player->region, &side, player))
+			if (!blockLegacy->getCollisionShape(&collisionVec, block, player->getRegion(), &side, player))
 				continue;
 			bool intersects = ignoreYcoll ? collisionVec.intersectsXZ(player->aabb->expandedXZ(0.1f)) : collisionVec.intersects(player->aabb->expandedXZ(0.1f));
 			

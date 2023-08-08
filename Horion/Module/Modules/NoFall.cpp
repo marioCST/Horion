@@ -40,7 +40,7 @@ void NoFall::onSendPacket(Packet* packet) {
 
 bool NoFall::isOverVoid() {
 	for (float posY = Game.getLocalPlayer()->getPos()->y; posY > 0.0f; --posY) {
-		if (!(Game.getLocalPlayer()->region->getBlock(Vec3(Game.getLocalPlayer()->getPos()->x, posY, Game.getLocalPlayer()->getPos()->z))->blockLegacy->blockId == 0)) {
+		if (!(Game.getLocalPlayer()->getRegion()->getBlock(Vec3(Game.getLocalPlayer()->getPos()->x, posY, Game.getLocalPlayer()->getPos()->z))->blockLegacy->blockId == 0)) {
 			return false;
 		}
 	}
@@ -74,7 +74,7 @@ void NoFall::onTick(GameMode* gm) {
 				Vec3 blockBelow = *localPlayer->getPos();
 				blockBelow.y -= localPlayer->aabb->height;
 				blockBelow.y -= 0.17999f;
-				while (localPlayer->region->getBlock(blockBelow)->blockLegacy->blockId == 0 && !localPlayer->region->getBlock(blockBelow)->blockLegacy->isSolid) {
+				while (localPlayer->getRegion()->getBlock(blockBelow)->blockLegacy->blockId == 0 && !localPlayer->getRegion()->getBlock(blockBelow)->blockLegacy->isSolid) {
 					blockBelow.y -= 1.f;
 					if (isOverVoid()) {
 						return;

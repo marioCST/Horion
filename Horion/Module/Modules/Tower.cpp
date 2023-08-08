@@ -23,9 +23,9 @@ bool Tower::tryTower(Vec3 blockBelow) {
 
 	DrawUtils::drawBox(blockBelow, Vec3(blockBelow).add(1), 0.4f);
 
-	Block* block = Game.getLocalPlayer()->region->getBlock(Vec3i(blockBelow));
+	Block* block = Game.getLocalPlayer()->getRegion()->getBlock(Vec3i(blockBelow));
 	BlockLegacy* blockLegacy = (block->blockLegacy);
-	if (blockLegacy->material->isReplaceable) {
+	if (!blockLegacy->isSolid) {
 		Vec3i blok(blockBelow);
 
 		// Find neighbour
@@ -44,7 +44,7 @@ bool Tower::tryTower(Vec3 blockBelow) {
 		int i = 0;
 		for (auto current : checklist) {
 			Vec3i calc = blok.sub(*current);
-			if (!((Game.getLocalPlayer()->region->getBlock(calc)->blockLegacy))->material->isReplaceable) {
+			if (((Game.getLocalPlayer()->getRegion()->getBlock(calc)->blockLegacy))->isSolid) {
 				// Found a solid block to click
 				foundCandidate = true;
 				blok = calc;

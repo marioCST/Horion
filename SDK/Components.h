@@ -15,7 +15,6 @@ struct ActorRotationComponent {
 };
 
 struct ActorHeadRotationComponent {
-	Vec2 rotPrev;
 	Vec2 rot;
 };
 
@@ -35,4 +34,8 @@ class PlayerMovementProxy;
 
 struct ActorMovementProxyComponent {
 	PlayerMovementProxy* movementProxy;
+};
+
+struct BlockSourceComponent {
+	BlockSource* region;
 };

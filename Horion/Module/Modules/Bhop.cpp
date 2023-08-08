@@ -17,7 +17,7 @@ void Bhop::onMove(MoveInputHandler* input) {
 	auto player = Game.getLocalPlayer();
 	if (player == nullptr) return;
 
-	if (player->isInLava(*player->region) || player->isInWater()) 
+	if (player->isInLava(*player->getRegion()) || player->isInWater()) 
 		return;
 	
 	if (Game.getClientInstance()->getMoveTurnInput()->isSneakDown) 
