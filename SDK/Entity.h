@@ -18,7 +18,7 @@
 class GameMode;
 
 class Level {
-	char pad_0x0[0xB30];
+	char pad_0x0[0xAC0];
 public:
 	int rayHitType;
 	int blockSide;
