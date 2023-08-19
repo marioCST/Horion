@@ -36,8 +36,8 @@ public:
 class BlockLegacy {
 public:
 	BUILD_ACCESS(this, uintptr_t**, Vtable, 0x0);
-	BUILD_ACCESS(this, TextHolder, tileName, 0x28);
-	BUILD_ACCESS(this, TextHolder, name, 0x78);
+	BUILD_ACCESS(this, TextHolder, tileName, 0x8);
+	BUILD_ACCESS(this, TextHolder, name, 0x30);
 	BUILD_ACCESS(this, Material*, material, 0xD8);
 	BUILD_ACCESS(this, float, translucency, 0x11C);
 	BUILD_ACCESS(this, bool, isSolid, 0x144);

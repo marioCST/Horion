@@ -912,12 +912,12 @@ __int8* Hooks::BlockLegacy_getLightEmission(BlockLegacy* a1, __int8* a2) {
 __int64 Hooks::LevelRenderer_renderLevel(__int64 _this, __int64 a2, __int64 a3) {
 	static auto oFunc = g_Hooks.LevelRenderer_renderLevelHook->GetFastcall<__int64, __int64, __int64, __int64>();
 
-	using reloadShit_t = void(__fastcall*)(__int64);
+	using reloadShit_t = void(__fastcall*)(__int64, unsigned __int64*, char);
 	static reloadShit_t reloadChunk = nullptr;
 
 	if (!reloadChunk) {
 		// RenderChunkCoordinator::rebuildAllRenderChunkGeometry
-		reloadChunk = reinterpret_cast<reloadShit_t>(FindSignature("48 89 5C ? ? 48 89 6C ? ? 56 57 41 56 48 83 EC ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 ? ? 45 0F B6 ? 48 8B F9"));
+		reloadChunk = reinterpret_cast<reloadShit_t>(FindSignature("48 89 5C 24 ? 48 89 6C 24 ? 56 57 41 56 48 83 EC ? 48 8B 05 ? ? ? ? 48 33 C4 48 89 44 24 ? 45 0F B6 F0"));
 	}
 
 	static auto xrayMod = moduleMgr->getModule<Xray>();
@@ -931,7 +931,7 @@ __int64 Hooks::LevelRenderer_renderLevel(__int64 _this, __int64 a2, __int64 a3) 
 
 		v5 = *(unsigned long long**)(_this + 32);
 		for (i = (unsigned long long*)*v5; i != v5; i = (unsigned long long*)*i)
-			reloadChunk(i[3]);
+			reloadChunk(i[3], v5, 1);
 	}
 
 	auto ret = oFunc(_this, a2, a3);
