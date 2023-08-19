@@ -19,7 +19,7 @@ class MinecraftGame;
 
 class BaseActorRenderContext {
 private:
-	char pad_0x0[0x60];  //0x0000
+	char pad_0x0[0x58];  //0x0000
 public:
 	ItemRenderer *renderer;  //0x0058
 private:

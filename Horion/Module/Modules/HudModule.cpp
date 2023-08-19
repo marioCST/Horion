@@ -118,7 +118,7 @@ void HudModule::onPostRender(MinecraftUIRenderContext* renderCtx) {
 		
 		if (!(Game.getLocalPlayer() == nullptr || !displayArmor || !GameData::canUseMoveKeys())) {
 			static float constexpr scale = 1.f;
-			static float constexpr opacity = 0.25f;
+			static float constexpr opacity = 0.75f;
 			static float constexpr spacing = scale + 15.f;
 			LocalPlayer* player = Game.getLocalPlayer();
 			float x = windowSize.x / 2.f + 5.f;
