@@ -1,4 +1,4 @@
-**This is a work in progress. I started to make 1.19.5X Horion update cuz Hive removed support for many versions and 1.19.5X is the second oldest version which probably will be supported longer than 1.18.1X**
+**Due to sudden changes in Minecraft's/Xbox's authentication system and Hive dropping all versions below 1.20 because of that, this project is discontinued**
 
 **This is independent of Borion and does NOT contain any Borion specific code**
 
